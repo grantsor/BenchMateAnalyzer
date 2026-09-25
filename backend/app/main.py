@@ -170,6 +170,7 @@ def find_default_logo_path() -> Optional[Path]:
 _cached_default_logo_data = None
 
 @app.get("/api/branding/default-logo")
+@app.get("/api/capframex/branding/default-logo")
 async def get_default_logo():
     path = find_default_logo_path()
     if path:
@@ -177,6 +178,7 @@ async def get_default_logo():
     raise HTTPException(status_code=404, detail="Default logo not found")
 
 @app.get("/api/branding/default-logo-data")
+@app.get("/api/capframex/branding/default-logo-data")
 async def get_default_logo_data():
     global _cached_default_logo_data
     if _cached_default_logo_data is not None:

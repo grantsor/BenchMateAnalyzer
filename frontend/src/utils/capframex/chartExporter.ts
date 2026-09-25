@@ -75,8 +75,6 @@ export function buildExportEchartsOption(
 ): any {
   const baseDim = isVertical ? 1080 : 1920;
   const scale = width / baseDim;
-  // Font scale: keep full scale for exports (scale >= 1.0) and prevent preview fonts from shrinking below legibility
-  const fontScale = isVertical ? Math.max(scale, 0.72) : Math.max(scale, 0.65);
 
   const datasetConfigIds = new Set(dataset.rows.map((r) => r.configuration_id));
   const excludedConfigIds = new Set(options.manuallyExcludedConfigIds || []);
@@ -211,49 +209,29 @@ export function buildExportEchartsOption(
     activeMetrics.includes("average_fps") &&
     (activeMetrics.includes("p1_fps") || activeMetrics.includes("p0_1_fps"));
 
-  // --- Dynamic Left & Right Margins ---
-  // When there are few products (<= 6), allocate ~28% left margin so product names have room without wrapping words.
-  // For medium datasets (<= 16), allocate ~24%.
-  // For large GPU hierarchy benchmark lists (> 16), allocate ~20.5% to maximize the horizontal bar area to ~74%.
-  const defaultLeft = isVertical
-    ? (displayRows.length <= 6
-        ? Math.round(width * 0.28)
-        : displayRows.length <= 16
-        ? Math.round(width * 0.26)
-        : Math.round(width * 0.245))
-    : (displayRows.length <= 6
-        ? Math.round(width * 0.22)
-        : Math.round(width * 0.20));
-
-  const gridLeft = options.gridLeftMargin
-    ? Math.round(options.gridLeftMargin * scale)
-    : defaultLeft;
-
-  const gridRight = Math.round(
-    isVertical
-      ? width * 0.055
-      : (isMergedBars ? 100 : isInside ? 65 : 120) * scale
+  // --- Dynamic Left & Right Margins (Matching OCR Analyzer) ---
+  const userGridLeft = options.gridLeftMargin ?? (isVertical ? 135 : 240);
+  const gridLeft = Math.max(
+    Math.round(width * (isVertical ? 0.28 : (displayRows.length <= 6 ? 0.24 : 0.22))),
+    Math.round((isVertical ? userGridLeft * 2.2 : userGridLeft * 1.85) * scale)
   );
 
-  // --- Dynamic Header Typography & Vertical Clearance ---
-  // Refined header proportions so game title, subtitle, and legend look balanced and never dominate the chart
-  const titleFontSize = Math.round((isVertical ? 25 : 24) * fontScale);
-  const titleItemGap = Math.max(3, Math.round((isVertical ? 4 : 4) * fontScale));
-  const subtitleFontSize = Math.round((isVertical ? 13 : 12.5) * fontScale);
-  const legendFontSize = Math.round((isVertical ? 12.5 : 12) * fontScale);
+  const gridRight = Math.round(
+    isInside ? 70 * scale : (isVertical ? 110 : 150) * scale
+  );
 
-  const titleTop = Math.round((isVertical ? 16 : 14) * scale);
-  const titleHeight = Math.round(titleFontSize * 1.15);
-  const subtitleHeight = Math.round(subtitleFontSize * 1.2);
-  const titleBlockHeight = titleHeight + titleItemGap + subtitleHeight;
+  // --- Dynamic Header Typography & Vertical Spacing Matching OCR Analyzer ---
+  const titleFontSize = Math.round((isVertical ? 36 : 40) * scale);
+  const subtitleFontSize = Math.round((isVertical ? 20 : 22) * scale);
+  const legendFontSize = Math.round((isVertical ? 17 : 19) * scale);
 
-  const subToLegendGap = Math.max(5, Math.round((isVertical ? 8 : 7) * fontScale));
-  const legendTop = titleTop + titleBlockHeight + subToLegendGap;
-  const legendHeight = Math.round(legendFontSize * 1.25);
-
-  const legendToGridGap = Math.max(8, Math.round((isVertical ? 11 : 10) * fontScale));
-  const gridTop = legendTop + legendHeight + legendToGridGap;
-  const gridBottom = Math.round((isVertical ? 50 : 45) * scale);
+  // Even, balanced vertical rhythm between header elements:
+  // Title Top -> Title -> (12px gap) -> Subtitle -> (12px gap) -> Legend -> (26px gap) -> Grid
+  const titleTop = Math.round((isVertical ? 26 : 22) * scale);
+  const titleItemGap = Math.max(6, Math.round(12 * scale));
+  const legendTop = Math.round(106 * scale);
+  const gridTop = Math.round(150 * scale);
+  const gridBottom = Math.round((isVertical ? 75 : 65) * scale);
   const totalGridWidth = Math.max(100, width - gridLeft - gridRight);
 
   let maxChartVal = 1;
@@ -264,80 +242,69 @@ export function buildExportEchartsOption(
     });
   });
 
-  // Calculate dynamic bar height & category gaps
+  // Calculate dynamic bar height & category gaps matching OCR proportions
   let barMaxWidth: number;
   let barCategoryGap: string;
   if (isMergedBars) {
-    if (displayRows.length >= 35) {
-      barMaxWidth = Math.max(6, Math.round((isVertical ? 20 : 13) * scale));
-      barCategoryGap = "20%";
-    } else if (displayRows.length >= 24) {
-      barMaxWidth = Math.max(7, Math.round((isVertical ? 24 : 15) * scale));
+    if (displayRows.length <= 6) {
+      barMaxWidth = Math.round((isVertical ? 60 : 54) * scale);
       barCategoryGap = "25%";
-    } else if (displayRows.length >= 18) {
-      barMaxWidth = Math.max(8, Math.round((isVertical ? 32 : 18) * scale));
-      barCategoryGap = "30%";
-    } else if (displayRows.length >= 12) {
-      barMaxWidth = Math.max(10, Math.round((isVertical ? 42 : 24) * scale));
-      barCategoryGap = "35%";
-    } else if (displayRows.length >= 6) {
-      barMaxWidth = Math.max(12, Math.round((isVertical ? 46 : 28) * scale));
-      barCategoryGap = "35%";
+    } else if (displayRows.length <= 12) {
+      barMaxWidth = Math.round((isVertical ? 46 : 38) * scale);
+      barCategoryGap = "25%";
+    } else if (displayRows.length <= 18) {
+      barMaxWidth = Math.round((isVertical ? 34 : 26) * scale);
+      barCategoryGap = "25%";
+    } else if (displayRows.length <= 26) {
+      barMaxWidth = Math.round((isVertical ? 24 : 18) * scale);
+      barCategoryGap = "25%";
     } else {
-      barMaxWidth = Math.max(14, Math.round((isVertical ? 48 : 34) * scale));
-      barCategoryGap = "40%";
+      barMaxWidth = Math.round((isVertical ? 18 : 14) * scale);
+      barCategoryGap = "20%";
     }
   } else {
-    if (displayRows.length >= 35) {
-      barMaxWidth = Math.max(5, Math.round((isVertical ? 15 : 12) * scale));
+    if (displayRows.length <= 6) {
+      barMaxWidth = Math.round((isVertical ? 58 : 52) * scale);
+      barCategoryGap = "25%";
+    } else if (displayRows.length <= 12) {
+      barMaxWidth = Math.round((isVertical ? 44 : 36) * scale);
+      barCategoryGap = "25%";
+    } else if (displayRows.length <= 20) {
+      barMaxWidth = Math.round((isVertical ? 30 : 24) * scale);
+      barCategoryGap = "25%";
+    } else if (displayRows.length <= 28) {
+      barMaxWidth = Math.round((isVertical ? 22 : 16) * scale);
       barCategoryGap = "20%";
-    } else if (displayRows.length >= 20) {
-      barMaxWidth = Math.max(7, Math.round((isVertical ? 22 : 16) * scale));
-      barCategoryGap = "25%";
-    } else if (displayRows.length >= 12) {
-      barMaxWidth = Math.max(9, Math.round((isVertical ? 32 : 24) * scale));
-      barCategoryGap = "25%";
-    } else if (displayRows.length <= 4) {
-      barMaxWidth = Math.max(12, Math.round((isVertical ? 36 : 28) * scale));
-      barCategoryGap = "35%";
     } else {
-      barMaxWidth = Math.max(10, Math.round((isVertical ? 40 : 32) * scale));
-      barCategoryGap = "30%";
+      barMaxWidth = Math.round((isVertical ? 16 : 12) * scale);
+      barCategoryGap = "15%";
     }
   }
 
   // Dynamic bar label font sizes based on row count and vertical orientation
   let baseBarLabelSize: number;
   if (isVertical) {
-    if (displayRows.length >= 36) {
-      baseBarLabelSize = 11.5;
-    } else if (displayRows.length >= 26) {
-      baseBarLabelSize = 13;
-    } else if (displayRows.length >= 18) {
-      baseBarLabelSize = 15;
-    } else if (displayRows.length >= 12) {
-      baseBarLabelSize = 17;
-    } else if (displayRows.length <= 6) {
-      baseBarLabelSize = 17.5;
-    } else {
+    if (displayRows.length <= 6) {
       baseBarLabelSize = 18;
+    } else if (displayRows.length <= 14) {
+      baseBarLabelSize = 15;
+    } else if (displayRows.length <= 22) {
+      baseBarLabelSize = 13;
+    } else {
+      baseBarLabelSize = 11;
     }
   } else {
-    if (displayRows.length >= 36) {
-      baseBarLabelSize = 11;
-    } else if (displayRows.length >= 24) {
-      baseBarLabelSize = 12.5;
-    } else if (displayRows.length >= 18) {
-      baseBarLabelSize = 14;
-    } else if (displayRows.length >= 12) {
-      baseBarLabelSize = 15.5;
-    } else if (displayRows.length <= 6) {
-      baseBarLabelSize = 16.5;
+    if (displayRows.length <= 6) {
+      baseBarLabelSize = 20;
+    } else if (displayRows.length <= 14) {
+      baseBarLabelSize = 16;
+    } else if (displayRows.length <= 22) {
+      baseBarLabelSize = 13.5;
     } else {
-      baseBarLabelSize = 17;
+      baseBarLabelSize = 11.5;
     }
   }
-  const barLabelFontSize = Math.round(baseBarLabelSize * fontScale);
+  const barLabelFontSize = Math.round(baseBarLabelSize * scale);
 
   const p1MetricId = activeMetrics.includes("p1_fps") ? "p1_fps" : "p0_1_fps";
   const avgMetricName =
@@ -616,7 +583,7 @@ export function buildExportEchartsOption(
                       position: "insideEndTop",
                       color: options.highlightOptions.referenceLineColor || "#eab308",
                       fontWeight: "bold",
-                      fontSize: Math.round((isVertical ? 16 : 17) * fontScale)
+                      fontSize: Math.round((isVertical ? 15 : 17) * scale)
                     }
                   }
                 ]
@@ -730,54 +697,21 @@ export function buildExportEchartsOption(
 
   let baseModelFontSize: number;
   let baseModelLineHeight: number;
-  if (isVertical) {
-    if (displayRows.length >= 36) {
-      baseModelFontSize = 11;
-      baseModelLineHeight = 13;
-    } else if (displayRows.length >= 26) {
-      baseModelFontSize = 12.5;
-      baseModelLineHeight = 15;
-    } else if (displayRows.length >= 18) {
-      baseModelFontSize = 14;
-      baseModelLineHeight = 17;
-    } else if (displayRows.length >= 12) {
-      baseModelFontSize = 16;
-      baseModelLineHeight = 19.5;
-    } else if (displayRows.length <= 6) {
-      baseModelFontSize = 17;
-      baseModelLineHeight = 21;
-    } else {
-      baseModelFontSize = 17.5;
-      baseModelLineHeight = 21.5;
-    }
-    if (options.labelFontSize && options.labelFontSize !== 11) {
-      baseModelFontSize = Math.round(options.labelFontSize * 1.15);
-      baseModelLineHeight = Math.round(baseModelFontSize * 1.2);
-    }
+  if (displayRows.length <= 6) {
+    baseModelFontSize = (options.labelFontSize ?? 11) * (isVertical ? 1.75 : 1.95);
+    baseModelLineHeight = isVertical ? 24 : 27;
+  } else if (displayRows.length <= 14) {
+    baseModelFontSize = (options.labelFontSize ?? 11) * (isVertical ? 1.45 : 1.6);
+    baseModelLineHeight = isVertical ? 20 : 22;
+  } else if (displayRows.length <= 24) {
+    baseModelFontSize = (options.labelFontSize ?? 11) * (isVertical ? 1.2 : 1.3);
+    baseModelLineHeight = isVertical ? 16 : 18;
   } else {
-    if (displayRows.length >= 36) {
-      baseModelFontSize = 11;
-      baseModelLineHeight = 13;
-    } else if (displayRows.length >= 24) {
-      baseModelFontSize = 12.5;
-      baseModelLineHeight = 15;
-    } else if (displayRows.length >= 16) {
-      baseModelFontSize = 14;
-      baseModelLineHeight = 17;
-    } else if (displayRows.length <= 6) {
-      baseModelFontSize = 16.5;
-      baseModelLineHeight = 20;
-    } else {
-      baseModelFontSize = 15.5;
-      baseModelLineHeight = 18.5;
-    }
-    if (options.labelFontSize && options.labelFontSize !== 11) {
-      baseModelFontSize = Math.round(options.labelFontSize * 1.2);
-      baseModelLineHeight = Math.round(baseModelFontSize * 1.2);
-    }
+    baseModelFontSize = (options.labelFontSize ?? 11) * (isVertical ? 1.0 : 1.1);
+    baseModelLineHeight = isVertical ? 13 : 15;
   }
-  const modelFontSize = Math.round(baseModelFontSize * fontScale);
-  const modelLineHeight = Math.round(baseModelLineHeight * fontScale);
+  const modelFontSize = Math.round(baseModelFontSize * scale);
+  const modelLineHeight = Math.round(baseModelLineHeight * scale);
 
   return {
     animation: false,
@@ -797,16 +731,14 @@ export function buildExportEchartsOption(
         color: textCol,
         fontSize: titleFontSize,
         fontWeight: "bold",
-        letterSpacing: Math.round(1.5 * fontScale),
-        lineHeight: titleHeight
+        letterSpacing: Math.round(2 * scale)
       },
       subtextStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: subColor,
         fontSize: subtitleFontSize,
         fontWeight: "bold",
-        letterSpacing: Math.round(1 * fontScale),
-        lineHeight: subtitleHeight
+        letterSpacing: Math.round(1.5 * scale)
       }
     },
     legend: {
@@ -819,9 +751,9 @@ export function buildExportEchartsOption(
         fontSize: legendFontSize,
         fontWeight: "600"
       },
-      itemGap: Math.round((isVertical ? 16 : 18) * scale),
-      itemWidth: Math.round((isVertical ? 14 : 16) * scale),
-      itemHeight: Math.round((isVertical ? 8 : 9) * scale),
+      itemGap: Math.round((isVertical ? 20 : 28) * scale),
+      itemWidth: Math.round((isVertical ? 22 : 26) * scale),
+      itemHeight: Math.round((isVertical ? 12 : 14) * scale),
       icon: "rect",
       data: isMergedBars
         ? [
@@ -875,16 +807,14 @@ export function buildExportEchartsOption(
       axisLabel: {
         color: subTextCol,
         fontWeight: "600",
-        fontSize: Math.round((isVertical ? 14 : 13) * fontScale),
+        fontSize: Math.round((isVertical ? 15 : 17) * scale),
         formatter: (val: number) => Math.round(val).toLocaleString()
       }
     },
     yAxis: {
       type: "category",
-      data: isVertical
-        ? (displayRows.length >= 18
-            ? categoryNames
-            : categoryNames.map((n) => formatTwoLineLabel(n, displayRows.length <= 6 ? 24 : 20)))
+      data: displayRows.length <= 16
+        ? categoryNames.map((n) => formatTwoLineLabel(n, isVertical ? 18 : 24))
         : categoryNames,
       axisLine: {
         show: true,
@@ -912,9 +842,9 @@ export function buildExportEchartsOption(
         fontWeight: "bold",
         lineHeight: modelLineHeight,
         align: "right",
-        margin: Math.round((isVertical ? 6 : 10) * fontScale),
-        width: Math.max(100, gridLeft - Math.round((isVertical ? 10 : 20) * fontScale)),
-        overflow: "truncate"
+        margin: Math.round((isVertical ? 16 : 20) * scale),
+        width: gridLeft - Math.round(32 * scale),
+        overflow: "break"
       }
     },
     graphic: [

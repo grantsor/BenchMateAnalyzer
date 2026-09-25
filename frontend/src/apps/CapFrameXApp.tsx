@@ -34,9 +34,9 @@ import JSZip from "jszip";
 const DEFAULT_BLUE_PRESET = GRADIENT_PRESETS.find((p) => p.id === "excel-blue")!;
 const DEFAULT_COLORS = samplePresetColors(DEFAULT_BLUE_PRESET.colors, 2);
 
-const CX_STORAGE_KEY_PREFERENCES = "cx_chart_preferences_v1";
-const GP_STORAGE_KEY_PREFERENCES = "gp_benchmark_chart_preferences_v1";
-const STORAGE_KEY_EXPORT_PHRASE = "gp_export_naming_phrase_v1";
+const CX_STORAGE_KEY_PREFERENCES = "cx_benchmark_chart_preferences_v2";
+const CX_STORAGE_KEY_EXPORT_PHRASE = "cx_export_naming_phrase_v1";
+const CX_STORAGE_KEY_UI_THEME = "cx_ui_theme_v1";
 
 interface ModeSessionState {
   folder: string;
@@ -93,7 +93,7 @@ function getStoredPreferences(): StoredAppPreferences {
   try {
     const raw =
       localStorage.getItem(CX_STORAGE_KEY_PREFERENCES) ||
-      localStorage.getItem(GP_STORAGE_KEY_PREFERENCES);
+      localStorage.getItem("cx_chart_preferences_v1");
     if (raw) {
       return JSON.parse(raw);
     }
@@ -107,7 +107,6 @@ function storePreferences(prefs: StoredAppPreferences) {
   try {
     const serialized = JSON.stringify(prefs);
     localStorage.setItem(CX_STORAGE_KEY_PREFERENCES, serialized);
-    localStorage.setItem(GP_STORAGE_KEY_PREFERENCES, serialized);
   } catch (e) {
     console.warn("Could not save chart preferences:", e);
   }
@@ -187,7 +186,7 @@ export const CapFrameXApp: React.FC = () => {
   });
   const [exportPhrase, setExportPhrase] = useState<string>(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY_EXPORT_PHRASE);
+      const saved = localStorage.getItem(CX_STORAGE_KEY_EXPORT_PHRASE);
       if (saved !== null && saved !== undefined && saved !== "") return saved;
     } catch (e) {}
     const p = getStoredPreferences();
@@ -229,6 +228,8 @@ export const CapFrameXApp: React.FC = () => {
       barValuePosition: p.barValuePosition || "auto",
       barLayout: p.barLayout || "auto",
       logoPosition: "top-right",
+      logoUrl: "/Full Logo Horizontal Colored.png",
+      logoAspectRatio: 2.7778,
       logoWidth: 170,
       logoWidth_16_9: 170,
       logoWidth_9_16: 140,
@@ -237,6 +238,7 @@ export const CapFrameXApp: React.FC = () => {
       logoOffsetX_16_9: 12,
       logoOffsetY_16_9: 10,
       logoOffsetX_9_16: 10,
+      logoOffsetY_9_16: 12,
       highlightOptions: (() => {
         const ho = p.highlightOptions;
         if (!ho || ho.activePresetId === "excel-amber" || ho.highlightBarColor === "#f97316") {
@@ -297,7 +299,7 @@ export const CapFrameXApp: React.FC = () => {
     });
 
     try {
-      localStorage.setItem(STORAGE_KEY_EXPORT_PHRASE, exportPhrase);
+      localStorage.setItem(CX_STORAGE_KEY_EXPORT_PHRASE, exportPhrase);
     } catch (e) {}
   }, [
     exportConfig,
@@ -648,7 +650,7 @@ export const CapFrameXApp: React.FC = () => {
 
   const [uiTheme, setUiTheme] = useState<"dark" | "light">(() => {
     try {
-      const saved = localStorage.getItem("gp_ui_theme_v1");
+      const saved = localStorage.getItem(CX_STORAGE_KEY_UI_THEME);
       if (saved === "light" || saved === "dark") return saved;
     } catch (e) {}
     return "dark";
@@ -657,7 +659,7 @@ export const CapFrameXApp: React.FC = () => {
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", uiTheme);
     try {
-      localStorage.setItem("gp_ui_theme_v1", uiTheme);
+      localStorage.setItem(CX_STORAGE_KEY_UI_THEME, uiTheme);
     } catch (e) {}
   }, [uiTheme]);
 

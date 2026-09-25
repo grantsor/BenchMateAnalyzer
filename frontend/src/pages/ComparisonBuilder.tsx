@@ -135,7 +135,9 @@ function getStoredPreferences(): SavedChartPreferences {
 
 function storePreferences(prefs: SavedChartPreferences) {
   try {
-    localStorage.setItem(STORAGE_KEY_PREFERENCES, JSON.stringify(prefs));
+    const existing = getStoredPreferences();
+    const merged = { ...existing, ...prefs };
+    localStorage.setItem(STORAGE_KEY_PREFERENCES, JSON.stringify(merged));
   } catch (err) {
     console.warn("Could not save chart preferences:", err);
   }
@@ -564,14 +566,21 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
 
   // Automatically persist design preferences to localStorage whenever user changes them
   useEffect(() => {
+    // Guard against saving uninitialized state
+    if (isLoading && !currentProject?.id) {
+      return;
+    }
+    const existingPrefs = getStoredPreferences();
+    const exclusionKey = getExclusionKey();
+
     storePreferences({
-      productName: productName,
-      productCategory: productCategory,
+      productName: productName || existingPrefs.productName || "",
+      productCategory: productCategory || existingPrefs.productCategory || "Laptop",
       includeCategoryTag: includeCategoryTag,
       exportPhrase: exportPhrase,
       batchExportMode: batchMode,
       summaryReferenceConfigId: summaryReferenceConfigId,
-      lastSelectedBenchmarkId: selectedBenchmarkId,
+      lastSelectedBenchmarkId: selectedBenchmarkId || existingPrefs.lastSelectedBenchmarkId,
       activeGradientPreset: chartOptions.activeGradientPreset,
       barColors: chartOptions.barColors,
       subtitleColor: chartOptions.subtitleColor,
@@ -601,21 +610,27 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       exportFormat: exportConfig.format,
       customBenchmarkTitles: chartOptions.customBenchmarkTitles,
       customMetricColors: chartOptions.customMetricColors,
-      batchSelectedKeys: Array.from(selectedExportKeys),
+      batchSelectedKeys: selectedExportKeys.size > 0
+        ? Array.from(selectedExportKeys)
+        : (existingPrefs.batchSelectedKeys || []),
       customExportPresets: customExportPresets,
       highlightOptions: chartOptions.highlightOptions,
-      selectedConfigIds: chartOptions.selectedConfigIds,
-      selectedConfigIdsByProject: currentProject?.id
+      selectedConfigIds: chartOptions.selectedConfigIds && chartOptions.selectedConfigIds.length > 0
+        ? chartOptions.selectedConfigIds
+        : existingPrefs.selectedConfigIds,
+      selectedConfigIdsByProject: currentProject?.id && chartOptions.selectedConfigIds && chartOptions.selectedConfigIds.length > 0
         ? {
-            ...(getStoredPreferences().selectedConfigIdsByProject || {}),
+            ...(existingPrefs.selectedConfigIdsByProject || {}),
             [currentProject.id]: chartOptions.selectedConfigIds
           }
-        : getStoredPreferences().selectedConfigIdsByProject,
-      manuallyExcludedConfigIdsByProject: {
-        ...(getStoredPreferences().manuallyExcludedConfigIdsByProject || {}),
-        [getExclusionKey()]: Array.from(manuallyExcludedConfigIdsRef.current)
-      },
-      lastSelectedProjectId: currentProject?.id,
+        : existingPrefs.selectedConfigIdsByProject,
+      manuallyExcludedConfigIdsByProject: exclusionKey && exclusionKey !== "default"
+        ? {
+            ...(existingPrefs.manuallyExcludedConfigIdsByProject || {}),
+            [exclusionKey]: Array.from(manuallyExcludedConfigIdsRef.current)
+          }
+        : existingPrefs.manuallyExcludedConfigIdsByProject,
+      lastSelectedProjectId: currentProject?.id || existingPrefs.lastSelectedProjectId,
       scope: scope,
       categoryFilter: categoryFilter,
       includeProductNameInLabels: chartOptions.includeProductNameInLabels
@@ -932,8 +947,11 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
             if (isProjectChange || isScopeChange) {
               const projKey = getExclusionKey();
               const savedExcluded = prefs.manuallyExcludedConfigIdsByProject?.[projKey];
-              if (savedExcluded) {
+              if (savedExcluded && savedExcluded.length > 0) {
                 excludedSet = new Set(savedExcluded);
+              } else if (currentProject?.id && prefs.selectedConfigIdsByProject?.[currentProject.id]?.length) {
+                const savedSelected = new Set(prefs.selectedConfigIdsByProject[currentProject.id]);
+                excludedSet = new Set(allRowIds.filter((id) => !savedSelected.has(id)));
               } else {
                 excludedSet = new Set();
               }
@@ -1417,21 +1435,19 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         ? prev.selectedConfigIds.filter((id) => id !== configId)
         : [...prev.selectedConfigIds, configId];
 
-      setManuallyExcludedConfigIds((prevExcluded) => {
-        const nextExcluded = new Set(prevExcluded);
-        if (isCurrentlyChecked) {
-          nextExcluded.add(configId);
-        } else {
-          nextExcluded.delete(configId);
-        }
-        manuallyExcludedConfigIdsRef.current = nextExcluded;
-        return nextExcluded;
-      });
+      const nextExcluded = new Set(manuallyExcludedConfigIdsRef.current);
+      if (isCurrentlyChecked) {
+        nextExcluded.add(configId);
+      } else {
+        nextExcluded.delete(configId);
+      }
+      manuallyExcludedConfigIdsRef.current = nextExcluded;
+      setManuallyExcludedConfigIds(nextExcluded);
 
       return {
         ...prev,
         selectedConfigIds: updated,
-        manuallyExcludedConfigIds: Array.from(manuallyExcludedConfigIdsRef.current)
+        manuallyExcludedConfigIds: Array.from(nextExcluded)
       };
     });
   };

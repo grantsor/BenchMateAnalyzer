@@ -256,7 +256,11 @@ export const api = {
     height: number;
     aspect_ratio: number;
   }> {
-    const res = await fetch(`${API_BASE}/branding/default-logo-data`);
+    try {
+      const res = await fetch(`${API_BASE}/branding/default-logo-data`);
+      if (res.ok) return await res.json();
+    } catch {}
+    const res = await fetch("/api/branding/default-logo-data");
     return res.json();
   },
 

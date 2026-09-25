@@ -207,12 +207,9 @@ export const ChartControls: React.FC<ChartControlsProps> = ({
 
   const handleResetLogo = () => {
     onOptionsChange({
-      ...(defaultLogoData
-        ? {
-            logoUrl: defaultLogoData.data_url,
-            logoAspectRatio: defaultLogoData.aspect_ratio || 2.7778
-          }
-        : {}),
+      logoUrl: defaultLogoData?.data_url || "/Full Logo Horizontal Colored.png",
+      logoAspectRatio: defaultLogoData?.aspect_ratio || 2.7778,
+      publicationLogoText: "GADGET PILIPINAS",
       logoWidth: 170,
       logoWidth_16_9: 170,
       logoWidth_9_16: 140,
