@@ -62,6 +62,7 @@ import {
   AvailableExportTarget,
   getAllAvailableExportTargets
 } from "../utils/benchmarkSubGroups";
+import { useBrandingDefaultsStore } from "../stores/brandingDefaultsStore";
 
 export interface CustomExportPreset {
   id: string;
@@ -322,6 +323,9 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     const p = getStoredPreferences();
     return (p.aspectRatio as "16:9" | "9:16") || "16:9";
   });
+
+  const branding = useBrandingDefaultsStore();
+  const lastAutoRatioKeyRef = useRef<string>("");
 
   const [activeConfigTab, setActiveConfigTab] = useState<"data" | "style" | "branding">("data");
   const [isGradientDropdownOpen, setIsGradientDropdownOpen] = useState(false);
@@ -1178,6 +1182,42 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       gridLeftMargin: ratio === "9:16" ? 135 : 240
     }));
   };
+
+  // Smart auto-switch to 9:16 when product row count exceeds threshold (> 8)
+  useEffect(() => {
+    if (!activeDataset || !activeDataset.rows || activeDataset.rows.length === 0) return;
+    const key = `${activeDataset.benchmark_id}_${activeDataset.rows.length}_${isSummaryActive}`;
+    if (lastAutoRatioKeyRef.current !== key) {
+      lastAutoRatioKeyRef.current = key;
+      if (branding.autoSwitchVerticalEnabled) {
+        if (activeDataset.rows.length > branding.autoSwitchThreshold) {
+          if (exportConfig.aspectRatio !== "9:16") {
+            handleAspectRatioChange("9:16");
+          }
+        } else {
+          const targetDefault = branding.defaultAspectRatio || "16:9";
+          if (exportConfig.aspectRatio !== targetDefault) {
+            handleAspectRatioChange(targetDefault);
+          }
+        }
+      }
+    }
+  }, [
+    activeDataset?.benchmark_id,
+    activeDataset?.rows?.length,
+    isSummaryActive,
+    branding.autoSwitchVerticalEnabled,
+    branding.autoSwitchThreshold,
+    branding.defaultAspectRatio
+  ]);
+
+  // Synchronize global branding settings to active chart options
+  useEffect(() => {
+    setChartOptions((prev) => ({
+      ...prev,
+      publicationLogoText: branding.publicationName
+    }));
+  }, [branding.publicationName]);
 
   const handleExportSingle = async () => {
     if (!activeDataset) return;

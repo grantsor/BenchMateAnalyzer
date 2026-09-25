@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { RefreshCw, Folder, FolderOpen, Sun, Moon, Cpu, Layers, Table, Laptop, Files, Gamepad2 } from "lucide-react";
+import { RefreshCw, Folder, FolderOpen, Sun, Moon, Cpu, Layers, Table, Laptop, Files, Gamepad2, Palette } from "lucide-react";
 import { BenchmarkMode } from "../../types/capframex";
+import { UITheme } from "../../stores/themeStore";
 
 interface HeaderProps {
   folder: string;
@@ -10,7 +11,7 @@ interface HeaderProps {
   onScan: (folderPath?: string) => void;
   onBrowse: (folderPath?: string) => void;
   onSelectFiles: (files: FileList | File[]) => void;
-  uiTheme: "light" | "dark";
+  uiTheme: UITheme;
   onToggleUiTheme: () => void;
   onOpenRunsModal: () => void;
   onOpenGpuHierarchyModal?: () => void;
@@ -249,17 +250,21 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
         )}
 
-        {/* Dark / Light Mode App UI Theme Toggle */}
+        {/* Multi-Theme UI Toggle */}
         <button
           type="button"
           onClick={onToggleUiTheme}
           className="p-2 rounded-lg bg-[#18181b] hover:bg-[#23232a] border border-[#23232a] text-slate-300 transition-colors"
-          title={uiTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+          title={`Active Theme: ${uiTheme}. Click to cycle themes (Dark, Light, OLED, Midnight).`}
         >
           {uiTheme === "light" ? (
-            <Moon className="w-4 h-4 text-indigo-400" />
+            <Sun className="w-4 h-4 text-amber-500" />
+          ) : uiTheme === "oled" ? (
+            <Moon className="w-4 h-4 text-zinc-400" />
+          ) : uiTheme === "midnight" ? (
+            <Moon className="w-4 h-4 text-sky-400" />
           ) : (
-            <Sun className="w-4 h-4 text-amber-400" />
+            <Moon className="w-4 h-4 text-indigo-400" />
           )}
         </button>
       </div>

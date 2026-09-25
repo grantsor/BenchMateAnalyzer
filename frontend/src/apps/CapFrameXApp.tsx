@@ -29,6 +29,8 @@ import {
   buildChartFileName
 } from "../utils/capframex/chartExporter";
 import { GRADIENT_PRESETS, samplePresetColors } from "../utils/capframex/colorPalettes";
+import { useThemeStore } from "../stores/themeStore";
+import { useBrandingDefaultsStore } from "../stores/brandingDefaultsStore";
 import JSZip from "jszip";
 
 const DEFAULT_BLUE_PRESET = GRADIENT_PRESETS.find((p) => p.id === "excel-blue")!;
@@ -36,7 +38,6 @@ const DEFAULT_COLORS = samplePresetColors(DEFAULT_BLUE_PRESET.colors, 2);
 
 const CX_STORAGE_KEY_PREFERENCES = "cx_benchmark_chart_preferences_v2";
 const CX_STORAGE_KEY_EXPORT_PHRASE = "cx_export_naming_phrase_v1";
-const CX_STORAGE_KEY_UI_THEME = "cx_ui_theme_v1";
 
 interface ModeSessionState {
   folder: string;
@@ -648,24 +649,8 @@ export const CapFrameXApp: React.FC = () => {
     }
   };
 
-  const [uiTheme, setUiTheme] = useState<"dark" | "light">(() => {
-    try {
-      const saved = localStorage.getItem(CX_STORAGE_KEY_UI_THEME);
-      if (saved === "light" || saved === "dark") return saved;
-    } catch (e) {}
-    return "dark";
-  });
-
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", uiTheme);
-    try {
-      localStorage.setItem(CX_STORAGE_KEY_UI_THEME, uiTheme);
-    } catch (e) {}
-  }, [uiTheme]);
-
-  const handleToggleUiTheme = () => {
-    setUiTheme((prev) => (prev === "dark" ? "light" : "dark"));
-  };
+  const { theme: uiTheme, cycleTheme: handleToggleUiTheme } = useThemeStore();
+  const branding = useBrandingDefaultsStore();
 
   const handleSelectFiles = async (files: FileList | File[]) => {
     if (!files) return;
@@ -1041,6 +1026,48 @@ export const CapFrameXApp: React.FC = () => {
     }
     return datasets[keys[0]];
   })();
+
+  // Smart auto-switch to 9:16 when product row count exceeds threshold (> 8)
+  const lastCxAutoRatioKeyRef = useRef<string>("");
+  useEffect(() => {
+    if (!activeDataset || !activeDataset.rows || activeDataset.rows.length === 0) return;
+    const currentKey = `${selectedGame}_${selectedCustomChartId || "std"}_${activeTab}_${activeDataset.rows.length}`;
+    if (lastCxAutoRatioKeyRef.current !== currentKey) {
+      lastCxAutoRatioKeyRef.current = currentKey;
+      if (branding.autoSwitchVerticalEnabled) {
+        if (activeDataset.rows.length > branding.autoSwitchThreshold) {
+          if (exportConfig.aspectRatio !== "9:16") {
+            setExportConfig((prev) => ({ ...prev, aspectRatio: "9:16" }));
+            setChartOptions((prev) => ({ ...prev, aspectRatio: "9:16" }));
+          }
+        } else {
+          const targetDefault = branding.defaultAspectRatio || "16:9";
+          if (exportConfig.aspectRatio !== targetDefault) {
+            setExportConfig((prev) => ({ ...prev, aspectRatio: targetDefault }));
+            setChartOptions((prev) => ({ ...prev, aspectRatio: targetDefault }));
+          }
+        }
+      }
+    }
+  }, [
+    selectedGame,
+    selectedCustomChartId,
+    activeTab,
+    activeDataset,
+    branding.autoSwitchVerticalEnabled,
+    branding.autoSwitchThreshold,
+    branding.defaultAspectRatio
+  ]);
+
+  // Synchronize global branding settings to active chart options
+  useEffect(() => {
+    setChartOptions((prev) => ({
+      ...prev,
+      publicationLogoText: branding.publicationName,
+      logoUrl: branding.logoUrl,
+      logoAspectRatio: branding.logoAspectRatio
+    }));
+  }, [branding.publicationName, branding.logoUrl, branding.logoAspectRatio]);
 
   const effectiveTitle = selectedCustomChartId
     ? customTitle || (customCharts.find((c) => c.id === selectedCustomChartId)?.title || "CUSTOM CHART")

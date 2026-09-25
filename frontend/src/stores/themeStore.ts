@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type UITheme = "dark" | "oled" | "midnight";
+export type UITheme = "dark" | "light" | "oled" | "midnight";
 
 export interface ThemeOption {
   id: UITheme;
@@ -16,13 +16,23 @@ export interface ThemeOption {
 export const THEME_OPTIONS: ThemeOption[] = [
   {
     id: "dark",
-    name: "Dark Mode",
+    name: "Obsidian Dark",
     badge: "Obsidian",
-    description: "Sleek neutral dark charcoal with high-contrast borders and red accents (Recommended)",
+    description: "Sleek neutral dark charcoal with high-contrast borders and red accents (Default)",
     surfaceColor: "#09090b",
     cardColor: "#121215",
     borderColor: "#23232a",
     icon: "🌙"
+  },
+  {
+    id: "light",
+    name: "Clean Light",
+    badge: "Light",
+    description: "Bright and crisp publication style with high-contrast text and clean borders",
+    surfaceColor: "#f4f5f8",
+    cardColor: "#ffffff",
+    borderColor: "#e2e8f0",
+    icon: "☀️"
   },
   {
     id: "oled",
@@ -58,7 +68,7 @@ export const useThemeStore = create<ThemeState>((set, get) => {
   let initialTheme: UITheme = "dark";
   try {
     const saved = localStorage.getItem(STORAGE_KEY_UI_THEME);
-    if (saved === "dark" || saved === "oled" || saved === "midnight") {
+    if (saved === "dark" || saved === "light" || saved === "oled" || saved === "midnight") {
       initialTheme = saved;
     }
   } catch (e) {
@@ -68,6 +78,19 @@ export const useThemeStore = create<ThemeState>((set, get) => {
   // Apply immediately on initialization
   if (typeof document !== "undefined") {
     document.documentElement.setAttribute("data-theme", initialTheme);
+  }
+
+  // Multi-window synchronization
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", (event) => {
+      if (event.key === STORAGE_KEY_UI_THEME && event.newValue) {
+        const t = event.newValue as UITheme;
+        if (["dark", "light", "oled", "midnight"].includes(t)) {
+          set({ theme: t });
+          document.documentElement.setAttribute("data-theme", t);
+        }
+      }
+    });
   }
 
   return {
@@ -84,7 +107,7 @@ export const useThemeStore = create<ThemeState>((set, get) => {
       }
     },
     cycleTheme: () => {
-      const order: UITheme[] = ["dark", "oled", "midnight"];
+      const order: UITheme[] = ["dark", "light", "oled", "midnight"];
       const current = get().theme;
       const nextIdx = (order.indexOf(current) + 1) % order.length;
       get().setTheme(order[nextIdx]);

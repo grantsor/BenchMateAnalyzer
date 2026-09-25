@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { OcrApp } from "./apps/OcrApp";
 import { CapFrameXApp } from "./apps/CapFrameXApp";
-import { Camera, Gamepad2, ExternalLink, Activity, Layers } from "lucide-react";
+import { Camera, Gamepad2, ExternalLink, Layers, Settings } from "lucide-react";
+import { SettingsModal } from "./components/settings/SettingsModal";
+import { useShortcutStore, isShortcutMatch } from "./stores/shortcutStore";
+import { useThemeStore } from "./stores/themeStore";
 
 type ActiveApp = "ocr" | "capframex";
 
@@ -26,6 +29,10 @@ export function App() {
     return "ocr";
   });
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { shortcuts } = useShortcutStore();
+  const { cycleTheme } = useThemeStore();
+
   const isStandalone = (() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -43,6 +50,40 @@ export function App() {
       console.warn("Could not persist active app:", e);
     }
   }, [activeApp]);
+
+  // Global customizable keyboard shortcuts listener with input guard
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Guard: do not trigger hotkeys if user is currently typing in an input
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName?.toLowerCase();
+        if (tag === "input" || tag === "textarea" || target.isContentEditable) {
+          return;
+        }
+      }
+
+      if (shortcuts.switch_ocr && isShortcutMatch(shortcuts.switch_ocr.combo, e)) {
+        e.preventDefault();
+        setActiveApp("ocr");
+      } else if (shortcuts.switch_capframex && isShortcutMatch(shortcuts.switch_capframex.combo, e)) {
+        e.preventDefault();
+        setActiveApp("capframex");
+      } else if (shortcuts.open_settings && isShortcutMatch(shortcuts.open_settings.combo, e)) {
+        e.preventDefault();
+        setIsSettingsOpen((prev) => !prev);
+      } else if (shortcuts.toggle_theme && isShortcutMatch(shortcuts.toggle_theme.combo, e)) {
+        e.preventDefault();
+        cycleTheme();
+      } else if (shortcuts.open_data && isShortcutMatch(shortcuts.open_data.combo, e)) {
+        e.preventDefault();
+        fetch("/api/system/open-data-folder", { method: "POST" }).catch(() => {});
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [shortcuts, cycleTheme]);
 
   const handlePopOut = () => {
     const url = `${window.location.origin}${window.location.pathname}?app=${activeApp}&standalone=1`;
@@ -64,16 +105,16 @@ export function App() {
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Analyzer</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700/60 font-mono">
-              v1.0.0
+              v1.1.0
             </span>
           </div>
 
-          {/* Dedicated Dual App Switcher */}
+          {/* Dual App Switcher (Clean, without Main/Dedicated badges) */}
           <div className="flex items-center bg-[#18181b] p-0.5 rounded-lg border border-[#27272a] shadow-inner">
             <button
               type="button"
               onClick={() => setActiveApp("ocr")}
-              className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-all duration-150 ${
+              className={`flex items-center gap-2 px-3.5 py-1 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer ${
                 activeApp === "ocr"
                   ? "bg-blue-600 text-white shadow-sm shadow-blue-900/50"
                   : "text-slate-400 hover:text-slate-200 hover:bg-[#23232a]"
@@ -81,17 +122,12 @@ export function App() {
             >
               <Camera className="w-3.5 h-3.5" />
               <span>Benchmark OCR Analyzer</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded font-normal transition-colors ${
-                activeApp === "ocr" ? "bg-blue-700 text-blue-100" : "bg-[#27272a] text-slate-400"
-              }`}>
-                Main App
-              </span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveApp("capframex")}
-              className={`flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold transition-all duration-150 ${
+              className={`flex items-center gap-2 px-3.5 py-1 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer ${
                 activeApp === "capframex"
                   ? "bg-emerald-600 text-white shadow-sm shadow-emerald-900/50"
                   : "text-slate-400 hover:text-slate-200 hover:bg-[#23232a]"
@@ -99,28 +135,28 @@ export function App() {
             >
               <Gamepad2 className="w-3.5 h-3.5" />
               <span>CapFrameX Analyzer</span>
-              <span className={`text-[10px] px-1.5 py-0.2 rounded font-normal transition-colors ${
-                activeApp === "capframex" ? "bg-emerald-700 text-emerald-100" : "bg-[#27272a] text-slate-400"
-              }`}>
-                Dedicated App
-              </span>
             </button>
           </div>
 
-          {/* Right Action Tools */}
-          <div className="flex items-center gap-3">
-            {/* Live Dual Engine Indicator */}
-            <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-mono">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              <span className="hidden sm:inline">Dual Engines Online</span>
-            </div>
+          {/* Right Action Tools: Settings + Pop Out */}
+          <div className="flex items-center gap-2.5">
+            {/* Dedicated Settings Button (Replaced Dual Engines Online) */}
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              title="Open BenchMate Settings & Changelogs (Ctrl+,)"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs font-semibold transition cursor-pointer"
+            >
+              <Settings className="w-3.5 h-3.5 text-blue-400" />
+              <span>Settings</span>
+            </button>
 
             {/* Pop-out to Separate Window for Dual-Monitor Setup */}
             <button
               type="button"
               onClick={handlePopOut}
               title={`Pop out ${activeApp === "ocr" ? "OCR Analyzer" : "CapFrameX Analyzer"} into a dedicated window for dual monitors`}
-              className="flex items-center gap-1 px-2 py-1 rounded bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs transition-colors"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs transition cursor-pointer"
             >
               <ExternalLink className="w-3 h-3 text-slate-400" />
               <span className="hidden md:inline">Pop Out Window</span>
@@ -146,6 +182,9 @@ export function App() {
           <CapFrameXApp />
         </div>
       </main>
+
+      {/* Unified Settings & Changelogs Modal */}
+      <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
     </div>
   );
 }

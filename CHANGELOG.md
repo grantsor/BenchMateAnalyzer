@@ -1,10 +1,52 @@
 # Changelog & Version Evolution
 
-All notable changes and milestones in the **Benchmark Analyzer & Chart Generator** project are documented here.
+All notable changes and milestones in the **BenchMate Analyzer** suite are documented here.
 
-The project adhered to strict local, offline-first operation with zero external cloud dependencies, running Microsoft ONNX Runtime and PaddleOCR v4 neural models locally.
+The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
-## [2.15.0] - 2026-09-11 (Latest Production Release)
+---
+
+## [1.1.0] - 2026-09-25
+### Uniform Multi-Theme Engine, 3-in-1 Changelogs Hub, Customizable Shortcuts, Smart 9:16 Auto-Switch & Topbar Polish
+
+- **Uniform Theming Engine Across Both Applications**:
+  - Integrated a shared 4-theme styling system (`Obsidian Dark` [default], `Clean Light`, `Pure Black OLED`, and `Midnight Navy`) across both the Benchmark OCR Analyzer and the CapFrameX Analyzer.
+  - Fixed CapFrameX light mode rendering by adding deep theme variables and CSS overrides (`[data-theme="light"]`) for all hex-based background surfaces, text headers, modals, cards, and input panels.
+  - Added instant multi-window/popout theme synchronization via `storage` event listeners.
+- **Top Navbar Polish & Dedicated Settings Hub**:
+  - Removed decorative tags ("Main App", "Dedicated App", "Dual Engines Online") for a cleaner, modern professional toolbar.
+  - Replaced the engine status placement with a dedicated **Settings gear button** (`Ctrl+,`) opening a tabbed modal with 6 sections:
+    1. **Appearance & Themes**: 4 rich visual theme cards with real-time preview and instant switching.
+    2. **Changelogs Hub**: Interactive 3-in-1 changelog browser supporting BenchMate Suite, Benchmark OCR Analyzer, and CapFrameX Analyzer with real-time keyword search and 1-click Markdown copy.
+    3. **Branding & Smart 9:16 Export**: Publication name (`GADGET PILIPINAS`), official logo preview, default export presets (16:9, 720p, WebP), and intelligent vertical auto-switching when products $> 8$.
+    4. **Keyboard Shortcuts**: Fully customizable hotkeys with interactive keystroke recording, conflict detection, and 1-click default restoration.
+    5. **Export File Naming**: Configurable file naming template preview (`[product] - [benchmark] - [resolution]`).
+    6. **Data & Storage Diagnostics**: 1-click "Open Data Folder" opening Windows File Explorer at the local data directory, plus independent preferences reset buttons.
+- **Smart 9:16 Auto-Switching for Large Comparisons**:
+  - Automatically switches chart aspect ratio to `9:16` vertical when comparing more than 8 products or configurations (customizable threshold in Settings).
+  - Equipped with a manual override guard so user-chosen aspect ratios are preserved on the active dataset without fighting manual clicks.
+- **Customizable Global Keyboard Shortcuts**:
+  - User-configurable shortcuts for Switch to OCR App (`Ctrl+1`), Switch to CapFrameX App (`Ctrl+2`), Quick Export Active Chart (`Ctrl+E`), Batch Export (`Ctrl+B`), Open Settings (`Ctrl+,`), Cycle UI Theme (`Ctrl+Shift+T`), and Open Data Folder (`Ctrl+O`).
+  - Input-focus guards prevent typing in search bars or text fields from triggering app shortcuts.
+- **System Integration & Diagnostics**:
+  - Added `POST /api/system/open-data-folder` endpoint launching Windows File Explorer directly into the application data and exports directory (`os.startfile`).
+
+---
+
+## [1.0.0] - 2026-09-24
+### Initial Release of BenchMate Analyzer Unified Desktop Suite
+
+- **Dual-Engine Unified Architecture**:
+  - Merged **Benchmark OCR Analyzer** and **CapFrameX Analyzer** into a single executable (`BenchMate-Analyzer.exe`).
+  - Isolated memory, caching, and state management: OCR ingested image sessions and CapFrameX JSON capture sessions operate concurrently without cross-contamination.
+- **Multi-Window & Popout Support**:
+  - Support for popping out CapFrameX Analyzer into a dedicated standalone browser window or multi-monitor setup while running OCR in the primary window.
+- **Offline Self-Contained Deployment**:
+  - Built-in PaddleOCR v4 models, ONNX Runtime, and SQLite embedded database packaged via PyInstaller with zero internet dependencies.
+
+---
+
+## [2.15.0] - 2026-09-11 (Benchmark OCR Analyzer Legacy Milestone)
 ### Filename-Agnostic OCR Vision, No-Recompile Dynamic AI Benchmark Builder & Interactive Review Tagging
 - **Filename-Agnostic Visual OCR Detection**:
   - Automatically identifies benchmark screenshots (3DMark Speed Way, Steel Nomad, Time Spy, Fire Strike, Port Royal, Geekbench Compute & AI, Procyon AI Vision & Image Gen, Octane, Cinebench, SuperPI, wPrime) with 95–99% confidence directly from visual layout and text anchors.

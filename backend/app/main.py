@@ -97,6 +97,26 @@ async def shutdown_system():
     threading.Thread(target=_delayed_exit, daemon=True).start()
     return {"status": "shutting_down", "message": "Server is terminating"}
 
+@app.post("/api/system/open-data-folder")
+async def open_data_folder():
+    """
+    Opens the local persistent data folder in Windows File Explorer.
+    """
+    import sys
+    import subprocess
+    data_dir = settings.DATA_DIR
+    data_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        if sys.platform == "win32":
+            os.startfile(str(data_dir))
+        elif sys.platform == "darwin":
+            subprocess.run(["open", str(data_dir)])
+        else:
+            subprocess.run(["xdg-open", str(data_dir)])
+        return {"status": "opened", "path": str(data_dir)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/changelog")
 async def get_changelog():
     """

@@ -74,6 +74,59 @@
   --color-brand-muted: #415a77;
 }
 
+/* Crisp Clean Light Theme */
+[data-theme="light"] {
+  --color-brand-surface: #f4f5f8;
+  --color-brand-card: #ffffff;
+  --color-brand-border: #e2e8f0;
+  --color-brand-dark: #eaecf2;
+  --color-brand-navy: #dfe3ea;
+  --color-brand-muted: #64748b;
+}
+
+[data-theme="light"] body {
+  color: #0f172a;
+  background-color: var(--color-brand-surface);
+}
+
+[data-theme="light"] .text-white {
+  color: #0f172a;
+}
+
+[data-theme="light"] .text-slate-100,
+[data-theme="light"] .text-slate-200 {
+  color: #1e293b;
+}
+
+[data-theme="light"] .text-slate-300,
+[data-theme="light"] .text-slate-400 {
+  color: #475569;
+}
+
+[data-theme="light"] .bg-\[\#09090b\],
+[data-theme="light"] .bg-\[\#0c0c0e\] {
+  background-color: var(--color-brand-surface);
+}
+
+[data-theme="light"] .bg-\[\#121215\],
+[data-theme="light"] .bg-\[\#161820\] {
+  background-color: var(--color-brand-card);
+}
+
+[data-theme="light"] .bg-\[\#18181b\] {
+  background-color: var(--color-brand-dark);
+}
+
+[data-theme="light"] .bg-\[\#23232a\] {
+  background-color: #e2e8f0;
+}
+
+[data-theme="light"] .border-\[\#23232a\],
+[data-theme="light"] .border-\[\#27272a\],
+[data-theme="light"] .border-\[\#2b2e3e\] {
+  border-color: var(--color-brand-border);
+}
+
 body {
   background-color: var(--color-brand-surface);
   color: #f1f5f9;
