@@ -1,0 +1,42 @@
+{
+  "id": "blackmagic_5gb",
+  "name": "Blackmagic Disk Speed Test 5GB",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "blackmagic_parser",
+  "file_patterns": [
+    ".*blackmagic.*5g.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "blackmagic 5g",
+    "blackmagic 5gb",
+    "blackmagic_5g",
+    "blackmagic_5gb"
+  ],
+  "keywords": [
+    "blackmagic",
+    "disk speed test",
+    "blackmagicdesign",
+    "5gb"
+  ],
+  "metrics": [
+    {
+      "id": "write_speed",
+      "name": "Write Speed",
+      "display_name": "Write",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "read_speed",
+      "name": "Read Speed",
+      "display_name": "Read",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    }
+  ]
+}

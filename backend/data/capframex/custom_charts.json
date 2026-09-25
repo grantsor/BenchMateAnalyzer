@@ -1,0 +1,952 @@
+[
+  {
+    "id": "pc_temps",
+    "name": "GPU Temperatures",
+    "mode": "pc",
+    "category": "temperatures",
+    "title": "GPU TEMPERATURES",
+    "sub_header": "PEAK LOAD TEMPERATURES (°C) | LOWER IS BETTER",
+    "unit": "°C",
+    "higher_is_better": false,
+    "metric_name": "Temperature",
+    "metric2_name": "",
+    "metric2_unit": "",
+    "rows": [
+      {
+        "id": "row_gpu_0_AERO_RTX_5070_Ti",
+        "label": "AERO RTX 5070 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "AERO RTX 5070 Ti"
+      },
+      {
+        "id": "row_gpu_1_AERO_RTX_5070Ti",
+        "label": "AERO RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "AERO RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_2_AORUS_RTX_5080_MASTER",
+        "label": "AORUS RTX 5080 MASTER",
+        "value": null,
+        "value2": null,
+        "gpu": "AORUS RTX 5080 MASTER"
+      },
+      {
+        "id": "row_gpu_2_ASUS_Prime_RTX_5080",
+        "label": "ASUS Prime RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS Prime RTX 5080"
+      },
+      {
+        "id": "row_gpu_3_ASUS_Prime_RX_9070_XT_OC",
+        "label": "ASUS Prime RX 9070 XT OC",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS Prime RX 9070 XT OC"
+      },
+      {
+        "id": "row_gpu_5_ASUS_ROG_RTX_5080_ASTRAL_OC",
+        "label": "ASUS ROG RTX 5080 ASTRAL OC",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS ROG RTX 5080 ASTRAL OC"
+      },
+      {
+        "id": "row_gpu_4_ASUS_RTX_5060_Prime",
+        "label": "ASUS RTX 5060 Prime",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RTX 5060 Prime"
+      },
+      {
+        "id": "row_gpu_5_ASUS_RTX_5060Ti_PRIME_OC16GB",
+        "label": "ASUS RTX 5060Ti PRIME OC16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RTX 5060Ti PRIME OC16GB"
+      },
+      {
+        "id": "row_gpu_6_ASUS_RX_9060_XT_16GB",
+        "label": "ASUS RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_7_Aorus_RTX_5060_Elite",
+        "label": "Aorus RTX 5060 Elite",
+        "value": null,
+        "value2": null,
+        "gpu": "Aorus RTX 5060 Elite"
+      },
+      {
+        "id": "row_gpu_8_Aorus_RTX_5080",
+        "label": "Aorus RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Aorus RTX 5080"
+      },
+      {
+        "id": "row_gpu_9_Astral_RTX_5080",
+        "label": "Astral RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Astral RTX 5080"
+      },
+      {
+        "id": "row_gpu_10_COLORFUL_RTX_5060_W",
+        "label": "COLORFUL RTX 5060 W",
+        "value": null,
+        "value2": null,
+        "gpu": "COLORFUL RTX 5060 W"
+      },
+      {
+        "id": "row_gpu_11_Colorful_RTX_5050",
+        "label": "Colorful RTX 5050",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5050"
+      },
+      {
+        "id": "row_gpu_12_Colorful_RTX_5060Ti_8GB_NB",
+        "label": "Colorful RTX 5060Ti 8GB NB",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5060Ti 8GB NB"
+      },
+      {
+        "id": "row_gpu_13_Colorful_RTX_5070Ti_ULTRA_W",
+        "label": "Colorful RTX 5070Ti ULTRA W",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5070Ti ULTRA W"
+      },
+      {
+        "id": "row_gpu_14_GIGABYTE_RTX_5070_Ti_Windforce",
+        "label": "GIGABYTE RTX 5070 Ti Windforce",
+        "value": null,
+        "value2": null,
+        "gpu": "GIGABYTE RTX 5070 Ti Windforce"
+      },
+      {
+        "id": "row_gpu_15_GIGABYTE_RX_9060_XT_16GB",
+        "label": "GIGABYTE RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "GIGABYTE RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_16_Gigabyte_RTX_5050",
+        "label": "Gigabyte RTX 5050",
+        "value": null,
+        "value2": null,
+        "gpu": "Gigabyte RTX 5050"
+      },
+      {
+        "id": "row_gpu_17_Gigabyte_RTX_5060Ti_Gaming_OC_16GB",
+        "label": "Gigabyte RTX 5060Ti Gaming OC 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Gigabyte RTX 5060Ti Gaming OC 16GB"
+      },
+      {
+        "id": "row_gpu_18_INNO3D_RTX_5080_X3",
+        "label": "INNO3D RTX 5080 X3",
+        "value": null,
+        "value2": null,
+        "gpu": "INNO3D RTX 5080 X3"
+      },
+      {
+        "id": "row_gpu_19_Inno3D_5060Ti_Twin_X2",
+        "label": "Inno3D 5060Ti Twin X2",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D 5060Ti Twin X2"
+      },
+      {
+        "id": "row_gpu_22_Inno3D_GeForce_RTX_5060_Ti_Twin_X2_16GB",
+        "label": "Inno3D GeForce RTX 5060 Ti Twin X2 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D GeForce RTX 5060 Ti Twin X2 16GB"
+      },
+      {
+        "id": "row_gpu_20_Inno3D_GeForce_RTX_5070_Ti_X3",
+        "label": "Inno3D GeForce RTX 5070 Ti X3",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D GeForce RTX 5070 Ti X3"
+      },
+      {
+        "id": "row_gpu_21_Inno3D_RTX_5070Ti_X3",
+        "label": "Inno3D RTX 5070Ti X3",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D RTX 5070Ti X3"
+      },
+      {
+        "id": "row_gpu_22_Inno3D_RTX_5080",
+        "label": "Inno3D RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D RTX 5080"
+      },
+      {
+        "id": "row_gpu_22_MSI_RTX_4070Ti_3X",
+        "label": "MSI RTX 4070Ti 3X",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 4070Ti 3X"
+      },
+      {
+        "id": "row_gpu_23_MSI_RTX_5060Ti_2X_16GB",
+        "label": "MSI RTX 5060Ti 2X 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 5060Ti 2X 16GB"
+      },
+      {
+        "id": "row_gpu_24_MSI_RTX_5070Ti_3X",
+        "label": "MSI RTX 5070Ti 3X",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 5070Ti 3X"
+      },
+      {
+        "id": "row_gpu_25_NVIDIA_RTX_4080_SUPER",
+        "label": "NVIDIA RTX 4080 SUPER",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 4080 SUPER"
+      },
+      {
+        "id": "row_gpu_26_NVIDIA_RTX_4090_FE",
+        "label": "NVIDIA RTX 4090 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 4090 FE"
+      },
+      {
+        "id": "row_gpu_27_NVIDIA_RTX_5080_FE",
+        "label": "NVIDIA RTX 5080 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 5080 FE"
+      },
+      {
+        "id": "row_gpu_28_NVIDIA_RTX_5090_FE",
+        "label": "NVIDIA RTX 5090 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 5090 FE"
+      },
+      {
+        "id": "row_gpu_29_PNY_RTX_5080",
+        "label": "PNY RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "PNY RTX 5080"
+      },
+      {
+        "id": "row_gpu_30_Prime_RTX_5070Ti",
+        "label": "Prime RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "Prime RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_31_ROG_4070Ti",
+        "label": "ROG 4070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG 4070Ti"
+      },
+      {
+        "id": "row_gpu_32_ROG_RTX_4060",
+        "label": "ROG RTX 4060",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG RTX 4060"
+      },
+      {
+        "id": "row_gpu_33_ROG_Strix_RTX_4080",
+        "label": "ROG Strix RTX 4080",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG Strix RTX 4080"
+      },
+      {
+        "id": "row_gpu_34_RTX_4060Ti_FE",
+        "label": "RTX 4060Ti FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4060Ti FE"
+      },
+      {
+        "id": "row_gpu_35_RTX_4070_FE",
+        "label": "RTX 4070 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 FE"
+      },
+      {
+        "id": "row_gpu_36_RTX_4070_SUPER_FE",
+        "label": "RTX 4070 SUPER FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 SUPER FE"
+      },
+      {
+        "id": "row_gpu_37_RTX_5070_FE",
+        "label": "RTX 5070 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 5070 FE"
+      },
+      {
+        "id": "row_gpu_38_Sapphire_RX_9060_XT_16GB",
+        "label": "Sapphire RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_3_Sapphire_RX_9070_GRE",
+        "label": "Sapphire RX 9070 GRE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 GRE"
+      },
+      {
+        "id": "row_gpu_39_Sapphire_RX_9070_PURE",
+        "label": "Sapphire RX 9070 PURE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 PURE"
+      },
+      {
+        "id": "row_gpu_40_Sapphire_RX_9070_XT_PURE",
+        "label": "Sapphire RX 9070 XT PURE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 XT PURE"
+      },
+      {
+        "id": "row_gpu_41_TUF_RTX_5070",
+        "label": "TUF RTX 5070",
+        "value": null,
+        "value2": null,
+        "gpu": "TUF RTX 5070"
+      },
+      {
+        "id": "row_gpu_42_Vanguard_RTX_5070Ti",
+        "label": "Vanguard RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "Vanguard RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_43_ZOTAC_RTX_5070Ti",
+        "label": "ZOTAC RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "ZOTAC RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_44_inno3d_5070_x2",
+        "label": "inno3d 5070 x2",
+        "value": null,
+        "value2": null,
+        "gpu": "inno3d 5070 x2"
+      },
+      {
+        "id": "row_gpu_0_AMD_Radeon_RX_9070",
+        "label": "AMD Radeon RX 9070",
+        "value": null,
+        "value2": null,
+        "gpu": "AMD Radeon RX 9070"
+      },
+      {
+        "id": "row_gpu_0_COLORFUL_iGAME_RTX_5060_Ti_ULTRA_OC_8GB",
+        "label": "COLORFUL iGAME RTX 5060 Ti ULTRA OC 8GB",
+        "value": null,
+        "value2": null,
+        "gpu": "COLORFUL iGAME RTX 5060 Ti ULTRA OC 8GB"
+      },
+      {
+        "id": "row_gpu_2_NVIDIA_GeForce_RTX_5090",
+        "label": "NVIDIA GeForce RTX 5090",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090"
+      },
+      {
+        "id": "row_gpu_0_RTX_5060_Ti",
+        "label": "RTX 5060 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 5060 Ti"
+      },
+      {
+        "id": "row_gpu_1_RTX_4070_Ti",
+        "label": "RTX 4070 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 Ti"
+      },
+      {
+        "id": "row_gpu_1_NVIDIA_GeForce_RTX_5090_Founders_Edition",
+        "label": "NVIDIA GeForce RTX 5090 Founders Edition",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090 Founders Edition"
+      },
+      {
+        "id": "row_gpu_2_NVIDIA_GeForce_RTX_5090NVIDIA_GeForce_RTX_5090_Founders_Edition",
+        "label": "NVIDIA GeForce RTX 5090NVIDIA GeForce RTX 5090 Founders Edition",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090NVIDIA GeForce RTX 5090 Founders Edition"
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "pc_power",
+    "name": "Power Consumption",
+    "mode": "pc",
+    "category": "power",
+    "title": "TOTAL BOARD POWER CONSUMPTION",
+    "sub_header": "PEAK GAMING POWER (WATTS) | LOWER IS BETTER",
+    "unit": "W",
+    "higher_is_better": false,
+    "metric_name": "Power",
+    "metric2_name": "",
+    "metric2_unit": "",
+    "rows": [
+      {
+        "id": "row_gpu_0_AERO_RTX_5070_Ti",
+        "label": "AERO RTX 5070 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "AERO RTX 5070 Ti"
+      },
+      {
+        "id": "row_gpu_1_AERO_RTX_5070Ti",
+        "label": "AERO RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "AERO RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_2_AORUS_RTX_5080_MASTER",
+        "label": "AORUS RTX 5080 MASTER",
+        "value": null,
+        "value2": null,
+        "gpu": "AORUS RTX 5080 MASTER"
+      },
+      {
+        "id": "row_gpu_2_ASUS_Prime_RTX_5080",
+        "label": "ASUS Prime RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS Prime RTX 5080"
+      },
+      {
+        "id": "row_gpu_3_ASUS_Prime_RX_9070_XT_OC",
+        "label": "ASUS Prime RX 9070 XT OC",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS Prime RX 9070 XT OC"
+      },
+      {
+        "id": "row_gpu_5_ASUS_ROG_RTX_5080_ASTRAL_OC",
+        "label": "ASUS ROG RTX 5080 ASTRAL OC",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS ROG RTX 5080 ASTRAL OC"
+      },
+      {
+        "id": "row_gpu_4_ASUS_RTX_5060_Prime",
+        "label": "ASUS RTX 5060 Prime",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RTX 5060 Prime"
+      },
+      {
+        "id": "row_gpu_5_ASUS_RTX_5060Ti_PRIME_OC16GB",
+        "label": "ASUS RTX 5060Ti PRIME OC16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RTX 5060Ti PRIME OC16GB"
+      },
+      {
+        "id": "row_gpu_6_ASUS_RX_9060_XT_16GB",
+        "label": "ASUS RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "ASUS RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_7_Aorus_RTX_5060_Elite",
+        "label": "Aorus RTX 5060 Elite",
+        "value": null,
+        "value2": null,
+        "gpu": "Aorus RTX 5060 Elite"
+      },
+      {
+        "id": "row_gpu_8_Aorus_RTX_5080",
+        "label": "Aorus RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Aorus RTX 5080"
+      },
+      {
+        "id": "row_gpu_9_Astral_RTX_5080",
+        "label": "Astral RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Astral RTX 5080"
+      },
+      {
+        "id": "row_gpu_10_COLORFUL_RTX_5060_W",
+        "label": "COLORFUL RTX 5060 W",
+        "value": null,
+        "value2": null,
+        "gpu": "COLORFUL RTX 5060 W"
+      },
+      {
+        "id": "row_gpu_11_Colorful_RTX_5050",
+        "label": "Colorful RTX 5050",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5050"
+      },
+      {
+        "id": "row_gpu_12_Colorful_RTX_5060Ti_8GB_NB",
+        "label": "Colorful RTX 5060Ti 8GB NB",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5060Ti 8GB NB"
+      },
+      {
+        "id": "row_gpu_13_Colorful_RTX_5070Ti_ULTRA_W",
+        "label": "Colorful RTX 5070Ti ULTRA W",
+        "value": null,
+        "value2": null,
+        "gpu": "Colorful RTX 5070Ti ULTRA W"
+      },
+      {
+        "id": "row_gpu_14_GIGABYTE_RTX_5070_Ti_Windforce",
+        "label": "GIGABYTE RTX 5070 Ti Windforce",
+        "value": null,
+        "value2": null,
+        "gpu": "GIGABYTE RTX 5070 Ti Windforce"
+      },
+      {
+        "id": "row_gpu_15_GIGABYTE_RX_9060_XT_16GB",
+        "label": "GIGABYTE RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "GIGABYTE RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_16_Gigabyte_RTX_5050",
+        "label": "Gigabyte RTX 5050",
+        "value": null,
+        "value2": null,
+        "gpu": "Gigabyte RTX 5050"
+      },
+      {
+        "id": "row_gpu_17_Gigabyte_RTX_5060Ti_Gaming_OC_16GB",
+        "label": "Gigabyte RTX 5060Ti Gaming OC 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Gigabyte RTX 5060Ti Gaming OC 16GB"
+      },
+      {
+        "id": "row_gpu_18_INNO3D_RTX_5080_X3",
+        "label": "INNO3D RTX 5080 X3",
+        "value": null,
+        "value2": null,
+        "gpu": "INNO3D RTX 5080 X3"
+      },
+      {
+        "id": "row_gpu_19_Inno3D_5060Ti_Twin_X2",
+        "label": "Inno3D 5060Ti Twin X2",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D 5060Ti Twin X2"
+      },
+      {
+        "id": "row_gpu_22_Inno3D_GeForce_RTX_5060_Ti_Twin_X2_16GB",
+        "label": "Inno3D GeForce RTX 5060 Ti Twin X2 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D GeForce RTX 5060 Ti Twin X2 16GB"
+      },
+      {
+        "id": "row_gpu_20_Inno3D_GeForce_RTX_5070_Ti_X3",
+        "label": "Inno3D GeForce RTX 5070 Ti X3",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D GeForce RTX 5070 Ti X3"
+      },
+      {
+        "id": "row_gpu_21_Inno3D_RTX_5070Ti_X3",
+        "label": "Inno3D RTX 5070Ti X3",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D RTX 5070Ti X3"
+      },
+      {
+        "id": "row_gpu_22_Inno3D_RTX_5080",
+        "label": "Inno3D RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "Inno3D RTX 5080"
+      },
+      {
+        "id": "row_gpu_22_MSI_RTX_4070Ti_3X",
+        "label": "MSI RTX 4070Ti 3X",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 4070Ti 3X"
+      },
+      {
+        "id": "row_gpu_23_MSI_RTX_5060Ti_2X_16GB",
+        "label": "MSI RTX 5060Ti 2X 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 5060Ti 2X 16GB"
+      },
+      {
+        "id": "row_gpu_24_MSI_RTX_5070Ti_3X",
+        "label": "MSI RTX 5070Ti 3X",
+        "value": null,
+        "value2": null,
+        "gpu": "MSI RTX 5070Ti 3X"
+      },
+      {
+        "id": "row_gpu_25_NVIDIA_RTX_4080_SUPER",
+        "label": "NVIDIA RTX 4080 SUPER",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 4080 SUPER"
+      },
+      {
+        "id": "row_gpu_26_NVIDIA_RTX_4090_FE",
+        "label": "NVIDIA RTX 4090 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 4090 FE"
+      },
+      {
+        "id": "row_gpu_27_NVIDIA_RTX_5080_FE",
+        "label": "NVIDIA RTX 5080 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 5080 FE"
+      },
+      {
+        "id": "row_gpu_28_NVIDIA_RTX_5090_FE",
+        "label": "NVIDIA RTX 5090 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA RTX 5090 FE"
+      },
+      {
+        "id": "row_gpu_29_PNY_RTX_5080",
+        "label": "PNY RTX 5080",
+        "value": null,
+        "value2": null,
+        "gpu": "PNY RTX 5080"
+      },
+      {
+        "id": "row_gpu_30_Prime_RTX_5070Ti",
+        "label": "Prime RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "Prime RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_31_ROG_4070Ti",
+        "label": "ROG 4070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG 4070Ti"
+      },
+      {
+        "id": "row_gpu_32_ROG_RTX_4060",
+        "label": "ROG RTX 4060",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG RTX 4060"
+      },
+      {
+        "id": "row_gpu_33_ROG_Strix_RTX_4080",
+        "label": "ROG Strix RTX 4080",
+        "value": null,
+        "value2": null,
+        "gpu": "ROG Strix RTX 4080"
+      },
+      {
+        "id": "row_gpu_34_RTX_4060Ti_FE",
+        "label": "RTX 4060Ti FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4060Ti FE"
+      },
+      {
+        "id": "row_gpu_35_RTX_4070_FE",
+        "label": "RTX 4070 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 FE"
+      },
+      {
+        "id": "row_gpu_36_RTX_4070_SUPER_FE",
+        "label": "RTX 4070 SUPER FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 SUPER FE"
+      },
+      {
+        "id": "row_gpu_37_RTX_5070_FE",
+        "label": "RTX 5070 FE",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 5070 FE"
+      },
+      {
+        "id": "row_gpu_38_Sapphire_RX_9060_XT_16GB",
+        "label": "Sapphire RX 9060 XT 16GB",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9060 XT 16GB"
+      },
+      {
+        "id": "row_gpu_3_Sapphire_RX_9070_GRE",
+        "label": "Sapphire RX 9070 GRE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 GRE"
+      },
+      {
+        "id": "row_gpu_39_Sapphire_RX_9070_PURE",
+        "label": "Sapphire RX 9070 PURE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 PURE"
+      },
+      {
+        "id": "row_gpu_40_Sapphire_RX_9070_XT_PURE",
+        "label": "Sapphire RX 9070 XT PURE",
+        "value": null,
+        "value2": null,
+        "gpu": "Sapphire RX 9070 XT PURE"
+      },
+      {
+        "id": "row_gpu_41_TUF_RTX_5070",
+        "label": "TUF RTX 5070",
+        "value": null,
+        "value2": null,
+        "gpu": "TUF RTX 5070"
+      },
+      {
+        "id": "row_gpu_42_Vanguard_RTX_5070Ti",
+        "label": "Vanguard RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "Vanguard RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_43_ZOTAC_RTX_5070Ti",
+        "label": "ZOTAC RTX 5070Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "ZOTAC RTX 5070Ti"
+      },
+      {
+        "id": "row_gpu_44_inno3d_5070_x2",
+        "label": "inno3d 5070 x2",
+        "value": null,
+        "value2": null,
+        "gpu": "inno3d 5070 x2"
+      },
+      {
+        "id": "row_gpu_0_AMD_Radeon_RX_9070",
+        "label": "AMD Radeon RX 9070",
+        "value": null,
+        "value2": null,
+        "gpu": "AMD Radeon RX 9070"
+      },
+      {
+        "id": "row_gpu_0_COLORFUL_iGAME_RTX_5060_Ti_ULTRA_OC_8GB",
+        "label": "COLORFUL iGAME RTX 5060 Ti ULTRA OC 8GB",
+        "value": null,
+        "value2": null,
+        "gpu": "COLORFUL iGAME RTX 5060 Ti ULTRA OC 8GB"
+      },
+      {
+        "id": "row_gpu_2_NVIDIA_GeForce_RTX_5090",
+        "label": "NVIDIA GeForce RTX 5090",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090"
+      },
+      {
+        "id": "row_gpu_0_RTX_5060_Ti",
+        "label": "RTX 5060 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 5060 Ti"
+      },
+      {
+        "id": "row_gpu_1_RTX_4070_Ti",
+        "label": "RTX 4070 Ti",
+        "value": null,
+        "value2": null,
+        "gpu": "RTX 4070 Ti"
+      },
+      {
+        "id": "row_gpu_1_NVIDIA_GeForce_RTX_5090_Founders_Edition",
+        "label": "NVIDIA GeForce RTX 5090 Founders Edition",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090 Founders Edition"
+      },
+      {
+        "id": "row_gpu_2_NVIDIA_GeForce_RTX_5090NVIDIA_GeForce_RTX_5090_Founders_Edition",
+        "label": "NVIDIA GeForce RTX 5090NVIDIA GeForce RTX 5090 Founders Edition",
+        "value": null,
+        "value2": null,
+        "gpu": "NVIDIA GeForce RTX 5090NVIDIA GeForce RTX 5090 Founders Edition"
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "laptop_cpu_temps",
+    "name": "CPU Temperatures",
+    "mode": "laptop",
+    "category": "temperatures",
+    "title": "CPU TEMPERATURES",
+    "sub_header": "MAX CPU TEMPERATURES (°C) | LOWER IS BETTER",
+    "unit": "°C",
+    "higher_is_better": false,
+    "metric_name": "CPU Temp",
+    "metric2_name": "",
+    "metric2_unit": "",
+    "rows": [
+      {
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
+        "value": 68.5,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Standard",
+        "label": "Standard",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_3_Turbo",
+        "label": "Turbo",
+        "value": null,
+        "value2": null
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "laptop_gpu_temps",
+    "name": "GPU Temperatures",
+    "mode": "laptop",
+    "category": "temperatures",
+    "title": "GPU TEMPERATURES",
+    "sub_header": "MAX GPU TEMPERATURES (°C) | LOWER IS BETTER",
+    "unit": "°C",
+    "higher_is_better": false,
+    "metric_name": "GPU Temp",
+    "metric2_name": "",
+    "metric2_unit": "",
+    "rows": [
+      {
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Standard",
+        "label": "Standard",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_3_Turbo",
+        "label": "Turbo",
+        "value": null,
+        "value2": null
+      }
+    ],
+    "notes": ""
+  },
+  {
+    "id": "laptop_battery_life",
+    "name": "Battery Life",
+    "mode": "laptop",
+    "category": "battery",
+    "title": "BATTERY LIFE RUNTIME",
+    "sub_header": "BATTERY RUNTIME (MINUTES) | HIGHER IS BETTER",
+    "unit": "mins",
+    "higher_is_better": true,
+    "metric_name": "Battery Runtime",
+    "metric2_name": "",
+    "metric2_unit": "",
+    "rows": [
+      {
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Standard",
+        "label": "Standard",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_3_Turbo",
+        "label": "Turbo",
+        "value": null,
+        "value2": null
+      }
+    ],
+    "notes": ""
+  }
+]

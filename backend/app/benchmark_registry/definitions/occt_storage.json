@@ -1,0 +1,65 @@
+{
+  "id": "occt_storage",
+  "name": "OCCT Storage Benchmark",
+  "version": "16.x",
+  "category": "Storage",
+  "parser_id": "occt_storage_parser",
+  "file_patterns": [
+    ".*occt.*storage.*\\.(jpg|jpeg|png|webp|bmp)$",
+    ".*occt.*(ssd|disk).*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "occt storage",
+    "occt_storage",
+    "occt ssd",
+    "occt disk",
+    "occt storage benchmark"
+  ],
+  "keywords": [
+    "occt",
+    "storage benchmark",
+    "storagebenchmark",
+    "sequential read",
+    "sequential write",
+    "random read",
+    "random write"
+  ],
+  "metrics": [
+    {
+      "id": "seq_read",
+      "name": "Sequential Read",
+      "display_name": "Seq Read",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "seq_write",
+      "name": "Sequential Write",
+      "display_name": "Seq Write",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "rnd_read",
+      "name": "Random Read",
+      "display_name": "Random Read",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 2
+    },
+    {
+      "id": "rnd_write",
+      "name": "Random Write",
+      "display_name": "Random Write",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 3
+    }
+  ]
+}

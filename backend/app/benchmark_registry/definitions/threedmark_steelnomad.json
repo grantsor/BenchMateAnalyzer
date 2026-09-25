@@ -1,0 +1,47 @@
+{
+  "id": "threedmark_steelnomad",
+  "name": "3DMark Steel Nomad",
+  "version": "Steel Nomad",
+  "category": "GPU/CPU",
+  "parser_id": "threedmark_parser",
+  "file_patterns": [
+    "steel.*nomad",
+    "steelnomad",
+    "3dm.*sn",
+    "sn_.*"
+  ],
+  "aliases": [
+    "steelnomad",
+    "steel nomad",
+    "3dmark steelnomad",
+    "3dmark steel nomad",
+    "3dmark_sn",
+    "sn"
+  ],
+  "keywords": [
+    "steel nomad",
+    "3dmark",
+    "graphics test",
+    "overall score"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Steel Nomad Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "graphics_test",
+      "name": "Graphics Test",
+      "display_name": "Graphics Test",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "id": "arithmetic_benchmark",
+  "name": "Arithmetic Benchmark",
+  "version": "1.0",
+  "category": "CPU",
+  "parser_id": "generic_parser",
+  "file_patterns": [],
+  "aliases": [
+    "arithmetic benchmark",
+    "arithmetic",
+    "arithmetic_benchmark"
+  ],
+  "keywords": [
+    "arithmetic benchmark",
+    "superpi",
+    "wprime"
+  ],
+  "metrics": [
+    {
+      "id": "superpi_32m",
+      "name": "SuperPI 32M",
+      "display_name": "SuperPI 32M",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 0
+    },
+    {
+      "id": "wprime_1024m",
+      "name": "wPrime 1024M",
+      "display_name": "wPrime 1024M",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 1
+    }
+  ]
+}

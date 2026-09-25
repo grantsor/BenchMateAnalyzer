@@ -1,0 +1,64 @@
+{
+  "id": "crystaldiskmark_1gb",
+  "name": "CrystalDiskMark 1GB",
+  "version": "8",
+  "category": "Storage",
+  "parser_id": "crystaldiskmark_parser",
+  "file_patterns": [
+    "crystal.*1g(b)?",
+    "cdm.*1g(b)?",
+    "cdm1gb"
+  ],
+  "aliases": [
+    "cdm 1gb",
+    "cdm1gb",
+    "crystaldiskmark 1gb",
+    "crystaldiskmark1gb"
+  ],
+  "keywords": [
+    "crystaldiskmark",
+    "seq1m",
+    "rnd4k",
+    "1gib",
+    "read (mb/s)",
+    "write (mb/s)"
+  ],
+  "metrics": [
+    {
+      "id": "seq_read",
+      "name": "Sequential Read",
+      "display_name": "Seq Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "seq_write",
+      "name": "Sequential Write",
+      "display_name": "Seq Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "rnd_4k_read",
+      "name": "Random 4K Read",
+      "display_name": "RND 4K Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 2
+    },
+    {
+      "id": "rnd_4k_write",
+      "name": "Random 4K Write",
+      "display_name": "RND 4K Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 3
+    }
+  ]
+}

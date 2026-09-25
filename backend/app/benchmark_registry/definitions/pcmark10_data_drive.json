@@ -1,0 +1,53 @@
+{
+  "id": "pcmark10_data_drive",
+  "name": "PCMark 10 Data Drive",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "pcmark10_storage_parser",
+  "file_patterns": [
+    "pcm10.*data",
+    "pcmark10.*data",
+    "pcm10.*datadrive",
+    "pmc10.*data"
+  ],
+  "aliases": [
+    "pcm10 datadrive",
+    "pcmark10 datadrive",
+    "pcm10 data drive"
+  ],
+  "keywords": [
+    "data drive benchmark",
+    "datadrivebenchmark",
+    "bandwidth",
+    "access time"
+  ],
+  "metrics": [
+    {
+      "id": "score",
+      "name": "Data Drive Score",
+      "display_name": "Score (pts)",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "bandwidth",
+      "name": "Bandwidth",
+      "display_name": "Bandwidth (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "access_time",
+      "name": "Access Time",
+      "display_name": "Access Time (\u00b5s)",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 2
+    }
+  ]
+}

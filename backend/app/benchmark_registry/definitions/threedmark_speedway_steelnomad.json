@@ -1,0 +1,39 @@
+{
+  "id": "threedmark_speedway_steelnomad",
+  "name": "3DMark Suite - Speedway and Steel Nomad",
+  "version": "1.0",
+  "category": "GPU/CPU",
+  "parser_id": "generic_parser",
+  "file_patterns": [],
+  "aliases": [
+    "3dmark suite - speedway and steel nomad",
+    "speedway and steel nomad",
+    "3dmark speedway and steel nomad",
+    "threedmark_speedway_steelnomad"
+  ],
+  "keywords": [
+    "speed way",
+    "steel nomad",
+    "3dmark suite"
+  ],
+  "metrics": [
+    {
+      "id": "speed_way",
+      "name": "Speed Way",
+      "display_name": "Speed Way",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "steel_nomad",
+      "name": "Steel Nomad",
+      "display_name": "Steel Nomad",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    }
+  ]
+}

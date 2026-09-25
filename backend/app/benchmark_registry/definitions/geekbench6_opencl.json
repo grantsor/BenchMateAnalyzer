@@ -1,0 +1,36 @@
+﻿{
+  "id": "geekbench6_opencl",
+  "name": "Geekbench 6 - OpenCL",
+  "version": "6",
+  "category": "GPU",
+  "parser_id": "geekbench_compute_parser",
+  "file_patterns": [
+    ".*opencl.*\\.(jpg|jpeg|png|webp|bmp)$",
+    "^gb6.*opencl.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "geekbench6_opencl",
+    "geekbench opencl",
+    "gb6 opencl",
+    "opencl"
+  ],
+  "keywords": [
+    "OpenCL Score",
+    "Geekbench Browser",
+    "Geekbench 6",
+    "OpenCL"
+  ],
+  "metrics": [
+    {
+      "id": "opencl_score",
+      "name": "OpenCL Score",
+      "display_name": "OpenCL Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 1000,
+      "range_max": 500000,
+      "sort_order": 1
+    }
+  ]
+}

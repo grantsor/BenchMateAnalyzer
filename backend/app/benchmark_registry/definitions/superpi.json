@@ -1,0 +1,36 @@
+{
+  "id": "superpi_benchmark",
+  "name": "Super PI Mod",
+  "version": "1.x",
+  "category": "CPU",
+  "parser_id": "superpi_parser",
+  "file_patterns": [
+    "superpi",
+    "super_pi",
+    "spi"
+  ],
+  "aliases": [
+    "superpi",
+    "super pi",
+    "super_pi",
+    "spi"
+  ],
+  "keywords": [
+    "super pi",
+    "super pi mod",
+    "32m",
+    "1m",
+    "calculation time"
+  ],
+  "metrics": [
+    {
+      "id": "time_seconds",
+      "name": "Calculation Time",
+      "display_name": "Time (Seconds)",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 0
+    }
+  ]
+}

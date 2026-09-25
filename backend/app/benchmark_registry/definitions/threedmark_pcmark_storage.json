@@ -1,0 +1,99 @@
+{
+  "id": "threedmark_pcmark_storage",
+  "name": "3DMark and PCMark Storage Benchmark",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "generic_parser",
+  "file_patterns": [],
+  "aliases": [
+    "3dmark and pcmark storage benchmark",
+    "3dmark and pcmark storage",
+    "3dmark pcmark storage"
+  ],
+  "keywords": [
+    "3dmark and pcmark storage benchmark"
+  ],
+  "metrics": [
+    {
+      "id": "tdm_bandwidth",
+      "name": "3DMark Storage Bandwidth",
+      "display_name": "3DMark Storage Bandwidth",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "pcm_quick_bandwidth",
+      "name": "PCMark 10 Quick System Bandwidth",
+      "display_name": "PCM10 Quick System Bandwidth",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "pcm_data_bandwidth",
+      "name": "PCMark 10 Data Drive Bandwidth",
+      "display_name": "PCM10 Data Drive Bandwidth",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 2
+    },
+    {
+      "id": "tdm_access_time",
+      "name": "3DMark Storage Access Time",
+      "display_name": "3DMark Storage Access Time",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 3
+    },
+    {
+      "id": "pcm_quick_access_time",
+      "name": "PCMark 10 Quick System Access Time",
+      "display_name": "PCM10 Quick System Access Time",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 4
+    },
+    {
+      "id": "pcm_data_access_time",
+      "name": "PCMark 10 Data Drive Access Time",
+      "display_name": "PCM10 Data Drive Access Time",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 5
+    },
+    {
+      "id": "tdm_score",
+      "name": "3DMark Storage Score",
+      "display_name": "3DMark Storage Score",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 6
+    },
+    {
+      "id": "pcm_quick_score",
+      "name": "PCMark 10 Quick System Score",
+      "display_name": "PCM10 Quick System Score",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 7
+    },
+    {
+      "id": "pcm_data_score",
+      "name": "PCMark 10 Data Drive Score",
+      "display_name": "PCM10 Data Drive Score",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 8
+    }
+  ]
+}

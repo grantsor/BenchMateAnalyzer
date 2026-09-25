@@ -1,0 +1,60 @@
+{
+  "id": "threedmark_timespy",
+  "name": "3DMark Time Spy",
+  "version": "Time Spy",
+  "category": "GPU/CPU",
+  "parser_id": "threedmark_parser",
+  "file_patterns": [
+    "time.*spy",
+    "timespy",
+    "3dmark.*ts",
+    "3dm.*ts",
+    "ts_.*"
+  ],
+  "aliases": [
+    "timespy",
+    "time spy",
+    "3dmark timespy",
+    "3dmark time spy",
+    "3dmark_ts",
+    "ts"
+  ],
+  "keywords": [
+    "time spy",
+    "3dmark",
+    "graphics score",
+    "cpu score",
+    "graphics test",
+    "cpu test",
+    "overall score"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Time Spy Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "graphics_score",
+      "name": "Graphics Score",
+      "display_name": "Graphics Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    },
+    {
+      "id": "cpu_score",
+      "name": "CPU Score",
+      "display_name": "CPU Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 2
+    }
+  ]
+}

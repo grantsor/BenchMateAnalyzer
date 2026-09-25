@@ -1,0 +1,53 @@
+{
+  "id": "pcmark10_quick_system_drive",
+  "name": "PCMark 10 Quick System Drive",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "pcmark10_storage_parser",
+  "file_patterns": [
+    "pcm10.*quick",
+    "pcmark10.*quick",
+    "pcm10.*quicksys",
+    "pmc10.*quick"
+  ],
+  "aliases": [
+    "pcm10 quicksys",
+    "pcmark10 quick system drive",
+    "pcm10 quick sys drive benchmark"
+  ],
+  "keywords": [
+    "quick system drive benchmark",
+    "quicksystemdrivebenchmark",
+    "bandwidth",
+    "access time"
+  ],
+  "metrics": [
+    {
+      "id": "score",
+      "name": "Quick System Score",
+      "display_name": "Score (pts)",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "bandwidth",
+      "name": "Bandwidth",
+      "display_name": "Bandwidth (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "access_time",
+      "name": "Access Time",
+      "display_name": "Access Time (\u00b5s)",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 2
+    }
+  ]
+}

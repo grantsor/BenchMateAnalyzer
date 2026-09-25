@@ -1,0 +1,64 @@
+{
+  "id": "occt_benchmark",
+  "name": "OCCT Benchmark",
+  "version": "16.x",
+  "category": "CPU",
+  "parser_id": "occt_parser",
+  "file_patterns": [
+    "^occt[0-9\\s\\.]",
+    "^occt_cpu.*",
+    "^occt_bench.*",
+    "^occt\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "occt",
+    "occt benchmark",
+    "occt_bench"
+  ],
+  "keywords": [
+    "occt",
+    "cpubenchmark",
+    "single thread - avx",
+    "multiple threads - avx",
+    "single thread - sse",
+    "multiple threads - sse"
+  ],
+  "metrics": [
+    {
+      "id": "multi_avx",
+      "name": "Multi Thread AVX",
+      "display_name": "Multi-Thread AVX",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "single_avx",
+      "name": "Single Thread AVX",
+      "display_name": "Single-Thread AVX",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    },
+    {
+      "id": "multi_sse",
+      "name": "Multi Thread SSE",
+      "display_name": "Multi-Thread SSE",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 2
+    },
+    {
+      "id": "single_sse",
+      "name": "Single Thread SSE",
+      "display_name": "Single-Thread SSE",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 3
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "threedmark_storage",
+  "name": "3DMark Storage Benchmark",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "threedmark_storage_parser",
+  "file_patterns": [
+    "3dm.*storage",
+    "3dmark.*storage",
+    "3dm_storage",
+    "^3dmark\\s*\\.(?:png|jpg|jpeg)$",
+    "^3dm\\s*\\.(?:png|jpg|jpeg)$",
+    "^3dm$"
+  ],
+  "aliases": [
+    "3dm storage",
+    "3dmark storage",
+    "3dm_storage",
+    "3dm",
+    "3dmark"
+  ],
+  "keywords": [
+    "storagebenchmarkscore",
+    "storage benchmark",
+    "bandwidth",
+    "average access time"
+  ],
+  "metrics": [
+    {
+      "id": "storage_score",
+      "name": "Storage Score",
+      "display_name": "Score (pts)",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "bandwidth",
+      "name": "Bandwidth",
+      "display_name": "Bandwidth (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "average_access_time",
+      "name": "Average Access Time",
+      "display_name": "Avg Access Time (\u00b5s)",
+      "unit": "\u00b5s",
+      "higher_is_better": false,
+      "decimal_places": 1,
+      "sort_order": 2
+    }
+  ]
+}

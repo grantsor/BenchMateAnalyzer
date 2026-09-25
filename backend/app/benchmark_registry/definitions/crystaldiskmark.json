@@ -1,0 +1,48 @@
+{
+  "id": "crystaldiskmark",
+  "name": "CrystalDiskMark",
+  "version": "8",
+  "category": "Storage",
+  "parser_id": "crystaldiskmark_parser",
+  "file_patterns": [
+    "crystaldisk",
+    "cdm",
+    "crystal.*disk",
+    "diskmark"
+  ],
+  "aliases": [
+    "crystaldisk",
+    "crystaldiskmark",
+    "cdm",
+    "crystal"
+  ],
+  "keywords": [
+    "crystaldiskmark",
+    "seq1m",
+    "rnd4k",
+    "read [mb/s]",
+    "write [mb/s]",
+    "seq1m q8t1",
+    "seq128k"
+  ],
+  "metrics": [
+    {
+      "id": "seq_read",
+      "name": "Sequential Read",
+      "display_name": "Seq Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "seq_write",
+      "name": "Sequential Write",
+      "display_name": "Seq Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    }
+  ]
+}

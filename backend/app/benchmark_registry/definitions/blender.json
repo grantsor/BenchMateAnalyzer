@@ -1,0 +1,57 @@
+{
+  "id": "blender_benchmark",
+  "name": "Blender Benchmark",
+  "version": "4.x",
+  "category": "Render",
+  "parser_id": "blender_parser",
+  "file_patterns": [
+    "blender",
+    "blener",
+    "blend"
+  ],
+  "aliases": [
+    "blender",
+    "blener",
+    "blender benchmark",
+    "blender_bench"
+  ],
+  "keywords": [
+    "blenderbenchmarklauncher",
+    "opendata.blender.org",
+    "blender open data",
+    "samples per minute",
+    "monster",
+    "junkshop",
+    "classroom",
+    "blender"
+  ],
+  "metrics": [
+    {
+      "id": "monster",
+      "name": "Monster",
+      "display_name": "Monster",
+      "unit": "samples/min",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "junkshop",
+      "name": "Junkshop",
+      "display_name": "Junkshop",
+      "unit": "samples/min",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    },
+    {
+      "id": "classroom",
+      "name": "Classroom",
+      "display_name": "Classroom",
+      "unit": "samples/min",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 2
+    }
+  ]
+}

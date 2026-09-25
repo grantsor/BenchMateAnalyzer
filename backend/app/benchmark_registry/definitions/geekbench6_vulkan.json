@@ -1,0 +1,36 @@
+﻿{
+  "id": "geekbench6_vulkan",
+  "name": "Geekbench 6 - Vulkan",
+  "version": "6",
+  "category": "GPU",
+  "parser_id": "geekbench_compute_parser",
+  "file_patterns": [
+    ".*vulkan.*\\.(jpg|jpeg|png|webp|bmp)$",
+    "^gb6.*vulkan.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "geekbench6_vulkan",
+    "geekbench vulkan",
+    "gb6 vulkan",
+    "vulkan"
+  ],
+  "keywords": [
+    "Vulkan Score",
+    "Geekbench Browser",
+    "Geekbench 6",
+    "Vulkan"
+  ],
+  "metrics": [
+    {
+      "id": "vulkan_score",
+      "name": "Vulkan Score",
+      "display_name": "Vulkan Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 1000,
+      "range_max": 500000,
+      "sort_order": 1
+    }
+  ]
+}

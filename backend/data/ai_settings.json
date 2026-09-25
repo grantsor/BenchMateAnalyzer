@@ -1,0 +1,5 @@
+{
+  "provider": "directml",
+  "api_key": "",
+  "model_name": "gemini-2.5-flash"
+}

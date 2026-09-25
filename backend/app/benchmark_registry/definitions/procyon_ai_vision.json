@@ -1,0 +1,38 @@
+﻿{
+  "id": "procyon_ai_vision",
+  "name": "Procyon AI Computer Vision",
+  "version": "1.0",
+  "category": "GPU",
+  "parser_id": "procyon_ai_parser",
+  "file_patterns": [
+    ".*procyon.*vision.*\\.(jpg|jpeg|png|webp|bmp)$",
+    ".*procyon.*ai.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "procyon_ai_vision",
+    "procyon vision",
+    "procyon ai",
+    "procyon ai computer vision"
+  ],
+  "keywords": [
+    "Procyon",
+    "AI Computer Vision",
+    "Inference device used",
+    "MobileNet V3",
+    "ResNet 50",
+    "Overall score"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Overall Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 50,
+      "range_max": 50000,
+      "sort_order": 1
+    }
+  ]
+}

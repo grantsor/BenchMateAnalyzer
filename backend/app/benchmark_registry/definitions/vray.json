@@ -1,0 +1,35 @@
+{
+  "id": "vray_benchmark",
+  "name": "V-Ray Benchmark",
+  "version": "6",
+  "category": "Render",
+  "parser_id": "vray_parser",
+  "file_patterns": [
+    "vray",
+    "v-ray",
+    "v_ray"
+  ],
+  "aliases": [
+    "vray",
+    "v-ray",
+    "v ray",
+    "vray benchmark"
+  ],
+  "keywords": [
+    "v-ray benchmark",
+    "v-ray score",
+    "vsamples",
+    "v-ray"
+  ],
+  "metrics": [
+    {
+      "id": "vray_score",
+      "name": "V-Ray Score",
+      "display_name": "V-Ray Score (vsamples)",
+      "unit": "vsamples",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "id": "as_ssd_copy",
+  "name": "AS SSD Copy Benchmark",
+  "version": "2.0",
+  "category": "Storage",
+  "parser_id": "as_ssd_copy_parser",
+  "file_patterns": [
+    "as.*ssd.*copy",
+    "asssd.*copy",
+    "as_copy"
+  ],
+  "aliases": [
+    "as ssd copy",
+    "asssd copy",
+    "as copy",
+    "as ssd copy 26"
+  ],
+  "keywords": [
+    "as ssd copy-benchmark",
+    "iso",
+    "program",
+    "game",
+    "speed:",
+    "duration:"
+  ],
+  "metrics": [
+    {
+      "id": "iso_speed",
+      "name": "ISO Speed",
+      "display_name": "ISO Speed (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "iso_duration",
+      "name": "ISO Duration",
+      "display_name": "ISO Duration (s)",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "program_speed",
+      "name": "Program Speed",
+      "display_name": "Program Speed (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 2
+    },
+    {
+      "id": "program_duration",
+      "name": "Program Duration",
+      "display_name": "Program Duration (s)",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 2,
+      "sort_order": 3
+    },
+    {
+      "id": "game_speed",
+      "name": "Game Speed",
+      "display_name": "Game Speed (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 4
+    },
+    {
+      "id": "game_duration",
+      "name": "Game Duration",
+      "display_name": "Game Duration (s)",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 2,
+      "sort_order": 5
+    }
+  ]
+}

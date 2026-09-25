@@ -1,0 +1,48 @@
+{
+  "id": "threedmark_speedway",
+  "name": "3DMark Speed Way",
+  "version": "Speed Way",
+  "category": "GPU/CPU",
+  "parser_id": "threedmark_parser",
+  "file_patterns": [
+    "speed.*way",
+    "speedway",
+    "3dm.*sw",
+    "3dm.*ss",
+    "sw_.*"
+  ],
+  "aliases": [
+    "speedway",
+    "speed way",
+    "3dmark speedway",
+    "3dmark speed way",
+    "3dmark_sw",
+    "sw"
+  ],
+  "keywords": [
+    "speed way",
+    "3dmark",
+    "graphics test",
+    "overall score"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Speed Way Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "graphics_test",
+      "name": "Graphics Test",
+      "display_name": "Graphics Test",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    }
+  ]
+}

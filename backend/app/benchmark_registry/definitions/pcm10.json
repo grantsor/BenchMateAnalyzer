@@ -1,0 +1,74 @@
+{
+  "id": "pcmark10",
+  "name": "PCMark 10",
+  "version": "10",
+  "category": "System",
+  "parser_id": "pcmark10_parser",
+  "file_patterns": [
+    "^(?!.*(data|quick|sys|storage|drive)).*pcm10",
+    "^(?!.*(data|quick|sys|storage|drive)).*pcmark10",
+    "^(?!.*(data|quick|sys|storage|drive)).*pcmark.*10",
+    "^(?!.*(data|quick|sys|storage|drive)).*pcm_.*"
+  ],
+  "aliases": [
+    "pcm10",
+    "pcmark10",
+    "pcmark 10",
+    "pcm"
+  ],
+  "keywords": [
+    "pcmark 10",
+    "pcmark10",
+    "pcmark 10 extended",
+    "essentials",
+    "productivity",
+    "digital content creation"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "PCMark 10 Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "essentials",
+      "name": "Essentials",
+      "display_name": "Essentials",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "display_name": "Productivity",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 2
+    },
+    {
+      "id": "digital_content_creation",
+      "name": "Digital Content Creation",
+      "display_name": "Digital Content",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 3
+    },
+    {
+      "id": "gaming",
+      "name": "Gaming",
+      "display_name": "Gaming",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 4
+    }
+  ]
+}

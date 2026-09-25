@@ -1,0 +1,49 @@
+{
+  "id": "cinebench_2024",
+  "name": "Cinebench 2024",
+  "version": "2024",
+  "category": "CPU",
+  "parser_id": "cinebench_parser",
+  "file_patterns": [
+    "^cb2024.*\\.(jpg|jpeg|png|webp|bmp)$",
+    "^cinebench.*2024.*\\.(jpg|jpeg|png|webp|bmp)$",
+    "^cb24.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "cb2024",
+    "cb24",
+    "cinebench 2024",
+    "cinebench2024",
+    "cinebench_2024"
+  ],
+  "keywords": [
+    "Cinebench 2024",
+    "CPU (Multi Core)",
+    "CPU (Single Core)",
+    "pts"
+  ],
+  "metrics": [
+    {
+      "id": "multi_core",
+      "name": "Multi-Core",
+      "display_name": "Multi-Core",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 100,
+      "range_max": 10000,
+      "sort_order": 0
+    },
+    {
+      "id": "single_core",
+      "name": "Single-Core",
+      "display_name": "Single-Core",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 20,
+      "range_max": 500,
+      "sort_order": 1
+    }
+  ]
+}

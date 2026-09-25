@@ -1,0 +1,55 @@
+{
+  "id": "geekbench_ai",
+  "name": "Geekbench AI",
+  "version": "1.x",
+  "category": "AI",
+  "parser_id": "gbai_parser",
+  "file_patterns": [
+    "gbai",
+    "geekbench.*ai",
+    "gb_ai"
+  ],
+  "aliases": [
+    "gbai",
+    "geekbench ai",
+    "geekbench_ai",
+    "gb ai"
+  ],
+  "keywords": [
+    "geekbench ai",
+    "geekbench al",
+    "single precision score",
+    "half precision score",
+    "quantized score",
+    "browser.geekbench.com/ai"
+  ],
+  "metrics": [
+    {
+      "id": "single_precision",
+      "name": "Single Precision",
+      "display_name": "Single Precision",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "half_precision",
+      "name": "Half Precision",
+      "display_name": "Half Precision",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    },
+    {
+      "id": "quantized",
+      "name": "Quantized",
+      "display_name": "Quantized Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 2
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "game_benchmark",
+  "name": "Game Benchmark (FPS)",
+  "version": "1.0",
+  "category": "Gaming",
+  "parser_id": "game_fps_parser",
+  "file_patterns": [
+    "cyberpunk",
+    "tomb.*raider",
+    "sotr",
+    "horizon",
+    "wukong",
+    "rdr2",
+    "forza",
+    "fps"
+  ],
+  "aliases": [
+    "game",
+    "gaming",
+    "cyberpunk",
+    "tombraider"
+  ],
+  "keywords": [
+    "average fps",
+    "avg fps",
+    "min fps",
+    "frames per second",
+    "fps",
+    "benchmark results"
+  ],
+  "metrics": [
+    {
+      "id": "avg_fps",
+      "name": "Average FPS",
+      "display_name": "Average FPS",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "min_fps",
+      "name": "Minimum FPS",
+      "display_name": "Min FPS / 1% Low",
+      "unit": "FPS",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    }
+  ]
+}

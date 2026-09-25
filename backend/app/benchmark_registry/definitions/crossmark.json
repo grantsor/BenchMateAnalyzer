@@ -1,0 +1,62 @@
+{
+  "id": "crossmark",
+  "name": "CrossMark",
+  "version": "1.0",
+  "category": "CPU/System",
+  "parser_id": "crossmark_parser",
+  "file_patterns": [
+    "crossmark",
+    "cross_mark",
+    "cross"
+  ],
+  "aliases": [
+    "crossmark",
+    "cross_mark",
+    "bapco crossmark"
+  ],
+  "keywords": [
+    "crossmark",
+    "overall score",
+    "productivity",
+    "creativity",
+    "responsiveness"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Overall Score",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "productivity",
+      "name": "Productivity",
+      "display_name": "Productivity",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    },
+    {
+      "id": "creativity",
+      "name": "Creativity",
+      "display_name": "Creativity",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 2
+    },
+    {
+      "id": "responsiveness",
+      "name": "Responsiveness",
+      "display_name": "Responsiveness",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 3
+    }
+  ]
+}

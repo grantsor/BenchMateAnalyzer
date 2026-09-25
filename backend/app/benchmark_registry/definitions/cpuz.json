@@ -1,0 +1,44 @@
+{
+  "id": "cpuz_benchmark",
+  "name": "CPU-Z Benchmark",
+  "version": "1.0",
+  "category": "CPU",
+  "parser_id": "cpuz_parser",
+  "file_patterns": [
+    "cpuz",
+    "cpu-z",
+    "cpu_z"
+  ],
+  "aliases": [
+    "cpuz",
+    "cpu-z",
+    "cpu z"
+  ],
+  "keywords": [
+    "cpu-z",
+    "cpu single thread",
+    "cpu multi thread",
+    "bench cpu",
+    "reference"
+  ],
+  "metrics": [
+    {
+      "id": "single_thread",
+      "name": "Single Thread",
+      "display_name": "Single Thread",
+      "unit": "points",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "multi_thread",
+      "name": "Multi Thread",
+      "display_name": "Multi Thread",
+      "unit": "points",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "DOTA 2": {
+    "title": "DOTA 2 - The International 2024 Finals Game 3",
+    "sub_header": "1080p | ULTRA HIGH PRESET | VULKAN",
+    "notes": "TI 2024 Finals Game 3 teamfight replay benchmark. 60 seconds duration."
+  },
+  "Cyberpunk 2077": {
+    "title": "Cyberpunk 2077: Phantom Liberty",
+    "sub_header": "RAY TRACING: OVERDRIVE | PATH TRACING",
+    "notes": "Dogtown market run benchmark route."
+  },
+  "Black Myth: Wukong": {
+    "title": "Black Myth: Wukong",
+    "sub_header": "VERY HIGH PRESET | FULL RAY TRACING",
+    "notes": "Official benchmark tool run."
+  },
+  "Counter-Strike 2": {
+    "title": "Counter-Strike 2 (CS2)",
+    "sub_header": "VERY HIGH PRESET | 8X MSAA | REFLEX ON",
+    "notes": "Dust II competitive 5v5 demo benchmark."
+  },
+  "Assassin's Creed Mirage": {
+    "title": "Assassin's Creed Mirage",
+    "sub_header": "ULTRA HIGH PRESET | NATIVE TAA",
+    "notes": "In-game built-in Baghdad benchmark tool."
+  }
+}

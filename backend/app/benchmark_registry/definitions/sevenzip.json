@@ -1,0 +1,53 @@
+{
+  "id": "sevenzip_benchmark",
+  "name": "7-Zip Benchmark",
+  "version": "1.0",
+  "category": "CPU",
+  "parser_id": "sevenzip_parser",
+  "file_patterns": [
+    "7zip",
+    "7-zip",
+    "7_zip"
+  ],
+  "aliases": [
+    "7zip",
+    "7-zip",
+    "7z"
+  ],
+  "keywords": [
+    "7-zip",
+    "compressing",
+    "decompressing",
+    "total rating",
+    "mips"
+  ],
+  "metrics": [
+    {
+      "id": "total_rating",
+      "name": "Total Rating",
+      "display_name": "Total Rating (MIPS)",
+      "unit": "MIPS",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "compressing",
+      "name": "Compressing",
+      "display_name": "Compressing (MIPS)",
+      "unit": "MIPS",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    },
+    {
+      "id": "decompressing",
+      "name": "Decompressing",
+      "display_name": "Decompressing (MIPS)",
+      "unit": "MIPS",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 2
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "id": "corona_benchmark",
+  "name": "Corona 10 Benchmark",
+  "version": "10",
+  "category": "Render",
+  "parser_id": "corona_parser",
+  "file_patterns": [
+    "corona",
+    "corona.*10"
+  ],
+  "aliases": [
+    "corona",
+    "corona 10",
+    "corona benchmark",
+    "coronabenchmark"
+  ],
+  "keywords": [
+    "corona 10 benchmark",
+    "corona",
+    "score (rays/s)",
+    "rays/s",
+    "performance score"
+  ],
+  "metrics": [
+    {
+      "id": "rays_per_sec",
+      "name": "Score (rays/s)",
+      "display_name": "Rays / sec",
+      "unit": "rays/s",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    }
+  ]
+}

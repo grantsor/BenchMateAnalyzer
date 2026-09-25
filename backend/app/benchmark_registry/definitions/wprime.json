@@ -1,0 +1,34 @@
+{
+  "id": "wprime_benchmark",
+  "name": "wPrime Benchmark",
+  "version": "2.x",
+  "category": "CPU",
+  "parser_id": "wprime_parser",
+  "file_patterns": [
+    "wprime",
+    "w_prime"
+  ],
+  "aliases": [
+    "wprime",
+    "w prime",
+    "wprimebenchmark"
+  ],
+  "keywords": [
+    "wprime",
+    "wprimebenchmark",
+    "1024m",
+    "32m",
+    "sec"
+  ],
+  "metrics": [
+    {
+      "id": "time_1024m",
+      "name": "1024M Time",
+      "display_name": "1024M Time (Seconds)",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 2,
+      "sort_order": 0
+    }
+  ]
+}

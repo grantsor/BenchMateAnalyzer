@@ -1,0 +1,45 @@
+{
+  "id": "octane_benchmark",
+  "name": "Octane 2.0 Benchmark",
+  "version": "2.0",
+  "category": "Browser/CPU",
+  "parser_id": "octane_parser",
+  "file_patterns": [
+    "octane",
+    "octanebench",
+    "octane.*2"
+  ],
+  "aliases": [
+    "octane",
+    "octane 2",
+    "octane 2.0",
+    "octanebench"
+  ],
+  "keywords": [
+    "octane",
+    "octane 2.0",
+    "octane.webmarks.info",
+    "single core score",
+    "multi core score"
+  ],
+  "metrics": [
+    {
+      "id": "multi_core",
+      "name": "Multi Core Score",
+      "display_name": "Multi-Core Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 0
+    },
+    {
+      "id": "single_core",
+      "name": "Single Core Score",
+      "display_name": "Single-Core Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 1
+    }
+  ]
+}

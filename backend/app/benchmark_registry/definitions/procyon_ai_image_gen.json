@@ -1,0 +1,66 @@
+{
+  "id": "procyon_ai_image_gen",
+  "name": "Procyon AI Image Generation - Stable Diffusion 1.5",
+  "version": "1.5",
+  "category": "GPU",
+  "parser_id": "procyon_ai_parser",
+  "file_patterns": [
+    ".*procyon.*sd.*\\.(jpg|jpeg|png|webp|bmp)$",
+    ".*procyon.*diffusion.*\\.(jpg|jpeg|png|webp|bmp)$",
+    ".*procyon.*image.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "procyon_ai_image_gen",
+    "procyon sd",
+    "procyon stable diffusion",
+    "procyon image generation"
+  ],
+  "keywords": [
+    "Procyon",
+    "AI Image Generation",
+    "Stable Diffusion 1.5",
+    "Overall duration",
+    "Overall image generation speed",
+    "UNET speed"
+  ],
+  "metrics": [
+    {
+      "id": "overall_score",
+      "name": "Overall Score",
+      "display_name": "Overall Score",
+      "unit": "score",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "range_min": 100,
+      "range_max": 50000,
+      "sort_order": 1
+    },
+    {
+      "id": "overall_duration",
+      "name": "Overall Duration",
+      "display_name": "Overall Duration",
+      "unit": "s",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 2
+    },
+    {
+      "id": "generation_speed",
+      "name": "Generation Speed",
+      "display_name": "Generation Speed",
+      "unit": "s/image",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 3
+    },
+    {
+      "id": "unet_speed",
+      "name": "UNET Speed",
+      "display_name": "UNET Speed",
+      "unit": "it/s",
+      "higher_is_better": true,
+      "decimal_places": 3,
+      "sort_order": 4
+    }
+  ]
+}

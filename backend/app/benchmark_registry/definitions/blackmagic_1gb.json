@@ -1,0 +1,43 @@
+{
+  "id": "blackmagic_1gb",
+  "name": "Blackmagic Disk Speed Test 1GB",
+  "version": "1.0",
+  "category": "Storage",
+  "parser_id": "blackmagic_parser",
+  "file_patterns": [
+    ".*blackmagic.*1g.*\\.(jpg|jpeg|png|webp|bmp)$"
+  ],
+  "aliases": [
+    "blackmagic 1g",
+    "blackmagic 1gb",
+    "blackmagic_1g",
+    "blackmagic_1gb",
+    "blackmagic ssd 1gb"
+  ],
+  "keywords": [
+    "blackmagic",
+    "disk speed test",
+    "blackmagicdesign",
+    "1gb"
+  ],
+  "metrics": [
+    {
+      "id": "write_speed",
+      "name": "Write Speed",
+      "display_name": "Write",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 0
+    },
+    {
+      "id": "read_speed",
+      "name": "Read Speed",
+      "display_name": "Read",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 1,
+      "sort_order": 1
+    }
+  ]
+}

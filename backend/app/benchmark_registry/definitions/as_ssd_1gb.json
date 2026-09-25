@@ -1,0 +1,107 @@
+{
+  "id": "as_ssd_1gb",
+  "name": "AS SSD 1GB",
+  "version": "2.0",
+  "category": "Storage",
+  "parser_id": "as_ssd_parser",
+  "file_patterns": [
+    "as.*ssd.*1g(b)?(?!.*(copy|compre|iops))",
+    "as(ssd)?[\\s_]*1g(b)?(?!.*(copy|compre|iops))"
+  ],
+  "aliases": [
+    "as 1g",
+    "asssd 1gb",
+    "as ssd 1gb",
+    "as ssd 1g"
+  ],
+  "keywords": [
+    "as ssd benchmark",
+    "1 gb",
+    "1gb",
+    "uaspstor",
+    "acc.time"
+  ],
+  "metrics": [
+    {
+      "id": "seq_read",
+      "name": "Sequential Read",
+      "display_name": "Seq Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 0
+    },
+    {
+      "id": "seq_write",
+      "name": "Sequential Write",
+      "display_name": "Seq Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 1
+    },
+    {
+      "id": "four_k_read",
+      "name": "4K Read",
+      "display_name": "4K Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 2
+    },
+    {
+      "id": "four_k_write",
+      "name": "4K Write",
+      "display_name": "4K Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 3
+    },
+    {
+      "id": "four_k_64_read",
+      "name": "4K-64Thrd Read",
+      "display_name": "4K-64Thrd Read (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 4
+    },
+    {
+      "id": "four_k_64_write",
+      "name": "4K-64Thrd Write",
+      "display_name": "4K-64Thrd Write (MB/s)",
+      "unit": "MB/s",
+      "higher_is_better": true,
+      "decimal_places": 2,
+      "sort_order": 5
+    },
+    {
+      "id": "acc_time_read",
+      "name": "Access Time Read",
+      "display_name": "Acc. Time Read (ms)",
+      "unit": "ms",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 6
+    },
+    {
+      "id": "acc_time_write",
+      "name": "Access Time Write",
+      "display_name": "Acc. Time Write (ms)",
+      "unit": "ms",
+      "higher_is_better": false,
+      "decimal_places": 3,
+      "sort_order": 7
+    },
+    {
+      "id": "score",
+      "name": "Total Score",
+      "display_name": "Score (pts)",
+      "unit": "pts",
+      "higher_is_better": true,
+      "decimal_places": 0,
+      "sort_order": 8
+    }
+  ]
+}

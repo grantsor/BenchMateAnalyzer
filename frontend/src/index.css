@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./assets/fonts/OpenSansCondensed-Light.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('./assets/fonts/OpenSansCondensed-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('./assets/fonts/OpenSansCondensed-Bold.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'Open Sans Condensed';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('./assets/fonts/OpenSansCondensed-Bold.ttf') format('truetype');
+}
+
+@theme {
+  --color-brand-red: #e63946;
+  --color-brand-blue: #1d3557;
+  --color-brand-navy: #0f0f12;
+  --color-brand-dark: #18181b;
+  --color-brand-light: #f8f9fa;
+  --color-brand-muted: #52525b;
+  --color-brand-border: #23232a;
+  --color-brand-card: #121215;
+  --color-brand-surface: #09090b;
+}
+
+/* Default: Pure Modern Dark Theme (Neutral Charcoal / Obsidian) */
+:root, [data-theme="dark"] {
+  --color-brand-surface: #09090b;
+  --color-brand-card: #121215;
+  --color-brand-border: #23232a;
+  --color-brand-dark: #18181b;
+  --color-brand-navy: #0f0f12;
+  --color-brand-muted: #52525b;
+}
+
+/* High-Contrast Pitch Black (OLED) */
+[data-theme="oled"] {
+  --color-brand-surface: #000000;
+  --color-brand-card: #0a0a0c;
+  --color-brand-border: #1c1c22;
+  --color-brand-dark: #121214;
+  --color-brand-navy: #050505;
+  --color-brand-muted: #3f3f46;
+}
+
+/* Classic Deep Blue (Midnight Navy) */
+[data-theme="midnight"] {
+  --color-brand-surface: #0b1320;
+  --color-brand-card: #131f30;
+  --color-brand-border: #2a3a50;
+  --color-brand-dark: #1b263b;
+  --color-brand-navy: #0d1b2a;
+  --color-brand-muted: #415a77;
+}
+
+body {
+  background-color: var(--color-brand-surface);
+  color: #f1f5f9;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Custom sleek scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-brand-surface);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-brand-border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand-muted);
+}
