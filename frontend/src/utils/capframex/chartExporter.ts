@@ -14,11 +14,11 @@ import { findGpuTier, DEFAULT_GPU_HIERARCHY } from "./gpuHierarchy";
 export function formatTwoLineLabel(text: string, maxCharsPerLine: number = 28): string {
   if (!text) return "";
   if (text.includes("\n")) return text;
+  if (text.length <= maxCharsPerLine) return text;
   if (text.includes(" - ")) {
     const parts = text.split(" - ");
     return `${parts[0].trim()}\n${parts.slice(1).join(" - ").trim()}`;
   }
-  if (text.length <= maxCharsPerLine) return text;
 
   const words = text.split(" ");
   const mid = text.length / 2;
@@ -219,11 +219,11 @@ export function buildExportEchartsOption(
     ? (displayRows.length <= 6
         ? Math.round(width * 0.28)
         : displayRows.length <= 16
-        ? Math.round(width * 0.24)
-        : Math.round(width * 0.205))
+        ? Math.round(width * 0.26)
+        : Math.round(width * 0.245))
     : (displayRows.length <= 6
-        ? Math.round(width * 0.24)
-        : Math.round(width * 0.22));
+        ? Math.round(width * 0.22)
+        : Math.round(width * 0.20));
 
   const gridLeft = options.gridLeftMargin
     ? Math.round(options.gridLeftMargin * scale)
@@ -231,29 +231,29 @@ export function buildExportEchartsOption(
 
   const gridRight = Math.round(
     isVertical
-      ? width * 0.05
-      : (isMergedBars ? 110 : isInside ? 70 : 130) * scale
+      ? width * 0.055
+      : (isMergedBars ? 100 : isInside ? 65 : 120) * scale
   );
 
   // --- Dynamic Header Typography & Vertical Clearance ---
-  // Calculated dynamically so Title, Subtitle, Legend, and Grid Bars NEVER overlap in any mode or resolution
-  const titleFontSize = Math.round((isVertical ? 40 : 36) * fontScale);
-  const titleItemGap = Math.max(4, Math.round((isVertical ? 8 : 6) * fontScale));
-  const subtitleFontSize = Math.round((isVertical ? 20 : 18) * fontScale);
-  const legendFontSize = Math.round((isVertical ? 18 : 16) * fontScale);
+  // Refined header proportions so game title, subtitle, and legend look balanced and never dominate the chart
+  const titleFontSize = Math.round((isVertical ? 25 : 24) * fontScale);
+  const titleItemGap = Math.max(3, Math.round((isVertical ? 4 : 4) * fontScale));
+  const subtitleFontSize = Math.round((isVertical ? 13 : 12.5) * fontScale);
+  const legendFontSize = Math.round((isVertical ? 12.5 : 12) * fontScale);
 
-  const titleTop = Math.round((isVertical ? 26 : 22) * scale);
+  const titleTop = Math.round((isVertical ? 16 : 14) * scale);
   const titleHeight = Math.round(titleFontSize * 1.15);
   const subtitleHeight = Math.round(subtitleFontSize * 1.2);
   const titleBlockHeight = titleHeight + titleItemGap + subtitleHeight;
 
-  const subToLegendGap = Math.max(10, Math.round((isVertical ? 16 : 14) * fontScale));
+  const subToLegendGap = Math.max(5, Math.round((isVertical ? 8 : 7) * fontScale));
   const legendTop = titleTop + titleBlockHeight + subToLegendGap;
   const legendHeight = Math.round(legendFontSize * 1.25);
 
-  const legendToGridGap = Math.max(14, Math.round((isVertical ? 22 : 18) * fontScale));
+  const legendToGridGap = Math.max(8, Math.round((isVertical ? 11 : 10) * fontScale));
   const gridTop = legendTop + legendHeight + legendToGridGap;
-  const gridBottom = Math.round((isVertical ? 70 : 65) * scale);
+  const gridBottom = Math.round((isVertical ? 50 : 45) * scale);
   const totalGridWidth = Math.max(100, width - gridLeft - gridRight);
 
   let maxChartVal = 1;
@@ -269,39 +269,39 @@ export function buildExportEchartsOption(
   let barCategoryGap: string;
   if (isMergedBars) {
     if (displayRows.length >= 35) {
-      barMaxWidth = Math.round((isVertical ? 22 : 14) * scale);
+      barMaxWidth = Math.max(6, Math.round((isVertical ? 20 : 13) * scale));
       barCategoryGap = "20%";
     } else if (displayRows.length >= 24) {
-      barMaxWidth = Math.round((isVertical ? 26 : 16) * scale);
+      barMaxWidth = Math.max(7, Math.round((isVertical ? 24 : 15) * scale));
       barCategoryGap = "25%";
     } else if (displayRows.length >= 18) {
-      barMaxWidth = Math.round((isVertical ? 34 : 20) * scale);
+      barMaxWidth = Math.max(8, Math.round((isVertical ? 32 : 18) * scale));
       barCategoryGap = "30%";
     } else if (displayRows.length >= 12) {
-      barMaxWidth = Math.round((isVertical ? 44 : 25) * scale);
+      barMaxWidth = Math.max(10, Math.round((isVertical ? 42 : 24) * scale));
       barCategoryGap = "35%";
     } else if (displayRows.length >= 6) {
-      barMaxWidth = Math.round((isVertical ? 48 : 30) * scale);
+      barMaxWidth = Math.max(12, Math.round((isVertical ? 46 : 28) * scale));
       barCategoryGap = "35%";
     } else {
-      barMaxWidth = Math.round((isVertical ? 50 : 36) * scale);
+      barMaxWidth = Math.max(14, Math.round((isVertical ? 48 : 34) * scale));
       barCategoryGap = "40%";
     }
   } else {
     if (displayRows.length >= 35) {
-      barMaxWidth = Math.round((isVertical ? 16 : 14) * scale);
+      barMaxWidth = Math.max(5, Math.round((isVertical ? 15 : 12) * scale));
       barCategoryGap = "20%";
     } else if (displayRows.length >= 20) {
-      barMaxWidth = Math.round((isVertical ? 24 : 18) * scale);
+      barMaxWidth = Math.max(7, Math.round((isVertical ? 22 : 16) * scale));
       barCategoryGap = "25%";
     } else if (displayRows.length >= 12) {
-      barMaxWidth = Math.round((isVertical ? 34 : 26) * scale);
+      barMaxWidth = Math.max(9, Math.round((isVertical ? 32 : 24) * scale));
       barCategoryGap = "25%";
     } else if (displayRows.length <= 4) {
-      barMaxWidth = Math.round((isVertical ? 36 : 28) * scale);
+      barMaxWidth = Math.max(12, Math.round((isVertical ? 36 : 28) * scale));
       barCategoryGap = "35%";
     } else {
-      barMaxWidth = Math.round((isVertical ? 42 : 34) * scale);
+      barMaxWidth = Math.max(10, Math.round((isVertical ? 40 : 32) * scale));
       barCategoryGap = "30%";
     }
   }
@@ -310,31 +310,31 @@ export function buildExportEchartsOption(
   let baseBarLabelSize: number;
   if (isVertical) {
     if (displayRows.length >= 36) {
-      baseBarLabelSize = 13.5;
+      baseBarLabelSize = 11.5;
     } else if (displayRows.length >= 26) {
-      baseBarLabelSize = 15.5;
+      baseBarLabelSize = 13;
     } else if (displayRows.length >= 18) {
-      baseBarLabelSize = 17.5;
-    } else if (displayRows.length >= 12) {
-      baseBarLabelSize = 19;
-    } else if (displayRows.length <= 6) {
-      baseBarLabelSize = 17.5;
-    } else {
-      baseBarLabelSize = 19;
-    }
-  } else {
-    if (displayRows.length >= 35) {
-      baseBarLabelSize = 12;
-    } else if (displayRows.length >= 24) {
-      baseBarLabelSize = 14;
-    } else if (displayRows.length >= 18) {
-      baseBarLabelSize = 15.5;
+      baseBarLabelSize = 15;
     } else if (displayRows.length >= 12) {
       baseBarLabelSize = 17;
     } else if (displayRows.length <= 6) {
+      baseBarLabelSize = 17.5;
+    } else {
+      baseBarLabelSize = 18;
+    }
+  } else {
+    if (displayRows.length >= 36) {
+      baseBarLabelSize = 11;
+    } else if (displayRows.length >= 24) {
+      baseBarLabelSize = 12.5;
+    } else if (displayRows.length >= 18) {
+      baseBarLabelSize = 14;
+    } else if (displayRows.length >= 12) {
+      baseBarLabelSize = 15.5;
+    } else if (displayRows.length <= 6) {
       baseBarLabelSize = 16.5;
     } else {
-      baseBarLabelSize = 17.5;
+      baseBarLabelSize = 17;
     }
   }
   const barLabelFontSize = Math.round(baseBarLabelSize * fontScale);
@@ -447,10 +447,10 @@ export function buildExportEchartsOption(
       const itemLabel = {
         show: options.showValues && p1Val > 0,
         position: canFitInside ? ("insideRight" as const) : ("insideLeft" as const),
-        distance: Math.round(canFitInside ? 8 * scale : 4 * scale),
+        distance: Math.round(canFitInside ? 6 * scale : 3 * scale),
         color: "#ffffff",
         fontWeight: "bold",
-        fontSize: canFitInside ? labelFontSize : Math.max(10, labelFontSize - 2),
+        fontSize: canFitInside ? labelFontSize : Math.max(7, Math.round(labelFontSize * 0.9)),
         formatter: () => p1Str
       };
 
@@ -732,48 +732,48 @@ export function buildExportEchartsOption(
   let baseModelLineHeight: number;
   if (isVertical) {
     if (displayRows.length >= 36) {
-      baseModelFontSize = 13;
-      baseModelLineHeight = 16;
+      baseModelFontSize = 11;
+      baseModelLineHeight = 13;
     } else if (displayRows.length >= 26) {
-      baseModelFontSize = 14.5;
-      baseModelLineHeight = 18;
+      baseModelFontSize = 12.5;
+      baseModelLineHeight = 15;
     } else if (displayRows.length >= 18) {
-      baseModelFontSize = 16.5;
-      baseModelLineHeight = 20;
+      baseModelFontSize = 14;
+      baseModelLineHeight = 17;
     } else if (displayRows.length >= 12) {
-      baseModelFontSize = 18.5;
-      baseModelLineHeight = 22.5;
+      baseModelFontSize = 16;
+      baseModelLineHeight = 19.5;
     } else if (displayRows.length <= 6) {
       baseModelFontSize = 17;
       baseModelLineHeight = 21;
     } else {
-      baseModelFontSize = 18;
-      baseModelLineHeight = 22;
+      baseModelFontSize = 17.5;
+      baseModelLineHeight = 21.5;
     }
     if (options.labelFontSize && options.labelFontSize !== 11) {
-      baseModelFontSize = Math.round(options.labelFontSize * 1.35);
-      baseModelLineHeight = Math.round(baseModelFontSize * 1.25);
+      baseModelFontSize = Math.round(options.labelFontSize * 1.15);
+      baseModelLineHeight = Math.round(baseModelFontSize * 1.2);
     }
   } else {
-    if (displayRows.length >= 35) {
-      baseModelFontSize = 13;
-      baseModelLineHeight = 16;
+    if (displayRows.length >= 36) {
+      baseModelFontSize = 11;
+      baseModelLineHeight = 13;
     } else if (displayRows.length >= 24) {
-      baseModelFontSize = 14.5;
-      baseModelLineHeight = 18;
+      baseModelFontSize = 12.5;
+      baseModelLineHeight = 15;
     } else if (displayRows.length >= 16) {
-      baseModelFontSize = 15.5;
-      baseModelLineHeight = 19;
+      baseModelFontSize = 14;
+      baseModelLineHeight = 17;
     } else if (displayRows.length <= 6) {
-      baseModelFontSize = 17;
-      baseModelLineHeight = 21;
-    } else {
       baseModelFontSize = 16.5;
       baseModelLineHeight = 20;
+    } else {
+      baseModelFontSize = 15.5;
+      baseModelLineHeight = 18.5;
     }
     if (options.labelFontSize && options.labelFontSize !== 11) {
-      baseModelFontSize = Math.round(options.labelFontSize * 1.3);
-      baseModelLineHeight = Math.round(baseModelFontSize * 1.25);
+      baseModelFontSize = Math.round(options.labelFontSize * 1.2);
+      baseModelLineHeight = Math.round(baseModelFontSize * 1.2);
     }
   }
   const modelFontSize = Math.round(baseModelFontSize * fontScale);
@@ -797,7 +797,7 @@ export function buildExportEchartsOption(
         color: textCol,
         fontSize: titleFontSize,
         fontWeight: "bold",
-        letterSpacing: Math.round(2 * fontScale),
+        letterSpacing: Math.round(1.5 * fontScale),
         lineHeight: titleHeight
       },
       subtextStyle: {
@@ -805,7 +805,7 @@ export function buildExportEchartsOption(
         color: subColor,
         fontSize: subtitleFontSize,
         fontWeight: "bold",
-        letterSpacing: Math.round(1.5 * fontScale),
+        letterSpacing: Math.round(1 * fontScale),
         lineHeight: subtitleHeight
       }
     },
@@ -819,9 +819,9 @@ export function buildExportEchartsOption(
         fontSize: legendFontSize,
         fontWeight: "600"
       },
-      itemGap: Math.round((isVertical ? 20 : 24) * scale),
-      itemWidth: Math.round((isVertical ? 20 : 24) * scale),
-      itemHeight: Math.round((isVertical ? 11 : 13) * scale),
+      itemGap: Math.round((isVertical ? 16 : 18) * scale),
+      itemWidth: Math.round((isVertical ? 14 : 16) * scale),
+      itemHeight: Math.round((isVertical ? 8 : 9) * scale),
       icon: "rect",
       data: isMergedBars
         ? [
@@ -875,19 +875,24 @@ export function buildExportEchartsOption(
       axisLabel: {
         color: subTextCol,
         fontWeight: "600",
-        fontSize: Math.round((isVertical ? 18 : 17) * fontScale),
+        fontSize: Math.round((isVertical ? 14 : 13) * fontScale),
         formatter: (val: number) => Math.round(val).toLocaleString()
       }
     },
     yAxis: {
       type: "category",
-      data: categoryNames.map((n) => formatTwoLineLabel(n, isVertical ? (displayRows.length <= 6 ? 22 : 16) : 26)),
+      data: isVertical
+        ? (displayRows.length >= 18
+            ? categoryNames
+            : categoryNames.map((n) => formatTwoLineLabel(n, displayRows.length <= 6 ? 24 : 20)))
+        : categoryNames,
       axisLine: {
         show: true,
         lineStyle: { color: isLight ? "#cbd5e1" : "#334155" }
       },
       axisTick: { show: false },
       axisLabel: {
+        interval: 0,
         color: (val: string, index: number) => {
           const row = displayRows[index];
           const isHighlighted =
@@ -907,8 +912,8 @@ export function buildExportEchartsOption(
         fontWeight: "bold",
         lineHeight: modelLineHeight,
         align: "right",
-        margin: Math.round((isVertical ? 8 : 12) * fontScale),
-        width: Math.max(120, gridLeft - Math.round((isVertical ? 14 : 24) * fontScale)),
+        margin: Math.round((isVertical ? 6 : 10) * fontScale),
+        width: Math.max(100, gridLeft - Math.round((isVertical ? 10 : 20) * fontScale)),
         overflow: "truncate"
       }
     },
