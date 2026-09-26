@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.1",
+    date: "2026-09-26",
+    title: "App-Relative Import Folder Shortcut, Chart Scaling Alignment, Dedicated Standalone Changelogs & Version Synchronization",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Open Import Folder",
+      "Customizable Shortcuts",
+      "Chart Scaling Parity",
+      "Typography Alignment",
+      "Settings Persistence",
+      "Multi-App Changelogs",
+      "Version Synchronization"
+    ],
+    highlights: [
+      "App-Relative Import Folder Quick Launch: Added a dedicated shortcut (Ctrl+I) and top navbar action to open the folder picker or import directory corresponding to the currently active app (OCR screenshots folder or CapFrameX JSON captures) in Windows File Explorer.",
+      "CapFrameX Chart Typography & Scaling Alignment: Completely overhauled CapFrameX chart rendering to match Benchmark OCR Analyzer aesthetic. Harmonized heading/subheading spacing, dynamic text scaling across both few-product and many-product datasets, and horizontal/vertical aspect ratio parity.",
+      "Default Publication Branding Integration: Official high-resolution Gadget Pilipinas logo is now active by default across both OCR and CapFrameX export engines.",
+      "Chart Defaults & Settings Retention: Fixed persistence of chart aspect ratios (16:9 vs 9:16), export resolution, format defaults, and custom auto-switch thresholds across app sessions.",
+      "Dedicated Standalone Changelogs: Published comprehensive markdown release histories for each individual application (CHANGELOG_OCR.md, CHANGELOG_CAPFRAMEX.md) alongside the unified CHANGELOG.md.",
+      "Full Codebase Version Marker Alignment: Synchronized Suite v1.1.1, CapFrameX v1.1.1, and OCR Analyzer v2.17.0 across backend API health endpoints, config files, package manifests, and UI badges."
+    ]
+  },
+  {
     version: "v1.1.0",
     date: "2026-09-26",
     title: "Unified Multi-Theme Engine, 3-in-1 Changelog Hub, Customizable Keyboard Shortcuts, Smart Auto-Switch to 9:16 & Master Navbar Cleanup",
-    isLatest: true,
+    isLatest: false,
     category: "Major",
     tags: [
       "Master Navbar Cleanup",
@@ -60,10 +84,32 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.1",
+    date: "2026-09-26",
+    title: "Chart Scaling & Typography Overhaul, Heading Spacing Parity, Default Gadget Pilipinas Branding & Import Folder Access",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Chart Scaling Fix",
+      "Typography Parity",
+      "Heading Spacing",
+      "Gadget Pilipinas Branding",
+      "Settings Retention",
+      "Import Folder Shortcut"
+    ],
+    highlights: [
+      "Chart Text Scaling Fix: Eliminated text scaling disparity on charts with few products. Subheadings, axis labels, and bar metrics now scale proportionally across both horizontal (16:9) and vertical (9:16) orientations.",
+      "Heading & Subheading Spacing Parity: Unified heading margins and spacing to match Benchmark OCR Analyzer's editorial presentation standards.",
+      "Default Gadget Pilipinas Branding: Pre-configured the high-resolution Gadget Pilipinas colored ribbon logo as the active default publication mark with matching top-right offsets.",
+      "Export Defaults & Setting Retention: Fixed persistence of aspect ratio, resolution (720p/1080p/4K), and image format selections across reloads.",
+      "1-Click Import Folder Explorer: Added clickable folder icon on the capture path input and support for the global Ctrl+I shortcut to immediately open the CapFrameX JSON capture folder in Windows File Explorer."
+    ]
+  },
+  {
     version: "v1.1.0",
     date: "2026-09-25",
     title: "Tri-Resolution Comparative Engine, Laptop Power Profiles, GPU Hierarchy Ranking, Merged Dual-Bars & Metadata Editor",
-    isLatest: true,
+    isLatest: false,
     category: "Major",
     tags: [
       "Tri-Resolution Engine",

@@ -7,6 +7,7 @@ import { useShortcutStore, isShortcutMatch, formatCombo } from "./stores/shortcu
 import { useThemeStore } from "./stores/themeStore";
 import { useImportStore } from "./stores/useImportStore";
 import { useProjectStore } from "./stores/projectStore";
+import { SUITE_VERSION_LABEL } from "./constants/version";
 
 type ActiveApp = "ocr" | "capframex";
 
@@ -146,7 +147,7 @@ export function App() {
               <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Analyzer</span>
             </div>
             <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700/60 font-mono">
-              v1.1.0
+              {SUITE_VERSION_LABEL}
             </span>
           </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { RefreshCw, Folder, FolderOpen, Sun, Moon, Cpu, Layers, Table, Laptop, Files, Gamepad2, Palette } from "lucide-react";
 import { BenchmarkMode } from "../../types/capframex";
 import { UITheme } from "../../stores/themeStore";
+import { CAPFRAMEX_VERSION_LABEL } from "../../constants/version";
 
 interface HeaderProps {
   folder: string;
@@ -105,12 +106,15 @@ export const Header: React.FC<HeaderProps> = ({
             <h1 className="text-sm font-bold text-white tracking-wide">
               CapFrameX Analyzer
             </h1>
+            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700/60 font-mono">
+              {CAPFRAMEX_VERSION_LABEL}
+            </span>
             <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border transition-colors ${
               benchmarkMode === "laptop"
                 ? "bg-indigo-500/20 text-indigo-300 border-indigo-500/30"
                 : "bg-blue-500/20 text-blue-400 border-blue-500/30"
             }`}>
-              {benchmarkMode === "laptop" ? "Laptop Profiles" : "Tri-Res v1.1"}
+              {benchmarkMode === "laptop" ? "Laptop Profiles" : "Tri-Res"}
             </span>
           </div>
           <p className="text-[11px] text-slate-400">

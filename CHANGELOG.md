@@ -4,6 +4,34 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
+### Dedicated Application Changelogs
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.0 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.1 - v1.0.0)
+
+---
+
+## [1.1.1] - 2026-09-26
+### App-Relative Import Folder Shortcut, Chart Scaling Alignment, Dedicated Standalone Changelogs & Version Synchronization
+
+- **App-Relative Import Folder Shortcut (`Ctrl+I`) & Quick Launch**:
+  - Added dynamic app-relative import folder detection: pressing `Ctrl+I`, clicking the top navbar "Open Import Folder" button, or using the Data & Storage settings card opens Windows File Explorer directly into the active app's folder (`POST /api/system/open-import-folder`).
+  - Automatically targets the active Benchmark OCR screenshots folder or the active CapFrameX JSON capture folder.
+  - Made the folder icon inside CapFrameX capture path input directly clickable to reveal the capture directory in File Explorer.
+- **CapFrameX Chart Typography & Scaling Alignment**:
+  - Aligned CapFrameX chart rendering directly with Benchmark OCR Analyzer editorial design standards.
+  - Corrected text scaling disparities on charts with few products, resolving cramped or disproportionately tiny subheadings on horizontal (16:9) charts and uneven heading spacing on vertical (9:16) charts.
+  - Unified font metrics, heading-to-subheading margins, and category label line-heights across both apps.
+- **Branding & Default Publication Logo Parity**:
+  - Pre-configured the official high-resolution Gadget Pilipinas colored ribbon logo (`12500x4500`, aspect 2.7778) as the active default publication mark across both apps.
+  - Fixed chart export preferences and setting retention so custom aspect ratios, resolutions (720p/1080p/4K), and formats persist reliably across project reloads.
+- **Dedicated Standalone Changelog Documentation**:
+  - Split and published complete dedicated markdown changelogs for each sub-application:
+    - [CHANGELOG_OCR.md](CHANGELOG_OCR.md): Complete release history for **Benchmark OCR Analyzer** (v2.17.0 down to v1.0.0).
+    - [CHANGELOG_CAPFRAMEX.md](CHANGELOG_CAPFRAMEX.md): Complete release history for **CapFrameX Analyzer** (v1.1.1, v1.1.0, v1.0.0).
+  - Updated the unified [CHANGELOG.md](CHANGELOG.md) to track suite-level milestones.
+- **Full Codebase Version Marker Alignment**:
+  - Synchronized Suite Version (`v1.1.1`), CapFrameX Version (`v1.1.1`), and Benchmark OCR Analyzer Version (`v2.17.0`) across `frontend/src/constants/version.ts`, `backend/app/config.py`, `backend/app/main.py` (`/api/health`), `frontend/package.json`, and UI status badges.
+
 ---
 
 ## [1.1.0] - 2026-09-25

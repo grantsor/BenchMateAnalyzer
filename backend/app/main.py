@@ -79,6 +79,11 @@ async def health_check():
         "status": "healthy",
         "service": settings.PROJECT_NAME,
         "version": settings.VERSION,
+        "app_versions": {
+            "suite": settings.VERSION,
+            "ocr_analyzer": settings.OCR_VERSION,
+            "capframex_analyzer": settings.CAPFRAMEX_VERSION
+        },
         "engines": {
             "ocr_engine": "ready",
             "capframex_engine": "ready"
