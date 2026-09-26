@@ -66,6 +66,7 @@ interface ModeSessionState {
 }
 
 interface StoredAppPreferences {
+  folder?: string;
   exportConfig?: ExportConfig;
   productName?: string;
   exportPhrase?: string;
@@ -114,7 +115,21 @@ function storePreferences(prefs: StoredAppPreferences) {
 }
 
 export const CapFrameXApp: React.FC = () => {
-  const [folder, setFolder] = useState("N:\\BenchMarkTool\\Sample CapframeX Data");
+  const [folder, setFolder] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem("cx_import_folder_path");
+      if (saved) return saved;
+      const p = getStoredPreferences();
+      if (p.folder) return p.folder;
+    } catch (e) {}
+    return "N:\\BenchMarkTool\\Sample CapframeX Data";
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("cx_import_folder_path", folder);
+    } catch (e) {}
+  }, [folder]);
   const [runsCount, setRunsCount] = useState(0);
   const [games, setGames] = useState<string[]>([]);
   const [selectedGame, setSelectedGame] = useState<string>("");
@@ -275,6 +290,7 @@ export const CapFrameXApp: React.FC = () => {
   // Automatically persist user settings to localStorage so they remain the default until changed
   useEffect(() => {
     storePreferences({
+      folder,
       exportConfig,
       productName,
       exportPhrase,

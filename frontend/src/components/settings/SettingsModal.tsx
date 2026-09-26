@@ -17,7 +17,8 @@ import {
   ExternalLink,
   Sliders,
   Image as ImageIcon,
-  CheckSquare
+  CheckSquare,
+  FolderSearch
 } from "lucide-react";
 import { useThemeStore, THEME_OPTIONS, UITheme } from "../../stores/themeStore";
 import { useBrandingDefaultsStore } from "../../stores/brandingDefaultsStore";
@@ -58,6 +59,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Action status state
   const [folderOpenStatus, setFolderOpenStatus] = useState<string | null>(null);
+  const [importFolderOpenStatus, setImportFolderOpenStatus] = useState<string | null>(null);
   const [resetStatus, setResetStatus] = useState<string | null>(null);
 
   useEffect(() => {
@@ -139,6 +141,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       setFolderOpenStatus("Error reaching backend");
     }
     setTimeout(() => setFolderOpenStatus(null), 3000);
+  };
+
+  const handleOpenImportFolder = async () => {
+    let targetPath = "";
+    let activeApp = "ocr";
+    try {
+      activeApp = localStorage.getItem("benchmate_active_app_v1") || "ocr";
+      if (activeApp === "ocr") {
+        targetPath = localStorage.getItem("gp_import_folder_path") || "";
+      } else {
+        targetPath = localStorage.getItem("cx_import_folder_path") || "";
+      }
+    } catch (e) {}
+
+    try {
+      setImportFolderOpenStatus("Opening...");
+      const res = await fetch("/api/system/open-import-folder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: targetPath, app_type: activeApp })
+      });
+      if (res.ok) {
+        setImportFolderOpenStatus("Folder opened!");
+      } else {
+        setImportFolderOpenStatus("Could not open automatically");
+      }
+    } catch {
+      setImportFolderOpenStatus("Error reaching backend");
+    }
+    setTimeout(() => setImportFolderOpenStatus(null), 3000);
   };
 
   const handleResetOcrPreferences = () => {
@@ -815,7 +847,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 <div className="bg-[#18181b]/70 border border-[#23232a] rounded-xl p-4 flex items-center justify-between gap-4">
                   <div className="space-y-0.5">
                     <div className="text-xs font-bold text-white flex items-center gap-2">
-                      <FolderOpen className="w-4 h-4 text-amber-400" />
+                      <FolderOpen className="w-4 h-4 text-blue-400" />
                       <span>Open Local Data Folder</span>
                     </div>
                     <div className="text-[11px] text-slate-400">
@@ -828,7 +860,28 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     onClick={handleOpenDataFolder}
                     className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition shadow shrink-0 cursor-pointer"
                   >
-                    {folderOpenStatus || "Open in Explorer"}
+                    {folderOpenStatus || "Open Data Folder"}
+                  </button>
+                </div>
+
+                {/* Active Import Folder Explorer */}
+                <div className="bg-[#18181b]/70 border border-[#23232a] rounded-xl p-4 flex items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <div className="text-xs font-bold text-white flex items-center gap-2">
+                      <FolderSearch className="w-4 h-4 text-amber-400" />
+                      <span>Open Active App Import Folder</span>
+                    </div>
+                    <div className="text-[11px] text-slate-400">
+                      Launches Windows File Explorer pointing to the import directory for whichever app is active (OCR screenshots or CapFrameX captures).
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleOpenImportFolder}
+                    className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold transition shadow shrink-0 cursor-pointer"
+                  >
+                    {importFolderOpenStatus || "Open Import Folder"}
                   </button>
                 </div>
 

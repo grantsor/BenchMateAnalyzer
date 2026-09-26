@@ -156,9 +156,22 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Folder Input + Browse Button Group */}
         <div className="flex items-center bg-[#18181b] border border-[#23232a] rounded-lg overflow-hidden focus-within:border-blue-500">
-          <div className="pl-3 pr-2 text-blue-400 flex items-center">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await fetch("/api/system/open-import-folder", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ path: inputFolder, app_type: "capframex" })
+                });
+              } catch (e) {}
+            }}
+            className="pl-3 pr-2 text-blue-400 hover:text-blue-300 transition flex items-center cursor-pointer"
+            title="Open this folder in Windows File Explorer (Ctrl+I)"
+          >
             <Folder className="w-3.5 h-3.5" />
-          </div>
+          </button>
           <input
             type="text"
             value={inputFolder}

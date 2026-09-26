@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from typing import Optional
+from pydantic import BaseModel
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
@@ -114,6 +115,67 @@ async def open_data_folder():
         else:
             subprocess.run(["xdg-open", str(data_dir)])
         return {"status": "opened", "path": str(data_dir)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+class OpenImportFolderRequest(BaseModel):
+    path: Optional[str] = None
+    app_type: Optional[str] = "ocr"  # "ocr" or "capframex"
+
+@app.post("/api/system/open-import-folder")
+async def open_import_folder(request: Optional[OpenImportFolderRequest] = None):
+    """
+    Opens the active application's import folder (OCR or CapFrameX) in Windows File Explorer.
+    """
+    import sys
+    import subprocess
+    from pathlib import Path
+
+    app_type = (request.app_type if request and request.app_type else "ocr").lower()
+    req_path = (request.path.strip() if request and request.path else "")
+
+    target_dir: Optional[Path] = None
+
+    if req_path:
+        p = Path(req_path)
+        if p.is_dir():
+            target_dir = p
+        elif p.is_file():
+            target_dir = p.parent
+        elif p.parent.exists():
+            target_dir = p.parent
+
+    if not target_dir or not target_dir.exists():
+        if app_type == "capframex":
+            candidates = [
+                Path(settings.CAPFRAMEX_DEFAULT_DIR),
+                Path(r"N:\BenchMarkTool\Sample CapframeX Data"),
+                settings.CAPFRAMEX_DATA_DIR,
+                settings.DATA_DIR
+            ]
+        else:
+            candidates = [
+                Path(r"N:\BenchMarkTool"),
+                settings.UPLOADS_DIR,
+                settings.DATA_DIR
+            ]
+        for c in candidates:
+            if c.exists():
+                target_dir = c
+                break
+
+    if not target_dir:
+        target_dir = settings.DATA_DIR
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+    try:
+        if sys.platform == "win32":
+            os.startfile(str(target_dir))
+        elif sys.platform == "darwin":
+            subprocess.run(["open", str(target_dir)])
+        else:
+            subprocess.run(["xdg-open", str(target_dir)])
+        return {"status": "opened", "path": str(target_dir), "app_type": app_type}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

@@ -26,10 +26,10 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
   - Automatically switches chart aspect ratio to `9:16` vertical when comparing more than 8 products or configurations (customizable threshold in Settings).
   - Equipped with a manual override guard so user-chosen aspect ratios are preserved on the active dataset without fighting manual clicks.
 - **Customizable Global Keyboard Shortcuts**:
-  - User-configurable shortcuts for Switch to OCR App (`Ctrl+1`), Switch to CapFrameX App (`Ctrl+2`), Quick Export Active Chart (`Ctrl+E`), Batch Export (`Ctrl+B`), Open Settings (`Ctrl+,`), Cycle UI Theme (`Ctrl+Shift+T`), and Open Data Folder (`Ctrl+O`).
+  - User-configurable shortcuts for Switch to OCR App (`Ctrl+1`), Switch to CapFrameX App (`Ctrl+2`), Quick Export Active Chart (`Ctrl+E`), Batch Export (`Ctrl+B`), Open Settings (`Ctrl+,`), Cycle UI Theme (`Ctrl+Shift+T`), Open Data Folder (`Ctrl+O`), and **Open Active Import Folder** (`Ctrl+I`).
   - Input-focus guards prevent typing in search bars or text fields from triggering app shortcuts.
 - **System Integration & Diagnostics**:
-  - Added `POST /api/system/open-data-folder` endpoint launching Windows File Explorer directly into the application data and exports directory (`os.startfile`).
+  - Added `POST /api/system/open-data-folder` and `POST /api/system/open-import-folder` endpoints launching Windows File Explorer directly into the application data directory or the active app's import directory (`os.startfile`).
 
 ---
 

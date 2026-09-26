@@ -65,6 +65,13 @@ export const DEFAULT_SHORTCUTS: Record<string, ShortcutDefinition> = {
     description: "Open the local BenchMate data and exports folder in Windows File Explorer",
     defaultCombo: { key: "o", ctrl: true },
     combo: { key: "o", ctrl: true }
+  },
+  open_import_folder: {
+    id: "open_import_folder",
+    label: "Open Active Import Folder",
+    description: "Open the active app's import folder (OCR screenshots or CapFrameX captures) in Windows File Explorer",
+    defaultCombo: { key: "i", ctrl: true },
+    combo: { key: "i", ctrl: true }
   }
 };
 

@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { OcrApp } from "./apps/OcrApp";
 import { CapFrameXApp } from "./apps/CapFrameXApp";
-import { Camera, Gamepad2, ExternalLink, Layers, Settings } from "lucide-react";
+import { Camera, Gamepad2, ExternalLink, Layers, Settings, FolderSearch } from "lucide-react";
 import { SettingsModal } from "./components/settings/SettingsModal";
-import { useShortcutStore, isShortcutMatch } from "./stores/shortcutStore";
+import { useShortcutStore, isShortcutMatch, formatCombo } from "./stores/shortcutStore";
 import { useThemeStore } from "./stores/themeStore";
+import { useImportStore } from "./stores/useImportStore";
+import { useProjectStore } from "./stores/projectStore";
 
 type ActiveApp = "ocr" | "capframex";
 
@@ -51,6 +53,42 @@ export function App() {
     }
   }, [activeApp]);
 
+  const handleOpenImportFolder = useCallback(async () => {
+    let targetPath = "";
+    if (activeApp === "ocr") {
+      targetPath =
+        useImportStore.getState().folderPath ||
+        useProjectStore.getState().currentProject?.root_folder_path ||
+        "";
+      if (!targetPath) {
+        try {
+          targetPath = localStorage.getItem("gp_import_folder_path") || "";
+        } catch (e) {}
+      }
+    } else {
+      try {
+        targetPath = localStorage.getItem("cx_import_folder_path") || "";
+        if (!targetPath) {
+          const raw = localStorage.getItem("cx_benchmark_chart_preferences_v2");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            targetPath = parsed.folder || "";
+          }
+        }
+      } catch (e) {}
+    }
+
+    try {
+      await fetch("/api/system/open-import-folder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ path: targetPath, app_type: activeApp })
+      });
+    } catch (e) {
+      console.error("Could not open import folder:", e);
+    }
+  }, [activeApp]);
+
   // Global customizable keyboard shortcuts listener with input guard
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -78,12 +116,15 @@ export function App() {
       } else if (shortcuts.open_data && isShortcutMatch(shortcuts.open_data.combo, e)) {
         e.preventDefault();
         fetch("/api/system/open-data-folder", { method: "POST" }).catch(() => {});
+      } else if (shortcuts.open_import_folder && isShortcutMatch(shortcuts.open_import_folder.combo, e)) {
+        e.preventDefault();
+        handleOpenImportFolder();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [shortcuts, cycleTheme]);
+  }, [shortcuts, cycleTheme, handleOpenImportFolder]);
 
   const handlePopOut = () => {
     const url = `${window.location.origin}${window.location.pathname}?app=${activeApp}&standalone=1`;
@@ -138,8 +179,19 @@ export function App() {
             </button>
           </div>
 
-          {/* Right Action Tools: Settings + Pop Out */}
-          <div className="flex items-center gap-2.5">
+          {/* Right Action Tools: Import Folder + Settings + Pop Out */}
+          <div className="flex items-center gap-2">
+            {/* Open Active Import Folder Button */}
+            <button
+              type="button"
+              onClick={handleOpenImportFolder}
+              title={`Open ${activeApp === "ocr" ? "OCR Screenshots" : "CapFrameX Captures"} Import Folder in Windows Explorer (${formatCombo(shortcuts.open_import_folder?.combo || { key: "i", ctrl: true })})`}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs font-semibold transition cursor-pointer"
+            >
+              <FolderSearch className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline">Import Folder</span>
+            </button>
+
             {/* Dedicated Settings Button (Replaced Dual Engines Online) */}
             <button
               type="button"

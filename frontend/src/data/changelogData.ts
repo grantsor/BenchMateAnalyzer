@@ -31,7 +31,7 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
       "Customizable Keyboard Shortcuts: Users can now record and customize hotkeys (Switch to OCR [Ctrl+1], Switch to CapFrameX [Ctrl+2], Quick Export [Ctrl+E], Batch Export [Ctrl+B], Open Settings [Ctrl+,], Toggle Theme [Ctrl+Shift+T]) with conflict prevention and input guard.",
       "Smart Auto-Switch to 9:16 Vertical Ratio: Added intelligent dataset detection that automatically shifts chart exports to 9:16 vertical orientation when product comparisons exceed 8 items (user-customizable threshold), while retaining 16:9 horizontal for fewer items.",
       "3-in-1 Central Changelog Hub: Added interactive version switchers inside Settings allowing reviewers to explore BenchMate Unified, Benchmark OCR, and CapFrameX release histories in one place with keyword search and 1-click Markdown copying.",
-      "Data & Storage Quick Launch: Added 1-click 'Open Data Folder' action to open local review data, databases, and chart exports directly in Windows File Explorer."
+      "Data & Import Folder Quick Launch: Added 1-click 'Open Data Folder' (Ctrl+O) and app-relative 'Open Import Folder' (Ctrl+I) to open local review data, OCR screenshots, or CapFrameX JSON captures directly in Windows File Explorer."
     ]
   },
   {
