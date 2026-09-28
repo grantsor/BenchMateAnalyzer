@@ -6,6 +6,20 @@ This application is also bundled as a dedicated analysis app within the unified 
 
 ---
 
+## [1.1.2] - 2026-09-28
+### Direct Downloads Delivery, Tri-Res & All-Games ZIP Export Reliability & Title Margin Safety
+
+- **Direct Downloads Delivery via Backend Engine**:
+  - Routed single chart image exports (`exportSingleChart`), Tri-Resolution ZIP packages (`exportTriResolutionZip`), and Batch All-Games archives (`handleExportAllGamesZip`) through `deliverExportFile` and `POST /api/export/save-file`.
+  - Files are written directly to the Windows `Downloads` directory, eliminating WebView2 silent cancellation of blob downloads.
+- **Export Toast Notifications & "Show in Explorer"**:
+  - Added on-screen success toasts reporting exported filenames and file sizes, complete with a 1-click **"Show in Explorer"** button that selects the generated file in Windows File Explorer.
+- **9:16 Vertical Safe Title Layout & Dynamic Offsets**:
+  - Implemented safe centered title width constraints to prevent long game or profile titles from overlapping the top-right publication logo.
+  - Aligned dynamic top offsets (`titleTop`, `legendTop`, `gridTop`) based on line count for balanced typography.
+
+---
+
 ## [1.1.1] - 2026-09-26
 ### Chart Scaling & Typography Overhaul, Heading Spacing Parity, Default Gadget Pilipinas Branding & Import Folder Access
 

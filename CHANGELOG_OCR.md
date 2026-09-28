@@ -6,6 +6,20 @@ This application is also bundled as the primary vision engine within the unified
 
 ---
 
+## [2.17.1] - 2026-09-28
+### 9:16 Long Title Word-Wrapping & Backend Direct Downloads Delivery
+
+- **9:16 Vertical Title-to-Logo Collision Fix**:
+  - Resolved text overlap on long benchmark titles (such as `3DMark and PCMark Storage Benchmark - Bandwidth (MB/s)`) in 9:16 vertical exports by introducing intelligent 3-line balanced word wrapping and safe centered title constraints.
+  - Dynamically calculates `titleTop`, `legendTop`, and `gridTop` depending on line count, ensuring title, subtitle, legend, and bars maintain proportional spacing without clipping.
+- **Backend File & ZIP Delivery Engine**:
+  - Implemented direct file delivery endpoints (`POST /api/export/save-file` and `POST /api/export/save-batch`) writing single chart images and ZIP archives directly to Windows `Downloads` and local `data/exports`.
+  - Added on-screen export toast alerts with a 1-click **"Show in Explorer"** button.
+- **Native Desktop WebView2 Downloads**:
+  - Enabled PyWebView download settings (`ALLOW_DOWNLOADS = True`) so single exports and batch ZIPs never silently fail inside the native Windows desktop app.
+
+---
+
 ## [2.17.0] - 2026-09-11
 ### PCMark 10 Storage Disambiguation, Unified 3DMark & PCMark Storage Suite, Split Sub-Charts & Smart Metric Defaulting
 

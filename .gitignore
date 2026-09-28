@@ -11,6 +11,8 @@ env/
 .pytest_cache/
 *.sqlite3
 backend/data/*.db
+backend/data/exports/
+data/
 
 # Node / Frontend
 frontend/node_modules/

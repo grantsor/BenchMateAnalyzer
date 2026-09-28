@@ -5,8 +5,29 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.0 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.1 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.1 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.2 - v1.0.0)
+
+---
+
+## [1.1.2] - 2026-09-28
+### Backend Download Delivery System, 9:16 Title-to-Logo Collision Resolution & Export Reliability
+
+- **Backend File & ZIP Delivery Engine (`/api/export/save-file` & `/api/export/save-batch`)**:
+  - Implemented direct file delivery endpoints saving single charts (WebP, PNG, JPG) and ZIP bundles directly to the user's Windows `Downloads` directory via Windows Shell registry lookup (`{374DE290-123F-4565-9164-39C4925E467B}`).
+  - Automatically mirrors a persistent backup copy in the application's internal `data/exports` directory.
+  - Completely bypasses Microsoft WebView2 browser download blocking and silent cancellation.
+- **Export Notification Toasts with 1-Click "Show in Explorer"**:
+  - Created sleek floating notification cards (`ExportToastContainer`) displaying the exported filename, file size, and success checkmark.
+  - Includes a 1-click **"Show in Explorer"** button that executes `explorer /select,"<file_path>"` to highlight the generated chart directly in Windows File Explorer.
+- **Native Desktop WebView2 Downloads Enabled**:
+  - Configured `webview.settings['ALLOW_DOWNLOADS'] = True` inside `run_app.py`, ensuring all PyWebView webview instances support download events and file streams without host interruption.
+- **9:16 Vertical Title-to-Logo Overlap Resolution**:
+  - Engineered intelligent 3-line balanced word wrapping and dynamic font scaling inside `formatChartTitle` to handle long benchmark titles (such as SSD suites like `3DMark and PCMark Storage Benchmark - Bandwidth (MB/s)`).
+  - Constrained title width strictly to `safeCenteredTitleWidth` (`width - 2 * (logoWidth + offsetX + 18*scale)`) with `overflow: "break"` and centered alignment, guaranteeing zero collision with top-right publication logos.
+  - Synchronized dynamic canvas offsets (`titleTop`, `legendTop`, `gridTop`) based on title line count (1-line, 2-line, 3-line) to maintain clean, proportional vertical rhythm.
+- **Unified Exporter Alignment Across Both Apps**:
+  - Both Benchmark OCR Analyzer and CapFrameX Analyzer now use the centralized `deliverExportFile` helper for single chart exports and multi-resolution ZIP archives.
 
 ---
 

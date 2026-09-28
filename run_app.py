@@ -244,6 +244,10 @@ if __name__ == "__main__":
         print(f"Opening native desktop GUI window at {app_url}...")
 
         import webview
+        try:
+            webview.settings['ALLOW_DOWNLOADS'] = True
+        except Exception:
+            pass
 
         window = webview.create_window(
             title=f"BenchMate Analyzer v{settings.VERSION} (OCR & CapFrameX)",

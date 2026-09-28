@@ -31,6 +31,7 @@ import {
 import { GRADIENT_PRESETS, samplePresetColors } from "../utils/capframex/colorPalettes";
 import { useThemeStore } from "../stores/themeStore";
 import { useBrandingDefaultsStore } from "../stores/brandingDefaultsStore";
+import { deliverExportFile } from "../utils/exportDownloadHelper";
 import JSZip from "jszip";
 
 const DEFAULT_BLUE_PRESET = GRADIENT_PRESETS.find((p) => p.id === "excel-blue")!;
@@ -1191,16 +1192,10 @@ export const CapFrameXApp: React.FC = () => {
 
       setExportProgressText("Compressing into ZIP archive...");
       const blob = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
       const cleanProduct = (productName || "Product").trim().replace(/[\\/:*?"<>|]/g, "-");
       const cleanGame = (effectiveTitle || selectedGame).trim().replace(/[\\/:*?"<>|]/g, "-");
-      link.download = `${cleanProduct} ${exportPhrase} - ${cleanGame} (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const zipFileName = `${cleanProduct} ${exportPhrase} - ${cleanGame} (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
+      await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
     } catch (e) {
       console.error("Tri-res export error:", e);
     } finally {
@@ -1293,15 +1288,9 @@ export const CapFrameXApp: React.FC = () => {
 
       setExportProgressText("Compressing all benchmark charts into ZIP...");
       const blob = await zip.generateAsync({ type: "blob" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
       const cleanProduct = (productName || "Gaming").trim().replace(/[\\/:*?"<>|]/g, "-");
-      link.download = `${cleanProduct} - All Benchmark Charts (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      const zipFileName = `${cleanProduct} - All Benchmark Charts (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
+      await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
     } catch (e) {
       console.error("Batch all games export failed:", e);
     } finally {

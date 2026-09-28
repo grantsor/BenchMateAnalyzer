@@ -4,6 +4,8 @@ import { GroupedBenchmarkDataset } from "../api/client";
 import type { ChartDesignOptions } from "../components/charts/BenchmarkChart";
 import { GRADIENT_PRESETS, samplePresetColors } from "./colorPalettes";
 import { getSplitExportTargets, AvailableExportTarget } from "./benchmarkSubGroups";
+import { deliverExportFile } from "./exportDownloadHelper";
+import { useExportToastStore } from "../stores/exportToastStore";
 
 export function formatTwoLineLabel(text: string, maxCharsPerLine: number = 28): string {
   if (!text) return "";
@@ -31,6 +33,135 @@ export function formatTwoLineLabel(text: string, maxCharsPerLine: number = 28): 
   const line1 = words.slice(0, bestIdx + 1).join(" ");
   const line2 = words.slice(bestIdx + 1).join(" ");
   return `${line1}\n${line2}`;
+}
+
+/**
+ * Intelligently wraps and scales benchmark titles to prevent overlapping with logos or canvas borders.
+ */
+export function formatChartTitle(
+  rawTitle: string,
+  isVertical: boolean,
+  safeWidthPx: number,
+  scale: number
+): {
+  text: string;
+  fontSize: number;
+  lineHeight: number;
+  lineCount: number;
+} {
+  const clean = (rawTitle || "").trim();
+  if (!clean) {
+    return {
+      text: "",
+      fontSize: Math.round((isVertical ? 30 : 38) * scale),
+      lineHeight: Math.round((isVertical ? 36 : 46) * scale),
+      lineCount: 1
+    };
+  }
+
+  let lines: string[] = [];
+
+  if (clean.includes("\n")) {
+    lines = clean.split("\n");
+  } else {
+    const max1Line = isVertical ? 25 : 44;
+    if (clean.length <= max1Line) {
+      lines = [clean];
+    } else {
+      const maxLines = isVertical ? (clean.length > 44 ? 3 : 2) : (clean.length > 60 ? 3 : 2);
+      const maxCharsPerLine = isVertical ? 26 : 42;
+
+      let splitHandled = false;
+      // Try split on ' - ' first
+      if (clean.includes(" - ")) {
+        const parts = clean.split(" - ");
+        if (parts.length === 2) {
+          const p1 = parts[0].trim();
+          const p2 = parts[1].trim();
+          if (p1.length <= maxCharsPerLine && p2.length <= maxCharsPerLine) {
+            lines = [p1, `- ${p2}`];
+            splitHandled = true;
+          } else if (p1.length > maxCharsPerLine && maxLines >= 3) {
+            const words = p1.split(" ");
+            const mid = Math.ceil(words.length / 2);
+            lines = [words.slice(0, mid).join(" "), words.slice(mid).join(" "), `- ${p2}`];
+            splitHandled = true;
+          }
+        }
+      }
+
+      if (!splitHandled) {
+        // Balanced word-based wrap
+        const words = clean.split(" ");
+        if (words.length <= 1) {
+          lines = [clean];
+        } else {
+          const targetLen = clean.length / maxLines;
+          const collected: string[] = [];
+          let currentWords: string[] = [];
+          let currentLen = 0;
+
+          for (let i = 0; i < words.length; i++) {
+            const w = words[i];
+            const wouldBe = currentLen + (currentLen > 0 ? 1 : 0) + w.length;
+            if (collected.length < maxLines - 1 && wouldBe > targetLen && currentWords.length > 0) {
+              collected.push(currentWords.join(" "));
+              currentWords = [w];
+              currentLen = w.length;
+            } else {
+              currentWords.push(w);
+              currentLen = wouldBe;
+            }
+          }
+          if (currentWords.length > 0) {
+            collected.push(currentWords.join(" "));
+          }
+          lines = collected;
+        }
+      }
+    }
+  }
+
+  // Calculate dynamic font size based on line count and max line length
+  const maxLineLen = Math.max(...lines.map((l) => l.length));
+  let baseFontSize: number;
+
+  if (isVertical) {
+    if (lines.length === 1) {
+      if (maxLineLen <= 18) baseFontSize = 30;
+      else if (maxLineLen <= 25) baseFontSize = 25;
+      else baseFontSize = 22;
+    } else if (lines.length === 2) {
+      if (maxLineLen <= 22) baseFontSize = 24;
+      else if (maxLineLen <= 28) baseFontSize = 20;
+      else baseFontSize = 18;
+    } else {
+      if (maxLineLen <= 22) baseFontSize = 19;
+      else baseFontSize = 16;
+    }
+  } else {
+    if (lines.length === 1) {
+      if (maxLineLen <= 32) baseFontSize = 38;
+      else if (maxLineLen <= 44) baseFontSize = 32;
+      else baseFontSize = 26;
+    } else if (lines.length === 2) {
+      if (maxLineLen <= 34) baseFontSize = 30;
+      else if (maxLineLen <= 46) baseFontSize = 25;
+      else baseFontSize = 21;
+    } else {
+      baseFontSize = 19;
+    }
+  }
+
+  const fontSize = Math.max(12, Math.round(baseFontSize * scale));
+  const lineHeight = Math.round(fontSize * 1.18);
+
+  return {
+    text: lines.join("\n"),
+    fontSize,
+    lineHeight,
+    lineCount: lines.length
+  };
 }
 
 export type ExportAspectRatio = "16:9" | "9:16";
@@ -150,11 +281,68 @@ export function buildExportEchartsOption(
       : options.barValuePosition === "outside"
       ? false
       : rows.length > 5;
+  // Logo parameters
+  const defaultLogoWidth = isVertical ? 140 : 170;
+  const defaultOffsetX = isVertical ? 10 : 12;
+  const defaultOffsetY = isVertical ? 12 : 10;
+
+  const rawWidth = isVertical
+    ? (options.logoWidth_9_16 ?? options.logoWidth ?? defaultLogoWidth)
+    : (options.logoWidth_16_9 ?? options.logoWidth ?? defaultLogoWidth);
+
+  const rawOffsetX = isVertical
+    ? (options.logoOffsetX_9_16 ?? defaultOffsetX)
+    : (options.logoOffsetX_16_9 ?? options.logoOffsetX ?? defaultOffsetX);
+
+  const rawOffsetY = isVertical
+    ? (options.logoOffsetY_9_16 ?? defaultOffsetY)
+    : (options.logoOffsetY_16_9 ?? options.logoOffsetY ?? defaultOffsetY);
+
+  const logoWidth = Math.round(rawWidth * (isVertical ? 1.5 : 1.65) * scale);
+  const logoAspect = options.logoAspectRatio || 2.7778;
+  const logoHeight = Math.round(logoWidth / logoAspect);
+  const isLogoLeft = options.logoPosition === "top-left";
+  const offsetX = Math.round(rawOffsetX * 1.8 * scale);
+  const offsetY = Math.round(rawOffsetY * 1.8 * scale);
+
+  // Logo right-occupied boundary: from right edge towards center
+  const logoOccupiedWidth = logoWidth + offsetX + Math.round(18 * scale);
+  // Symmetrically clear space so title centered horizontally NEVER touches the logo
+  const safeCenteredTitleWidth = Math.max(
+    Math.round(140 * scale),
+    Math.round(width - 2 * logoOccupiedWidth)
+  );
+
+  const rawTitleText = options.title || dataset.benchmark_name.toUpperCase();
+  const titleLayout = formatChartTitle(rawTitleText, isVertical, safeCenteredTitleWidth, scale);
+
+  // Dynamic vertical offsets
+  const titleTop = Math.round(
+    (isVertical
+      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 20 : 28)
+      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 24)
+    ) * scale
+  );
+  const titleItemGap = Math.max(3, Math.round((isVertical ? 5 : 6) * scale));
+
+  const legendTop = Math.round(
+    (isVertical
+      ? (titleLayout.lineCount >= 3 ? 134 : titleLayout.lineCount === 2 ? 116 : 94)
+      : (titleLayout.lineCount >= 3 ? 126 : titleLayout.lineCount === 2 ? 108 : 94)
+    ) * scale
+  );
+
+  const gridTop = Math.round(
+    (isVertical
+      ? (titleLayout.lineCount >= 3 ? 190 : titleLayout.lineCount === 2 ? 172 : 150)
+      : (titleLayout.lineCount >= 3 ? 180 : titleLayout.lineCount === 2 ? 165 : 150)
+    ) * scale
+  );
+
   // Grid margins
   const userGridLeft = options.gridLeftMargin ?? (isVertical ? 135 : 240);
   const gridLeft = Math.round((isVertical ? userGridLeft * 2.2 : userGridLeft * 1.85) * scale);
   const gridRight = Math.round((isInside ? 70 : (isVertical ? 110 : 150)) * scale);
-  const gridTop = Math.round((isVertical ? 150 : 150) * scale);
   const gridBottom = Math.round((isVertical ? 75 : 65) * scale);
   const totalGridWidth = Math.max(100, width - gridLeft - gridRight);
 
@@ -318,30 +506,6 @@ export function buildExportEchartsOption(
     };
   });
 
-  // Logo parameters
-  const defaultLogoWidth = isVertical ? 140 : 170;
-  const defaultOffsetX = isVertical ? 10 : 12;
-  const defaultOffsetY = isVertical ? 12 : 10;
-
-  const rawWidth = isVertical
-    ? (options.logoWidth_9_16 ?? options.logoWidth ?? defaultLogoWidth)
-    : (options.logoWidth_16_9 ?? options.logoWidth ?? defaultLogoWidth);
-
-  const rawOffsetX = isVertical
-    ? (options.logoOffsetX_9_16 ?? defaultOffsetX)
-    : (options.logoOffsetX_16_9 ?? options.logoOffsetX ?? defaultOffsetX);
-
-  const rawOffsetY = isVertical
-    ? (options.logoOffsetY_9_16 ?? defaultOffsetY)
-    : (options.logoOffsetY_16_9 ?? options.logoOffsetY ?? defaultOffsetY);
-
-  const logoWidth = Math.round(rawWidth * (isVertical ? 1.5 : 1.65) * scale);
-  const logoAspect = options.logoAspectRatio || 2.7778;
-  const logoHeight = Math.round(logoWidth / logoAspect);
-  const isLogoLeft = options.logoPosition === "top-left";
-  const offsetX = Math.round(rawOffsetX * 1.8 * scale);
-  const offsetY = Math.round(rawOffsetY * 1.8 * scale);
-
   // Symmetrical solid corner decorations sizing (compact, solid pure colors, no white cutouts)
   const cornerSize = Math.round((isVertical ? 85 : 100) * scale);
 
@@ -351,7 +515,6 @@ export function buildExportEchartsOption(
   const hib = firstRow?.metrics[firstMetricKey]?.higher_is_better ?? true;
   const autoSub = hib ? "HIGHER IS BETTER" : "LOWER IS BETTER";
   const subtitle = options.subtitle || autoSub;
-  const titleText = options.title || dataset.benchmark_name.toUpperCase();
   const subColor = options.subtitleColor || (subtitle.includes("LOWER") ? "#f59e0b" : "#e63946");
 
   // Highlight Graphics (row background shade and dividing lines)
@@ -436,28 +599,33 @@ export function buildExportEchartsOption(
       fontFamily: options.fontFamily || "Inter, system-ui, sans-serif"
     },
     title: {
-      text: titleText,
+      text: titleLayout.text,
       subtext: subtitle,
       left: "center",
-      top: Math.round((isVertical ? 30 : 26) * scale),
-      itemGap: Math.max(4, Math.round(6 * scale)), // Close spacing between title and subtitle
+      top: titleTop,
+      itemGap: titleItemGap,
       textStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: textCol,
-        fontSize: Math.round((isVertical ? 36 : 40) * scale),
+        fontSize: titleLayout.fontSize,
+        lineHeight: titleLayout.lineHeight,
         fontWeight: "bold",
-        letterSpacing: Math.round(2 * scale)
+        letterSpacing: Math.round((isVertical ? 1.2 : 1.8) * scale),
+        width: safeCenteredTitleWidth,
+        overflow: "break",
+        align: "center"
       },
       subtextStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: subColor,
-        fontSize: Math.round((isVertical ? 18 : 20) * scale),
+        fontSize: Math.round((isVertical ? 17 : 20) * scale),
         fontWeight: "bold",
-        letterSpacing: Math.round(1.5 * scale)
+        letterSpacing: Math.round(1.5 * scale),
+        align: "center"
       }
     },
     legend: {
-      top: Math.round((isVertical ? 96 : 94) * scale),
+      top: legendTop,
       left: "center",
       orient: "horizontal",
       type: "scroll", // Strictly keep legend items on a single row in export
@@ -788,12 +956,7 @@ export async function exportSingleChart(
     customFileName ||
     buildChartFileName(productName, title, config.format, componentCategory, includeCategoryTag, exportPhrase);
 
-  const link = document.createElement("a");
-  link.href = dataUrl;
-  link.download = name;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  await deliverExportFile(name, dataUrl, { openInExplorer: false, notify: true });
 }
 
 /**
@@ -869,18 +1032,19 @@ export async function batchExportIndividualCharts(
     const dataUrl = await renderChartToDataUrl(ds, dsOptions, config);
     const fileName = buildChartFileName(productName, title, config.format, componentCategory, includeCategoryTag, exportPhrase);
 
-    const link = document.createElement("a");
-    link.href = dataUrl;
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    await deliverExportFile(fileName, dataUrl, { openInExplorer: false, notify: false });
 
-    // Stagger downloads by 300ms so browser download manager handles each cleanly
+    // Small delay between saves
     if (i < targets.length - 1) {
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 150));
     }
   }
+
+  useExportToastStore.getState().showToast({
+    type: "success",
+    title: "Batch Export Completed",
+    message: `Saved ${targets.length} individual chart images directly to Downloads.`
+  });
 }
 
 /**
@@ -969,12 +1133,6 @@ export async function batchExportAllCharts(
   const fullProduct = cleanPhrase ? `${cleanProduct} ${cleanPhrase}` : cleanProduct;
   const prefix = includeCategoryTag && componentCategory ? `[${componentCategory.toUpperCase()}] ` : "";
   const blob = await zip.generateAsync({ type: "blob" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `${prefix}${fullProduct} - All Benchmarks (${config.aspectRatio.replace(":", "x")}_${config.resolution}).zip`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
+  const zipFileName = `${prefix}${fullProduct} - All Benchmarks (${config.aspectRatio.replace(":", "x")}_${config.resolution}).zip`;
+  await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
 }

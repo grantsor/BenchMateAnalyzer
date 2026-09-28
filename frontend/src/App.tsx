@@ -8,6 +8,7 @@ import { useThemeStore } from "./stores/themeStore";
 import { useImportStore } from "./stores/useImportStore";
 import { useProjectStore } from "./stores/projectStore";
 import { SUITE_VERSION_LABEL } from "./constants/version";
+import { ExportToastContainer } from "./components/common/ExportToastContainer";
 
 type ActiveApp = "ocr" | "capframex";
 
@@ -238,6 +239,9 @@ export function App() {
 
       {/* Unified Settings & Changelogs Modal */}
       <SettingsModal isOpen={isSettingsOpen} onClose={() => setIsSettingsOpen(false)} />
+
+      {/* Global Export Delivery Toast Notification */}
+      <ExportToastContainer />
     </div>
   );
 }

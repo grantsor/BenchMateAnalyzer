@@ -34,10 +34,29 @@ interface ReleaseItem {
 
 const BUILTIN_RELEASES: ReleaseItem[] = [
   {
+    version: "v2.17.1",
+    date: "2026-09-28",
+    title: "9:16 Long Title Word-Wrapping & Backend Direct Downloads Delivery",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "9:16 Title Wrapping",
+      "SSD Benchmark Layout",
+      "Logo Collision Fix",
+      "Direct Downloads",
+      "Show in Explorer Toast"
+    ],
+    highlights: [
+      "9:16 Vertical Title-to-Logo Collision Fix: Resolved text scaling overlap on long benchmark titles (such as 3DMark & PCMark Storage Benchmark suite) by introducing intelligent 3-line balanced word wrapping and safe centered title constraints.",
+      "Dynamic Canvas Offsets: Automatically calculates titleTop, legendTop, and gridTop depending on line count so title, subtitle, legend, and bars maintain clean, proportional spacing without clipping.",
+      "Direct Export Delivery & Toasts: Single chart image exports and batch ZIP archives now save directly to Windows Downloads with instant toast notifications and 1-click 'Show in Explorer' integration."
+    ]
+  },
+  {
     version: "v2.17.0",
     date: "2026-09-11",
     title: "PCMark 10 Storage Disambiguation, Unified 3DMark & PCMark Storage Suite, Split Sub-Charts & Smart Metric Defaulting",
-    isLatest: true,
+    isLatest: false,
     category: "Major",
     tags: [
       "Storage Benchmark Suite",

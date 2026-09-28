@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.2",
+    date: "2026-09-28",
+    title: "Backend Download Delivery System, 9:16 Title-to-Logo Collision Resolution & Export Reliability",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Backend Download Delivery",
+      "WebView2 Export Fix",
+      "9:16 Title Scaling",
+      "Multi-Line Balanced Wrap",
+      "Export Notification Toasts",
+      "Show in Explorer",
+      "ZIP Archive Delivery"
+    ],
+    highlights: [
+      "Backend File & ZIP Delivery Engine: Added POST /api/export/save-file and POST /api/export/save-batch endpoints writing exports directly to the user's Windows Downloads directory and archiving locally in data/exports, completely bypassing WebView2 browser download blocking.",
+      "Export Notification Toast with 'Show in Explorer': Sleek on-screen toast confirmation showing exported file name, size, and a 1-click button to reveal the file directly in Windows File Explorer.",
+      "Native Desktop WebView2 Downloads Enabled: Configured PyWebView ALLOW_DOWNLOADS=True to ensure all file transfers and blob downloads execute without silent host cancellation.",
+      "9:16 Vertical Title Collision Resolution: Engineered multi-line balanced word-wrapping and font scaling for long titles (e.g. SSD benchmarks like '3DMark and PCMark Storage Benchmark - Bandwidth (MB/s)'), preventing any overlap with top-right publication logos.",
+      "Dynamic Export Canvas Offsets: Title width is strictly constrained to safe centered canvas geometry away from logos, with mathematically synchronized dynamic offsets (titleTop, legendTop, and gridTop) adapting seamlessly across 1-line, 2-line, and 3-line titles.",
+      "Unified Exporter Alignment: Both Benchmark OCR Analyzer and CapFrameX Analyzer now use the unified download delivery system and shared title formatting logic for single chart exports and batch ZIP archives."
+    ]
+  },
+  {
     version: "v1.1.1",
     date: "2026-09-26",
     title: "App-Relative Import Folder Shortcut, Chart Scaling Alignment, Dedicated Standalone Changelogs & Version Synchronization",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Open Import Folder",
@@ -84,10 +108,30 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.2",
+    date: "2026-09-28",
+    title: "Direct Downloads Delivery, Tri-Res & All-Games ZIP Export Reliability & Title Margin Safety",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Direct Export Delivery",
+      "Tri-Res ZIP Export",
+      "Batch Games Export",
+      "9:16 Title Wrapping",
+      "Show in Explorer"
+    ],
+    highlights: [
+      "Direct Downloads Delivery: Single chart exports, Tri-Resolution ZIP archives, and Batch All-Games ZIP archives now save directly to Windows Downloads with toast feedback and 1-click 'Show in Explorer'.",
+      "WebView2 ZIP Download Fix: Resolved issue where clicking export or ZIP download buttons in WebView2 produced no file due to blocked blob URLs and premature revokeObjectURL calls.",
+      "9:16 Vertical Safe Title Layout: Applied safe centered title width and multi-line wrapping to prevent titles from colliding with publication logos.",
+      "Dynamic Legend and Grid Spacing: Synchronized dynamic top offsets for titles, legends, and chart grids based on line count."
+    ]
+  },
+  {
     version: "v1.1.1",
     date: "2026-09-26",
     title: "Chart Scaling & Typography Overhaul, Heading Spacing Parity, Default Gadget Pilipinas Branding & Import Folder Access",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Chart Scaling Fix",
@@ -146,10 +190,29 @@ export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
 
 export const OCR_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v2.17.1",
+    date: "2026-09-28",
+    title: "9:16 Long Title Word-Wrapping & Backend Direct Downloads Delivery",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "9:16 Title Wrapping",
+      "SSD Benchmark Layout",
+      "Logo Collision Fix",
+      "Direct Downloads",
+      "Show in Explorer Toast"
+    ],
+    highlights: [
+      "9:16 Vertical Title-to-Logo Collision Fix: Resolved text scaling overlap on long benchmark titles (such as 3DMark & PCMark Storage Benchmark suite) by introducing intelligent 3-line balanced word wrapping and safe centered title constraints.",
+      "Dynamic Canvas Offsets: Automatically calculates titleTop, legendTop, and gridTop depending on line count so title, subtitle, legend, and bars maintain clean, proportional spacing without clipping.",
+      "Direct Export Delivery & Toasts: Single chart image exports and batch ZIP archives now save directly to Windows Downloads with instant toast notifications and 1-click 'Show in Explorer' integration."
+    ]
+  },
+  {
     version: "v2.17.0",
     date: "2026-09-11",
     title: "PCMark 10 Storage Disambiguation, Unified 3DMark & PCMark Storage Suite, Split Sub-Charts & Smart Metric Defaulting",
-    isLatest: true,
+    isLatest: false,
     category: "Major",
     tags: [
       "Storage Benchmark Suite",
