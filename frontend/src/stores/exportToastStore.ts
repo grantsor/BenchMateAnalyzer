@@ -2,7 +2,7 @@ import { create } from "zustand";
 
 export interface ExportToast {
   id: string;
-  type: "success" | "error" | "info";
+  type: "success" | "error" | "info" | "warning";
   title: string;
   message: string;
   filePath?: string;
@@ -13,7 +13,7 @@ export interface ExportToast {
 interface ExportToastStore {
   toasts: ExportToast[];
   showToast: (toast: {
-    type?: "success" | "error" | "info";
+    type?: "success" | "error" | "info" | "warning";
     title: string;
     message: string;
     filePath?: string;

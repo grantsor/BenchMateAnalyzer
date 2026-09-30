@@ -4,6 +4,16 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.2] - 2026-09-30
+### Batch Individual & ZIP Export Delivery Hardening & Explorer Integration
+
+- **Dynamic Backend Export Routing**:
+  - Single chart and batch export requests now resolve dynamically through `getApiBase()`, routing directly to `http://127.0.0.1:8742/api` under both dev servers (port 5173) and native production builds.
+- **Batch Individual Export Directory Capture**:
+  - The completion toast for batch individual exports now accurately captures the target directory, enabling a 1-click **"Show in Explorer"** button that reveals the entire batch in Windows File Explorer.
+- **Safe Write Fallback on File Locks**:
+  - Prevents export failures when files are locked by Windows Explorer or image viewers by automatically generating timestamped files.
+
 ---
 
 ## [2.17.1] - 2026-09-28

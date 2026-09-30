@@ -32,6 +32,7 @@ import { GRADIENT_PRESETS, samplePresetColors } from "../utils/capframex/colorPa
 import { useThemeStore } from "../stores/themeStore";
 import { useBrandingDefaultsStore } from "../stores/brandingDefaultsStore";
 import { deliverExportFile } from "../utils/exportDownloadHelper";
+import { useExportToastStore } from "../stores/exportToastStore";
 import JSZip from "jszip";
 
 const DEFAULT_BLUE_PRESET = GRADIENT_PRESETS.find((p) => p.id === "excel-blue")!;
@@ -1094,7 +1095,14 @@ export const CapFrameXApp: React.FC = () => {
   const handleExportActive = async () => {
     if (selectedCustomChartId) {
       const ds = datasets["custom"];
-      if (!ds || ds.rows.length === 0) return;
+      if (!ds || ds.rows.length === 0) {
+        useExportToastStore.getState().showToast({
+          type: "warning",
+          title: "Nothing to Export",
+          message: "The custom chart has no rows to export."
+        });
+        return;
+      }
       setIsExporting(true);
       setExportProgressText("Rendering custom chart...");
       try {
@@ -1114,8 +1122,13 @@ export const CapFrameXApp: React.FC = () => {
           effectiveTitle || activeCustom?.name || "Custom Chart",
           activeCustom?.unit || "Metric"
         );
-      } catch (e) {
+      } catch (e: any) {
         console.error("Export custom chart error:", e);
+        useExportToastStore.getState().showToast({
+          type: "error",
+          title: "Export Failed",
+          message: e?.message || "Failed to export custom chart image."
+        });
       } finally {
         setIsExporting(false);
         setExportProgressText("");
@@ -1130,7 +1143,14 @@ export const CapFrameXApp: React.FC = () => {
     }
 
     const ds = datasets[targetRes];
-    if (!ds || ds.rows.length === 0) return;
+    if (!ds || ds.rows.length === 0) {
+      useExportToastStore.getState().showToast({
+        type: "warning",
+        title: "Nothing to Export",
+        message: `No benchmark data available for ${targetRes} to export.`
+      });
+      return;
+    }
 
     setIsExporting(true);
     setExportProgressText(`Rendering ${targetRes}...`);
@@ -1150,8 +1170,13 @@ export const CapFrameXApp: React.FC = () => {
         effectiveTitle || selectedGame,
         targetRes
       );
-    } catch (e) {
+    } catch (e: any) {
       console.error("Export active error:", e);
+      useExportToastStore.getState().showToast({
+        type: "error",
+        title: "Export Failed",
+        message: e?.message || "Failed to export chart image."
+      });
     } finally {
       setIsExporting(false);
       setExportProgressText("");
@@ -1160,12 +1185,21 @@ export const CapFrameXApp: React.FC = () => {
 
   // Export tri-resolution / all profiles ZIP
   const handleExportTriResZip = async () => {
+    const keys = Object.keys(datasets).filter((k) => (datasets[k]?.rows?.length || 0) > 0);
+    if (keys.length === 0) {
+      useExportToastStore.getState().showToast({
+        type: "warning",
+        title: "Nothing to Export",
+        message: "No resolution benchmark data found for this game to export."
+      });
+      return;
+    }
+
     setIsExporting(true);
     const zip = new JSZip();
 
     try {
-      const keys = Object.keys(datasets).filter((k) => (datasets[k]?.rows?.length || 0) > 0);
-      const resList = keys.length > 0 ? keys : ["1080p", "1440p", "4K"];
+      const resList = keys;
 
       for (const res of resList) {
         setExportProgressText(`Rendering ${res} chart...`);
@@ -1194,10 +1228,16 @@ export const CapFrameXApp: React.FC = () => {
       const blob = await zip.generateAsync({ type: "blob" });
       const cleanProduct = (productName || "Product").trim().replace(/[\\/:*?"<>|]/g, "-");
       const cleanGame = (effectiveTitle || selectedGame).trim().replace(/[\\/:*?"<>|]/g, "-");
-      const zipFileName = `${cleanProduct} ${exportPhrase} - ${cleanGame} (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
+      const phrasePart = exportPhrase?.trim() ? ` ${exportPhrase.trim()}` : "";
+      const zipFileName = `${cleanProduct}${phrasePart} - ${cleanGame} (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
       await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
-    } catch (e) {
+    } catch (e: any) {
       console.error("Tri-res export error:", e);
+      useExportToastStore.getState().showToast({
+        type: "error",
+        title: "Export Failed",
+        message: e?.message || "Failed to create Tri-Res ZIP archive."
+      });
     } finally {
       setIsExporting(false);
       setExportProgressText("");
@@ -1206,7 +1246,14 @@ export const CapFrameXApp: React.FC = () => {
 
   // Batch Export ALL Games
   const handleExportAllGamesZip = async () => {
-    if (games.length === 0 && customCharts.length === 0) return;
+    if (games.length === 0 && customCharts.length === 0) {
+      useExportToastStore.getState().showToast({
+        type: "warning",
+        title: "Nothing to Export",
+        message: "No games or custom charts loaded to export."
+      });
+      return;
+    }
 
     setIsExporting(true);
     const zip = new JSZip();
@@ -1289,10 +1336,16 @@ export const CapFrameXApp: React.FC = () => {
       setExportProgressText("Compressing all benchmark charts into ZIP...");
       const blob = await zip.generateAsync({ type: "blob" });
       const cleanProduct = (productName || "Gaming").trim().replace(/[\\/:*?"<>|]/g, "-");
-      const zipFileName = `${cleanProduct} - All Benchmark Charts (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
+      const phrasePart = exportPhrase?.trim() ? ` ${exportPhrase.trim()}` : "";
+      const zipFileName = `${cleanProduct}${phrasePart} - All Benchmark Charts (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
       await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
-    } catch (e) {
+    } catch (e: any) {
       console.error("Batch all games export failed:", e);
+      useExportToastStore.getState().showToast({
+        type: "error",
+        title: "Batch Export Failed",
+        message: e?.message || "Failed to create All Games ZIP archive."
+      });
     } finally {
       setIsExporting(false);
       setExportProgressText("");

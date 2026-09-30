@@ -1,6 +1,21 @@
 import { useExportToastStore } from "../stores/exportToastStore";
 
 /**
+ * Dynamically resolves the API base URL.
+ * When running in development (e.g., Vite on port 5173/3000) or any non-backend port,
+ * it targets the backend at http://127.0.0.1:8742/api.
+ * In production desktop runtime (port 8742), it uses /api.
+ */
+export const getApiBase = (): string => {
+  if (typeof window !== "undefined") {
+    if (window.location.protocol === "file:" || (window.location.port && window.location.port !== "8742")) {
+      return "http://127.0.0.1:8742/api";
+    }
+  }
+  return "/api";
+};
+
+/**
  * Converts a Blob to a base64 Data URL string.
  */
 export async function blobToDataUrl(blob: Blob): Promise<string> {
@@ -17,7 +32,8 @@ export async function blobToDataUrl(blob: Blob): Promise<string> {
  */
 export async function openFileInExplorer(filePath?: string, directory?: string): Promise<void> {
   try {
-    await fetch("/api/export/open-in-explorer", {
+    const apiBase = getApiBase();
+    await fetch(`${apiBase}/export/open-in-explorer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ file_path: filePath, directory: directory })
@@ -52,10 +68,11 @@ export async function deliverExportFile(
   let savedFilePath: string | undefined;
   let savedDirectory: string | undefined;
   let backendSuccess = false;
+  const apiBase = getApiBase();
 
   // 1. Direct save via backend into Windows Downloads
   try {
-    const resp = await fetch("/api/export/save-file", {
+    const resp = await fetch(`${apiBase}/export/save-file`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -71,9 +88,12 @@ export async function deliverExportFile(
         savedFilePath = data.file_path;
         savedDirectory = data.directory;
       }
+    } else {
+      const errDetail = await resp.text().catch(() => "");
+      console.warn(`[Export] Backend save-file returned HTTP ${resp.status}:`, errDetail);
     }
   } catch (err) {
-    console.warn("Backend save failed, relying on browser download fallback:", err);
+    console.warn("[Export] Backend save failed, relying on browser download fallback:", err);
   }
 
   // 2. Standard browser download fallback
@@ -94,7 +114,7 @@ export async function deliverExportFile(
       }
     }, 2000); // 2000ms delay ensures asynchronous browser download engine starts
   } catch (browserErr) {
-    console.warn("Browser link.click fallback error:", browserErr);
+    console.warn("[Export] Browser link.click fallback error:", browserErr);
   }
 
   // 3. User feedback toast notification
@@ -107,6 +127,12 @@ export async function deliverExportFile(
         message: options?.customToastMessage || `${filename} saved successfully.`,
         filePath: savedFilePath,
         directory: savedDirectory
+      });
+    } else if (backendSuccess) {
+      showToast({
+        type: "success",
+        title: "Export Saved",
+        message: options?.customToastMessage || `${filename} saved successfully.`
       });
     } else {
       showToast({

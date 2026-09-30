@@ -4,6 +4,19 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.3] - 2026-09-30
+### Export Engine Parity, Guarded Tab Export Handling & User Warning Feedback
+
+- **Direct Export Delivery Reliability**:
+  - Standardized single chart exports, Tri-Resolution ZIPs, and All Games ZIPs through dynamic API routing (`getApiBase`) ensuring files always download to Windows `Downloads`.
+  - Resolved dev server relative path resolution failures that prevented downloads from firing.
+- **Dataset Guard Warning Toasts**:
+  - Eliminated silent failures when exporting with unselected or empty datasets by displaying clear, actionable warning notifications.
+- **Enhanced Exception Catching**:
+  - Added comprehensive error toasts to Tri-Res and All Games batch exporters to guarantee full user feedback on failures.
+- **Vite Dev Server Compatibility**:
+  - Full proxying support enabling full export capabilities during frontend development on port 5173.
+
 ---
 
 ## [1.1.2] - 2026-09-28

@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.3",
+    date: "2026-09-30",
+    title: "Zero-Failure Export Delivery Engine (Single & ZIP), Dynamic API Routing, Vite Dev Proxy & Safe File Write Fallback",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Export Delivery Engine",
+      "Dynamic API Routing",
+      "Vite Dev Proxy",
+      "ZIP Archive Streaming",
+      "Safe Write Fallback",
+      "Warning Feedback",
+      "Multi-App Parity"
+    ],
+    highlights: [
+      "Dynamic Backend Export Routing: Resolved issue where chart and ZIP export requests failed silently during development or preview by introducing dynamic API host resolution (getApiBase) that always directs export calls to http://127.0.0.1:8742/api.",
+      "Vite Dev Proxy Integration: Configured frontend/vite.config.ts with transparent /api proxying to the local backend, guaranteeing full export, scan, and run ingestion functionality in dev mode (port 5173).",
+      "Safe File Write Fallback: Backend export engine (/api/export/save-file and /api/export/save-batch) now detects Windows file locks or PermissionErrors and automatically falls back to unique timestamped file names rather than failing.",
+      "Active User Warning Feedback: Replaced silent returns on empty or unselected datasets in both OCR and CapFrameX with informative warning toasts, guiding reviewers on what data needs to be selected.",
+      "Uvicorn Max Event Size Scaling: Expanded server max incomplete event size up to 100MB to flawlessly support large multi-game and multi-resolution batch ZIP packages.",
+      "Full Portable Binary Synchronization: Recompiled BenchMate-Analyzer.exe and release ZIP distribution, updating all workspace locations with the latest binaries."
+    ]
+  },
+  {
     version: "v1.1.2",
     date: "2026-09-28",
     title: "Backend Download Delivery System, 9:16 Title-to-Logo Collision Resolution & Export Reliability",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Backend Download Delivery",
@@ -108,10 +132,30 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.3",
+    date: "2026-09-30",
+    title: "Export Engine Parity, Guarded Tab Export Handling & User Warning Feedback",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Export Delivery Fix",
+      "Dynamic API Routing",
+      "Guarded Tab Export",
+      "Tri-Res ZIP Delivery",
+      "All Games ZIP Delivery"
+    ],
+    highlights: [
+      "Direct Export Delivery Reliability: Standardized single chart exports, Tri-Resolution ZIPs, and All Games ZIPs through dynamic API routing ensuring files always download to Windows Downloads.",
+      "Dataset Guard Warning Toasts: Eliminated silent failures when exporting with unselected or empty datasets by displaying clear, actionable warning notifications.",
+      "Enhanced Exception Catching: Added comprehensive error toasts to Tri-Res and All Games batch exporters to guarantee full user feedback.",
+      "Vite Dev Server Compatibility: Full proxying support enabling full export capabilities during frontend development."
+    ]
+  },
+  {
     version: "v1.1.2",
     date: "2026-09-28",
     title: "Direct Downloads Delivery, Tri-Res & All-Games ZIP Export Reliability & Title Margin Safety",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Direct Export Delivery",
@@ -190,10 +234,28 @@ export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
 
 export const OCR_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v2.17.2",
+    date: "2026-09-30",
+    title: "Batch Individual & ZIP Export Delivery Hardening & Explorer Integration",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Batch Export Fix",
+      "Dynamic API Routing",
+      "Safe Write Fallback",
+      "Explorer Integration"
+    ],
+    highlights: [
+      "Dynamic Host Resolution for Exports: Single chart and batch exports reliably route to http://127.0.0.1:8742/api under dev servers and native builds alike.",
+      "Batch Individual Export Directory Passing: The completion toast for batch individual exports now captures the target directory, enabling 1-click 'Show in Explorer'.",
+      "Safe Write Fallback: Protects exports against Windows PermissionError and file locks with automatic timestamped file creation."
+    ]
+  },
+  {
     version: "v2.17.1",
     date: "2026-09-28",
     title: "9:16 Long Title Word-Wrapping & Backend Direct Downloads Delivery",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "9:16 Title Wrapping",

@@ -5,8 +5,29 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.1 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.2 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.2 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.3 - v1.0.0)
+
+---
+
+## [1.1.3] - 2026-09-30
+### Zero-Failure Export Delivery Engine (Single & ZIP), Dynamic API Routing, Vite Dev Proxy & Safe Write Fallback
+
+- **Dynamic Backend Export Routing (`getApiBase`)**:
+  - Engineered dynamic host resolution ensuring chart image and ZIP archive export requests reliably route to `http://127.0.0.1:8742/api` across dev servers (port 5173/3000), preview servers, and native desktop builds.
+  - Completely resolved export failure where frontend dev environments hit relative `/api/export/save-file` on port 5173, returning HTML fallbacks and silently dropping downloads.
+- **Vite Dev Proxy Integration**:
+  - Configured `frontend/vite.config.ts` with transparent `/api` reverse proxying to `http://127.0.0.1:8742`, guaranteeing 100% feature parity during frontend development.
+- **Safe File Write Fallback & Lock Recovery**:
+  - Hardened backend `/api/export/save-file` and `/api/export/save-batch` to detect Windows `PermissionError` or file lock contention (e.g. file open in Windows Photos or 7-Zip).
+  - Automatically recovers by saving to unique timestamped filenames rather than raising HTTP 500 errors.
+- **Guarded Tab Exports & User Warning Feedback**:
+  - Eliminated silent returns when attempting to export without active datasets loaded.
+  - Implemented actionable amber warning toasts (`type: "warning"`) guiding reviewers to select valid benchmark data or games.
+- **Large ZIP Streaming Support**:
+  - Configured uvicorn with `h11_max_incomplete_event_size=100MB` to effortlessly handle bulk multi-resolution and all-games ZIP exports.
+- **Full Workspace Binary Synchronization**:
+  - Recompiled `BenchMate-Analyzer.exe` and release distribution ZIP, updating all working directories including `N:\BenchMarkTool\BenchMateAnalyzer`.
 
 ---
 

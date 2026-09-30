@@ -1,7 +1,7 @@
 import React from "react";
 import { useExportToastStore } from "../../stores/exportToastStore";
 import { openFileInExplorer } from "../../utils/exportDownloadHelper";
-import { CheckCircle2, FolderOpen, X, AlertCircle, Info } from "lucide-react";
+import { CheckCircle2, FolderOpen, X, AlertCircle, Info, AlertTriangle } from "lucide-react";
 
 export const ExportToastContainer: React.FC = () => {
   const { toasts, dismissToast } = useExportToastStore();
@@ -18,6 +18,7 @@ export const ExportToastContainer: React.FC = () => {
           <div className="flex-shrink-0 mt-0.5">
             {toast.type === "success" && <CheckCircle2 className="w-5 h-5 text-emerald-400" />}
             {toast.type === "error" && <AlertCircle className="w-5 h-5 text-rose-400" />}
+            {toast.type === "warning" && <AlertTriangle className="w-5 h-5 text-amber-400" />}
             {toast.type === "info" && <Info className="w-5 h-5 text-sky-400" />}
           </div>
 

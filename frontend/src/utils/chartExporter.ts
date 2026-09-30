@@ -991,6 +991,7 @@ export async function batchExportIndividualCharts(
         };
       });
 
+  let lastDirectory: string | undefined;
   for (let i = 0; i < targets.length; i++) {
     const target = targets[i];
     const ds = target.dataset;
@@ -1032,7 +1033,10 @@ export async function batchExportIndividualCharts(
     const dataUrl = await renderChartToDataUrl(ds, dsOptions, config);
     const fileName = buildChartFileName(productName, title, config.format, componentCategory, includeCategoryTag, exportPhrase);
 
-    await deliverExportFile(fileName, dataUrl, { openInExplorer: false, notify: false });
+    const exportResult = await deliverExportFile(fileName, dataUrl, { openInExplorer: false, notify: false });
+    if (exportResult.directory) {
+      lastDirectory = exportResult.directory;
+    }
 
     // Small delay between saves
     if (i < targets.length - 1) {
@@ -1043,7 +1047,8 @@ export async function batchExportIndividualCharts(
   useExportToastStore.getState().showToast({
     type: "success",
     title: "Batch Export Completed",
-    message: `Saved ${targets.length} individual chart images directly to Downloads.`
+    message: `Saved ${targets.length} individual chart images directly to Downloads.`,
+    directory: lastDirectory
   });
 }
 

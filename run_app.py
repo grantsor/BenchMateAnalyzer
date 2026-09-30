@@ -218,7 +218,8 @@ def run_uvicorn_server():
         host=settings.HOST,
         port=settings.PORT,
         log_level="info",
-        log_config=uvicorn_log_config
+        log_config=uvicorn_log_config,
+        h11_max_incomplete_event_size=100 * 1024 * 1024
     )
 
 if __name__ == "__main__":

@@ -125,7 +125,15 @@ async def save_export_file(req: SaveExportFileRequest):
     try:
         dest_path.write_bytes(file_bytes)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to write file to {dest_path}: {e}")
+        # If write fails (e.g. file is locked or PermissionError in Windows), try timestamped filename
+        try:
+            import time
+            fallback_name = f"{dest_path.stem}_{int(time.time())}{dest_path.suffix}"
+            dest_path = target_dir / fallback_name
+            dest_path.write_bytes(file_bytes)
+            clean_name = fallback_name
+        except Exception:
+            raise HTTPException(status_code=500, detail=f"Failed to write file to {dest_path}: {e}")
 
     # Also archive a copy in app's internal exports directory
     try:
@@ -136,7 +144,7 @@ async def save_export_file(req: SaveExportFileRequest):
 
     if req.open_in_explorer:
         try:
-            subprocess.Popen(f'explorer /select,"{dest_path}"')
+            subprocess.Popen(["explorer", f"/select,{str(dest_path)}"])
         except Exception:
             pass
 
@@ -177,7 +185,14 @@ async def save_export_batch(req: BatchSaveExportRequest):
         try:
             file_bytes = base64.b64decode(raw_b64)
             dest_path = target_dir / clean_name
-            dest_path.write_bytes(file_bytes)
+            try:
+                dest_path.write_bytes(file_bytes)
+            except Exception:
+                import time
+                fallback_name = f"{dest_path.stem}_{int(time.time())}_{len(saved_files)}{dest_path.suffix}"
+                dest_path = target_dir / fallback_name
+                dest_path.write_bytes(file_bytes)
+                clean_name = fallback_name
             
             # Archive copy
             try:
@@ -193,7 +208,7 @@ async def save_export_batch(req: BatchSaveExportRequest):
 
     if req.open_in_explorer and first_path:
         try:
-            subprocess.Popen(f'explorer /select,"{first_path}"')
+            subprocess.Popen(["explorer", f"/select,{str(first_path)}"])
         except Exception:
             pass
 
