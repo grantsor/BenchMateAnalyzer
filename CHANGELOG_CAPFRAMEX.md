@@ -4,6 +4,18 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.4] - 2026-10-08
+### Offline Font Portability & Monochromatic Blue Highlight Parity
+
+- **Offline Typography Consistency**:
+  - Embedded `Open Sans`, `Open Sans Condensed`, and `Inter` fonts into the native runtime bundle, ensuring uniform rendering on secondary devices without internet access.
+- **Monochromatic Blue Highlight Default**:
+  - Enabled `useHighlightBarColor` by default and aligned highlight gradients to Monochromatic Blue (`#2563eb` / `#60a5fa`), eliminating residual amber/yellow 1% Low highlights (`#b45309`).
+- **Automatic Settings Migration**:
+  - Seamlessly converts existing user preferences from amber presets to Monochromatic Blue.
+
+---
+
 ## [1.1.3] - 2026-09-30
 ### Export Engine Parity, Guarded Tab Export Handling & User Warning Feedback
 

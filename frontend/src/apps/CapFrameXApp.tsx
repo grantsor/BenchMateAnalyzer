@@ -218,15 +218,17 @@ export const CapFrameXApp: React.FC = () => {
   const [chartOptions, setChartOptions] = useState<ChartDesignOptions>(() => {
     const p = getStoredPreferences();
     const ratio = p.exportConfig?.aspectRatio || (p.aspectRatio as ExportAspectRatio) || "16:9";
-    const colors = p.barColors && p.barColors.length > 0 ? p.barColors : DEFAULT_COLORS;
+    const isAmber = p.activeGradientPreset === "excel-amber" || p.highlightOptions?.activePresetId === "excel-amber" || p.highlightOptions?.highlightBarColor === "#f97316";
+    const activePreset = (!p.activeGradientPreset || p.activeGradientPreset === "excel-amber") ? "excel-blue" : p.activeGradientPreset;
+    const colors = !isAmber && p.barColors && p.barColors.length > 0 ? p.barColors : DEFAULT_COLORS;
     return {
       theme: p.theme || "light",
       title: "",
       subtitle: "",
       showValues: p.showValues ?? true,
       barColors: colors,
-      activeGradientPreset: p.activeGradientPreset || "excel-blue",
-      customMetricColors: p.customMetricColors || {
+      activeGradientPreset: activePreset,
+      customMetricColors: (!isAmber && p.customMetricColors) ? p.customMetricColors : {
         average_fps: colors[0],
         p1_fps: colors[1]
       },
@@ -262,10 +264,15 @@ export const CapFrameXApp: React.FC = () => {
         if (!ho || ho.activePresetId === "excel-amber" || ho.highlightBarColor === "#f97316") {
           return {
             ...DEFAULT_HIGHLIGHT_OPTIONS,
+            useHighlightBarColor: true,
             ...(ho ? { enabled: ho.enabled, highlightedConfigIds: ho.highlightedConfigIds } : {})
           };
         }
-        return ho;
+        return {
+          ...DEFAULT_HIGHLIGHT_OPTIONS,
+          ...ho,
+          useHighlightBarColor: ho.useHighlightBarColor ?? true
+        };
       })()
     };
   });

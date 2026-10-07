@@ -412,9 +412,9 @@ export function buildExportEchartsOption(
         const startColor =
           options.highlightOptions.highlightBarGradient?.[0] ||
           options.highlightOptions.highlightBarColor ||
-          "#f59e0b";
+          "#2563eb";
         const endColor =
-          options.highlightOptions.highlightBarGradient?.[1] || startColor;
+          options.highlightOptions.highlightBarGradient?.[1] || "#60a5fa";
 
         return {
           value: avgVal,
@@ -471,7 +471,10 @@ export function buildExportEchartsOption(
       };
 
       if (isHighlighted && options.highlightOptions?.useHighlightBarColor) {
-        const deepHighlight = "#b45309";
+        const deepHighlight =
+          options.highlightOptions.highlightBarGradient?.[1] ||
+          options.highlightOptions.highlightBarColor ||
+          "#1d4ed8";
         return {
           value: p1Val,
           itemStyle: {

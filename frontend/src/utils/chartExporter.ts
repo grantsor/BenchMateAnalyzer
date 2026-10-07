@@ -256,7 +256,7 @@ export function buildExportEchartsOption(
   const defaultColors =
     options.barColors && options.barColors.length > 0
       ? options.barColors
-      : ["#e63946", "#1d3557", "#2a9d8f", "#f4a261", "#8338ec", "#3a86ff"];
+      : ["#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"];
 
   const displayRows = [...rows].reverse();
   const categoryNames = displayRows.map((r) => {
@@ -403,10 +403,10 @@ export function buildExportEchartsOption(
         const startColor =
           options.highlightOptions.highlightBarGradient?.[0] ||
           options.highlightOptions.highlightBarColor ||
-          "#f97316";
+          "#2563eb";
         const endColor =
           options.highlightOptions.highlightBarGradient?.[1] ||
-          startColor;
+          "#60a5fa";
 
         return {
           value: val,
@@ -692,7 +692,7 @@ export function buildExportEchartsOption(
             return (
               options.highlightOptions.highlightBarGradient?.[0] ||
               options.highlightOptions.highlightBarColor ||
-              "#f97316"
+              "#2563eb"
             );
           }
           return textCol;

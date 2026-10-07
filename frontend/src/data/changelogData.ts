@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.4",
+    date: "2026-10-08",
+    title: "Offline TrueType Font Bundling (Open Sans Condensed, Open Sans, Inter) & Universal Monochromatic Blue Defaults",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Offline Font Bundling",
+      "Open Sans Condensed",
+      "Open Sans",
+      "Inter",
+      "Cross-Device Font Parity",
+      "Monochromatic Blue Default",
+      "Highlight Palette Alignment",
+      "Preference Migration"
+    ],
+    highlights: [
+      "Fully Bundled Offline Fonts: Packaged local TrueType font files (Inter-Regular, Inter-Medium, Inter-SemiBold, OpenSans-VariableFont, OpenSansCondensed-Light, OpenSansCondensed-Bold) directly inside the production build assets, eliminating reliance on external Google Fonts and ensuring pixel-identical typography across any offline Windows computer.",
+      "Comprehensive @font-face Registrations: Defined full @font-face rules for Open Sans Condensed (weights 300..900), Open Sans (weights 300..800), and Inter (weights 400..900) in index.css, preventing Windows fallback fonts (Arial / Segoe UI) on secondary test machines.",
+      "Universal Monochromatic Blue Palette: Established Monochromatic Blue (excel-blue) as the strict default palette across all benchmark graphs, bar color series, and highlight gradients in both Benchmark OCR Analyzer and CapFrameX Analyzer.",
+      "Highlight Bar Blue Parity: Replaced all legacy amber (#f97316 / #ea580c / #f59e0b) fallbacks with vibrant blue gradients (#2563eb to #60a5fa) and enabled useHighlightBarColor by default in CapFrameX.",
+      "Seamless Preference Auto-Migration: Added startup migration converting stale localStorage highlight presets from excel-amber to excel-blue while safely preserving users' starred hardware selections."
+    ]
+  },
+  {
     version: "v1.1.3",
     date: "2026-09-30",
     title: "Zero-Failure Export Delivery Engine (Single & ZIP), Dynamic API Routing, Vite Dev Proxy & Safe File Write Fallback",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Export Delivery Engine",
@@ -132,10 +156,28 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.4",
+    date: "2026-10-08",
+    title: "Offline Font Portability & Monochromatic Blue Highlight Parity",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Offline Fonts",
+      "Monochromatic Blue",
+      "Highlight Tint Fix",
+      "Preference Migration"
+    ],
+    highlights: [
+      "Offline Typography Consistency: Embedded Open Sans, Open Sans Condensed, and Inter fonts into the native runtime bundle, ensuring uniform rendering on secondary devices without internet access.",
+      "Monochromatic Blue Highlight Default: Enabled useHighlightBarColor by default and aligned highlight gradients to Monochromatic Blue (#2563eb / #60a5fa), eliminating residual amber/yellow 1% Low highlights (#b45309).",
+      "Automatic Settings Migration: Seamlessly converts existing user preferences from amber presets to Monochromatic Blue."
+    ]
+  },
+  {
     version: "v1.1.3",
     date: "2026-09-30",
     title: "Export Engine Parity, Guarded Tab Export Handling & User Warning Feedback",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Export Delivery Fix",
@@ -234,10 +276,29 @@ export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
 
 export const OCR_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v2.17.3",
+    date: "2026-10-08",
+    title: "Offline Font Bundling & Monochromatic Blue Highlight Alignment",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Offline Fonts",
+      "Open Sans Condensed",
+      "Inter",
+      "Monochromatic Blue",
+      "Highlight Palette Alignment"
+    ],
+    highlights: [
+      "Local Font Asset Bundling: TrueType fonts for Open Sans Condensed, Open Sans, and Inter are now completely self-contained within the application package, guaranteeing identical font display across all workstations.",
+      "Monochromatic Blue Default: Made excel-blue the standard default palette for bar colors, highlight gradients, row background shading, and dividing lines, replacing legacy amber fallbacks.",
+      "Preference Auto-Migration: Migrated legacy localStorage visual preferences from amber to Monochromatic Blue on app startup."
+    ]
+  },
+  {
     version: "v2.17.2",
     date: "2026-09-30",
     title: "Batch Individual & ZIP Export Delivery Hardening & Explorer Integration",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Batch Export Fix",

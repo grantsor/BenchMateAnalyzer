@@ -1,11 +1,11 @@
-# BenchMate Analyzer & Chart Generator v1.1.1
+# BenchMate Analyzer & Chart Generator v1.1.4
 
 A professional, 100% offline Windows desktop application engineered for technology reviewers at **Gadget Pilipinas**. **BenchMate Analyzer** merges the **Benchmark OCR Analyzer** and the **CapFrameX Analyzer** into a unified, high-performance workstation suite capable of running off a single standalone executable.
 
 ### 📜 Changelogs & Release Notes
-- 🌐 [Master BenchMate Suite Changelog](CHANGELOG.md) (v1.1.1)
-- 🔍 [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.0)
-- 🎮 [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.1)
+- 🌐 [Master BenchMate Suite Changelog](CHANGELOG.md) (v1.1.4)
+- 🔍 [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.3)
+- 🎮 [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.4)
 
 ---
 

@@ -81,6 +81,8 @@ interface SavedChartPreferences {
   activeGradientPreset?: string;
   barColors?: string[];
   subtitleColor?: string;
+  fontFamily?: string;
+  headerFontFamily?: string;
   logoPosition?: "top-left" | "top-right";
   logoWidth?: number;
   logoWidth_16_9?: number;
@@ -146,12 +148,12 @@ function storePreferences(prefs: SavedChartPreferences) {
 
 
 export function hexToRgba(hex: string, alpha: number = 0.15): string {
-  if (!hex) return `rgba(249, 115, 22, ${alpha})`;
+  if (!hex) return `rgba(37, 99, 235, ${alpha})`;
   let cleanHex = hex.replace("#", "").trim();
   if (cleanHex.startsWith("rgba") || cleanHex.startsWith("rgb")) {
     return cleanHex;
   }
-  let r = 249, g = 115, b = 22;
+  let r = 37, g = 99, b = 235;
   if (cleanHex.length === 6) {
     r = parseInt(cleanHex.substring(0, 2), 16);
     g = parseInt(cleanHex.substring(2, 4), 16);
@@ -168,13 +170,13 @@ export const DEFAULT_HIGHLIGHT_OPTIONS: ChartHighlightOptions = {
   enabled: false,
   highlightedConfigIds: [],
   useHighlightBarColor: true,
-  highlightBarColor: "#f97316",
-  highlightBarGradient: ["#f97316", "#ea580c"],
-  activePresetId: "excel-amber",
+  highlightBarColor: "#2563eb",
+  highlightBarGradient: ["#2563eb", "#60a5fa"],
+  activePresetId: "excel-blue",
   useRowBackgroundShade: true,
-  rowShadeColor: "rgba(249, 115, 22, 0.15)",
+  rowShadeColor: "rgba(37, 99, 235, 0.15)",
   useRowDividingLine: true,
-  dividingLineColor: "rgba(249, 115, 22, 0.6)",
+  dividingLineColor: "rgba(37, 99, 235, 0.6)",
   useReferenceLine: false,
   referenceLineValue: 60,
   referenceLineLabel: "60 FPS TARGET",
@@ -199,7 +201,7 @@ export function getPresetHighlightColors(presetId: string): [string, string] {
       return ["#475569", "#94a3b8"];
     case "gp-classic":
     default:
-      return ["#e63946", "#f4a261"];
+      return ["#2563eb", "#60a5fa"];
   }
 }
 
@@ -393,21 +395,37 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
   // Chart Design Options State with localStorage persistence
   const [chartOptions, setChartOptions] = useState<ChartDesignOptions>(() => {
     const p = getStoredPreferences();
+    const isAmber =
+      p.activeGradientPreset === "excel-amber" ||
+      p.highlightOptions?.activePresetId === "excel-amber" ||
+      p.highlightOptions?.highlightBarColor === "#f97316";
+    const activePreset =
+      !p.activeGradientPreset || p.activeGradientPreset === "excel-amber"
+        ? "excel-blue"
+        : p.activeGradientPreset;
+    const colors =
+      !isAmber && p.barColors && p.barColors.length > 0
+        ? p.barColors
+        : ["#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"];
+
     return {
       theme: p.theme || "light",
       title: "",
       subtitle: "HIGHER IS BETTER",
       subtitleColor: p.subtitleColor,
       showValues: p.showValues ?? true,
-      barColors: p.barColors || ["#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"],
-      fontFamily: "Inter",
+      barColors: colors,
+      fontFamily: p.fontFamily || "'Open Sans', Inter, system-ui, sans-serif",
+      headerFontFamily:
+        p.headerFontFamily ||
+        "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
       aspectRatio: p.aspectRatio || "16:9",
       publicationLogoText: "GADGET PILIPINAS",
       showDecorations: p.showDecorations ?? true,
       sortOrder: p.sortOrder || "desc",
       selectedMetrics: [],
       selectedConfigIds: p.selectedConfigIds || [],
-      logoUrl: p.isCustomLogo ? p.logoUrl : (p.logoUrl || "/default_logo.png"),
+      logoUrl: p.isCustomLogo ? p.logoUrl : p.logoUrl || "/default_logo.png",
       logoPosition: p.logoPosition || "top-right",
       logoWidth: p.logoWidth ?? 170,
       logoWidth_16_9: p.logoWidth_16_9 ?? 170,
@@ -419,7 +437,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       logoOffsetY_16_9: p.logoOffsetY_16_9 ?? 10,
       logoOffsetX_9_16: p.logoOffsetX_9_16 ?? 10,
       logoOffsetY_9_16: p.logoOffsetY_9_16 ?? 12,
-      activeGradientPreset: p.activeGradientPreset !== undefined ? p.activeGradientPreset : "excel-blue",
+      activeGradientPreset: activePreset,
       labelFontSize: p.labelFontSize ?? 11,
       gridLeftMargin: p.gridLeftMargin ?? (p.aspectRatio === "9:16" ? 135 : 240),
       barValuePosition: (() => {
@@ -429,17 +447,26 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         if (p.barValuePosition === "inside") return "inside";
         return "auto";
       })(),
-      customMetricColors: p.customMetricColors || {},
+      customMetricColors: (!isAmber && p.customMetricColors) ? p.customMetricColors : {},
       customBenchmarkTitles: p.customBenchmarkTitles || {},
       productName: p.productName || "",
       includeProductNameInLabels: p.includeProductNameInLabels ?? false,
-      highlightOptions: p.highlightOptions
-        ? {
+      highlightOptions: (() => {
+        const ho = p.highlightOptions;
+        if (!ho || ho.activePresetId === "excel-amber" || ho.highlightBarColor === "#f97316") {
+          return {
             ...DEFAULT_HIGHLIGHT_OPTIONS,
-            ...p.highlightOptions,
-            highlightedConfigIds: p.highlightOptions.highlightedConfigIds || []
-          }
-        : DEFAULT_HIGHLIGHT_OPTIONS
+            useHighlightBarColor: true,
+            ...(ho ? { enabled: ho.enabled, highlightedConfigIds: ho.highlightedConfigIds } : {})
+          };
+        }
+        return {
+          ...DEFAULT_HIGHLIGHT_OPTIONS,
+          ...ho,
+          useHighlightBarColor: ho.useHighlightBarColor ?? true,
+          highlightedConfigIds: ho.highlightedConfigIds || []
+        };
+      })()
     };
   });
 
@@ -492,19 +519,8 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
   const toggleHighlightConfig = (configId: string) => {
     setChartOptions((prev) => {
       const cur = prev.highlightOptions || {
-        enabled: true,
-        highlightedConfigIds: [],
-        useHighlightBarColor: true,
-        highlightBarColor: "#f97316",
-        highlightBarGradient: ["#f97316", "#ea580c"],
-        useRowBackgroundShade: true,
-        rowShadeColor: "rgba(249, 115, 22, 0.15)",
-        useRowDividingLine: true,
-        dividingLineColor: "rgba(249, 115, 22, 0.6)",
-        useReferenceLine: false,
-        referenceLineValue: 60,
-        referenceLineLabel: "60 FPS TARGET",
-        referenceLineColor: "#eab308"
+        ...DEFAULT_HIGHLIGHT_OPTIONS,
+        enabled: true
       };
       const existing = cur.highlightedConfigIds || [];
       const isAlready = existing.includes(configId);
@@ -588,6 +604,8 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       activeGradientPreset: chartOptions.activeGradientPreset,
       barColors: chartOptions.barColors,
       subtitleColor: chartOptions.subtitleColor,
+      fontFamily: chartOptions.fontFamily,
+      headerFontFamily: chartOptions.headerFontFamily,
       logoPosition: chartOptions.logoPosition,
       logoWidth: chartOptions.logoWidth,
       logoWidth_16_9: chartOptions.logoWidth_16_9,
@@ -880,15 +898,14 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         let updatedCustomColors = { ...(prev.customMetricColors || {}) };
 
         // If an Excel gradient preset is active, dynamically scale and sample across active dataset metrics
-        if (prev.activeGradientPreset) {
-          const preset = GRADIENT_PRESETS.find((p) => p.id === prev.activeGradientPreset);
-          if (preset) {
-            const sampled = samplePresetColors(preset.colors, activeDataset.metric_ids.length);
-            updatedBarColors = sampled;
-            activeDataset.metric_ids.forEach((mId, idx) => {
-              updatedCustomColors[mId] = sampled[idx % sampled.length];
-            });
-          }
+        const activePresetId = prev.activeGradientPreset || "excel-blue";
+        const preset = GRADIENT_PRESETS.find((p) => p.id === activePresetId);
+        if (preset) {
+          const sampled = samplePresetColors(preset.colors, activeDataset.metric_ids.length);
+          updatedBarColors = sampled;
+          activeDataset.metric_ids.forEach((mId, idx) => {
+            updatedCustomColors[mId] = sampled[idx % sampled.length];
+          });
         }
 
         const savedCustomTitle =
@@ -1018,15 +1035,14 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         let updatedBarColors = prev.barColors;
         let updatedCustomColors = { ...(prev.customMetricColors || {}) };
 
-        if (prev.activeGradientPreset) {
-          const preset = GRADIENT_PRESETS.find((p) => p.id === prev.activeGradientPreset);
-          if (preset) {
-            const sampled = samplePresetColors(preset.colors, activeDataset.metric_ids.length);
-            updatedBarColors = sampled;
-            activeDataset.metric_ids.forEach((mId, idx) => {
-              updatedCustomColors[mId] = sampled[idx % sampled.length];
-            });
-          }
+        const activePresetId = prev.activeGradientPreset || "excel-blue";
+        const preset = GRADIENT_PRESETS.find((p) => p.id === activePresetId);
+        if (preset) {
+          const sampled = samplePresetColors(preset.colors, activeDataset.metric_ids.length);
+          updatedBarColors = sampled;
+          activeDataset.metric_ids.forEach((mId, idx) => {
+            updatedCustomColors[mId] = sampled[idx % sampled.length];
+          });
         }
 
         return {
@@ -1051,15 +1067,14 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
           let updatedBarColors = prev.barColors;
           let updatedCustomColors = { ...(prev.customMetricColors || {}) };
 
-          if (prev.activeGradientPreset) {
-            const preset = GRADIENT_PRESETS.find((p) => p.id === prev.activeGradientPreset);
-            if (preset) {
-              const sampled = samplePresetColors(preset.colors, activeM.length);
-              updatedBarColors = sampled;
-              activeM.forEach((mId, idx) => {
-                updatedCustomColors[mId] = sampled[idx % sampled.length];
-              });
-            }
+          const activePresetId = prev.activeGradientPreset || "excel-blue";
+          const preset = GRADIENT_PRESETS.find((p) => p.id === activePresetId);
+          if (preset) {
+            const sampled = samplePresetColors(preset.colors, activeM.length);
+            updatedBarColors = sampled;
+            activeM.forEach((mId, idx) => {
+              updatedCustomColors[mId] = sampled[idx % sampled.length];
+            });
           }
 
           return {
@@ -1094,15 +1109,14 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       let updatedBarColors = prev.barColors;
 
       // If an Excel gradient preset is active, dynamically scale and re-sample across active metrics
-      if (prev.activeGradientPreset) {
-        const preset = GRADIENT_PRESETS.find((p) => p.id === prev.activeGradientPreset);
-        if (preset) {
-          const sampled = samplePresetColors(preset.colors, newSelectedMetrics.length);
-          updatedBarColors = sampled;
-          newSelectedMetrics.forEach((mId, idx) => {
-            updatedCustomColors[mId] = sampled[idx % sampled.length];
-          });
-        }
+      const activePresetId = prev.activeGradientPreset || "excel-blue";
+      const preset = GRADIENT_PRESETS.find((p) => p.id === activePresetId);
+      if (preset) {
+        const sampled = samplePresetColors(preset.colors, newSelectedMetrics.length);
+        updatedBarColors = sampled;
+        newSelectedMetrics.forEach((mId, idx) => {
+          updatedCustomColors[mId] = sampled[idx % sampled.length];
+        });
       }
 
       return {
@@ -1572,6 +1586,8 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         subtitleColor: undefined,
         showValues: true,
         barColors: ["#1e3a8a", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"],
+        fontFamily: "'Open Sans', Inter, system-ui, sans-serif",
+        headerFontFamily: "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         aspectRatio: "16:9",
         showDecorations: true,
         sortOrder: "desc",
@@ -1593,7 +1609,8 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
         logoUrl: defaultLogoData?.data_url || "/default_logo.png",
         logoAspectRatio: defaultLogoData?.aspect_ratio || 2.7778,
         productName: currentProject?.name || "Product",
-        includeProductNameInLabels: false
+        includeProductNameInLabels: false,
+        highlightOptions: DEFAULT_HIGHLIGHT_OPTIONS
       }));
     }
   };
@@ -2079,10 +2096,10 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                             const activeStart =
                               chartOptions.highlightOptions?.highlightBarGradient?.[0] ||
                               chartOptions.highlightOptions?.highlightBarColor ||
-                              "#f97316";
+                              "#2563eb";
                             const activeEnd =
                               chartOptions.highlightOptions?.highlightBarGradient?.[1] ||
-                              "#ea580c";
+                              "#60a5fa";
                             return (
                               <div
                                 className="w-3.5 h-3.5 rounded-full shrink-0 border border-white/30 shadow-sm"
@@ -2212,10 +2229,10 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                               const curStart =
                                 chartOptions.highlightOptions?.highlightBarGradient?.[0] ||
                                 chartOptions.highlightOptions?.highlightBarColor ||
-                                "#f97316";
+                                "#2563eb";
                               const curEnd =
                                 chartOptions.highlightOptions?.highlightBarGradient?.[1] ||
-                                "#ea580c";
+                                "#60a5fa";
                               setChartOptions((prev) => ({
                                 ...prev,
                                 highlightOptions: {
@@ -2247,7 +2264,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                   value={
                                     chartOptions.highlightOptions.highlightBarGradient?.[0] ||
                                     chartOptions.highlightOptions.highlightBarColor ||
-                                    "#f97316"
+                                    "#2563eb"
                                   }
                                   onChange={(e) => {
                                     const col = e.target.value;
@@ -2271,7 +2288,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                 <span className="text-[10px] font-mono text-slate-300 uppercase truncate">
                                   {chartOptions.highlightOptions.highlightBarGradient?.[0] ||
                                     chartOptions.highlightOptions.highlightBarColor ||
-                                    "#f97316"}
+                                    "#2563eb"}
                                 </span>
                               </div>
                             </div>
@@ -2283,7 +2300,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                   type="color"
                                   value={
                                     chartOptions.highlightOptions.highlightBarGradient?.[1] ||
-                                    "#ea580c"
+                                    "#60a5fa"
                                   }
                                   onChange={(e) => {
                                     const col = e.target.value;
@@ -2294,7 +2311,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                         activePresetId: undefined,
                                         highlightBarGradient: [
                                           prev.highlightOptions?.highlightBarGradient?.[0] ||
-                                            "#f97316",
+                                            "#2563eb",
                                           col
                                         ]
                                       }
@@ -2304,7 +2321,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                 />
                                 <span className="text-[10px] font-mono text-slate-300 uppercase truncate">
                                   {chartOptions.highlightOptions.highlightBarGradient?.[1] ||
-                                    "#ea580c"}
+                                    "#60a5fa"}
                                 </span>
                               </div>
                             </div>
@@ -2356,7 +2373,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                                               ...prev.highlightOptions!,
                                               highlightBarGradient: [
                                                 prev.highlightOptions?.highlightBarGradient?.[0] ||
-                                                  "#f97316",
+                                                  "#2563eb",
                                                 c
                                               ]
                                             }

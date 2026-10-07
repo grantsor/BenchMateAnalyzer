@@ -5,8 +5,25 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.2 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.3 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.3 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.4 - v1.0.0)
+
+---
+
+## [1.1.4] - 2026-10-08
+### Offline TrueType Font Bundling (Open Sans Condensed, Open Sans, Inter) & Universal Monochromatic Blue Defaults
+
+- **Fully Bundled Offline Fonts**:
+  - Packaged local TrueType font assets (`Inter-Regular.ttf`, `Inter-Medium.ttf`, `Inter-SemiBold.ttf`, `OpenSans-VariableFont.ttf`, `OpenSansCondensed-Light.ttf`, `OpenSansCondensed-Bold.ttf`) directly inside `frontend/src/assets/fonts/`.
+  - Registered comprehensive offline `@font-face` rules for `Open Sans Condensed` (weights 300, 400, 700, 800, 900), `Open Sans` (weights 300..800), and `Inter` (weights 400..900) in `frontend/src/index.css`.
+  - Guaranteed identical, high-definition typography across all Windows devices regardless of internet connectivity or pre-installed system fonts, fully eliminating unintended fallbacks to Arial or Segoe UI.
+- **Universal Monochromatic Blue Palette**:
+  - Established Monochromatic Blue (`excel-blue`) as the strict default palette across all benchmark graphs, bar color series, and highlight gradients in both Benchmark OCR Analyzer and CapFrameX Analyzer.
+  - Eliminated residual amber (`#f97316`, `#ea580c`, `#f59e0b`, `#b45309`) fallbacks in `ComparisonBuilder.tsx`, `chartExporter.ts`, `capframex/chartExporter.ts`, and `capframex/colorPalettes.ts`.
+  - Enabled `useHighlightBarColor: true` by default in CapFrameX so highlighted hardware entries visibly adopt the vibrant blue gradient.
+- **Seamless Preference Auto-Migration**:
+  - Added automatic migration logic on application startup converting stale `localStorage` highlight presets (`excel-amber` / `#f97316`) over to `excel-blue` while preserving custom starred hardware selections.
+  - Updated "Reset Defaults" actions across both applications to restore the unified Monochromatic Blue theme and offline typography.
 
 ---
 

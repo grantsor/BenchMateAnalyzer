@@ -91,8 +91,9 @@ export function getPresetHighlightColors(presetId: string): [string, string] {
     case "excel-gray":
       return ["#475569", "#94a3b8"];
     case "gp-classic":
-    default:
       return ["#e63946", "#f4a261"];
+    default:
+      return ["#2563eb", "#60a5fa"];
   }
 }
 

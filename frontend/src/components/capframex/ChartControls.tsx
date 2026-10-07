@@ -808,7 +808,7 @@ export const ChartControls: React.FC<ChartControlsProps> = ({
                         <label className="flex items-center space-x-1.5 cursor-pointer text-[11px] font-semibold text-slate-200">
                           <input
                             type="checkbox"
-                            checked={options.highlightOptions?.useHighlightBarColor ?? false}
+                            checked={options.highlightOptions?.useHighlightBarColor ?? true}
                             onChange={(e) =>
                               onOptionsChange({
                                 highlightOptions: {

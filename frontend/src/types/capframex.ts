@@ -54,7 +54,7 @@ export interface ChartHighlightOptions {
 export const DEFAULT_HIGHLIGHT_OPTIONS: ChartHighlightOptions = {
   enabled: false,
   highlightedConfigIds: [],
-  useHighlightBarColor: false,
+  useHighlightBarColor: true,
   highlightBarColor: "#2563eb",
   highlightBarGradient: ["#2563eb", "#60a5fa"],
   activePresetId: "excel-blue",

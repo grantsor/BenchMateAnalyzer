@@ -4,6 +4,18 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.3] - 2026-10-08
+### Offline Font Bundling & Monochromatic Blue Highlight Alignment
+
+- **Local Font Asset Bundling**:
+  - TrueType fonts for `Open Sans Condensed`, `Open Sans`, and `Inter` are now completely self-contained within the application package, guaranteeing identical font display across all workstations without reliance on Google Fonts.
+- **Monochromatic Blue Default**:
+  - Made `excel-blue` the standard default palette for bar colors, highlight gradients, row background shading, and dividing lines, replacing legacy amber fallbacks.
+- **Preference Auto-Migration**:
+  - Migrated legacy `localStorage` visual preferences from amber to Monochromatic Blue on app startup.
+
+---
+
 ## [2.17.2] - 2026-09-30
 ### Batch Individual & ZIP Export Delivery Hardening & Explorer Integration
 
