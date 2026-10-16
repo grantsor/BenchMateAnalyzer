@@ -105,12 +105,20 @@ class DataService:
             logger.warning(f"Target directory does not exist: {target_dir}")
             return 0
 
-        parsed_runs = []
+        json_files = []
         for root, _, files in os.walk(target_dir):
             for file in files:
                 if file.lower().endswith(".json"):
-                    full_path = os.path.join(root, file)
-                    run_data = CapFrameXParser.parse_file(full_path, scan_root=target_dir)
+                    json_files.append(os.path.join(root, file))
+
+        parsed_runs = []
+        if json_files:
+            import concurrent.futures
+            from functools import partial
+            max_workers = min(32, max(4, (os.cpu_count() or 4) * 2))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                parse_fn = partial(CapFrameXParser.parse_file, scan_root=target_dir)
+                for run_data in executor.map(parse_fn, json_files):
                     if run_data:
                         parsed_runs.append(run_data)
 

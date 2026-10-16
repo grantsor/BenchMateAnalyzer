@@ -127,25 +127,31 @@ async def upload_captures(
     parsed_runs = []
     detected_folder = "Uploaded Captures"
 
-    for item in files:
+    async def _parse_upload_item(item):
         if not hasattr(item, "filename"):
-            continue
+            return None, None
         fname = item.filename or "capture.json"
         if not fname.lower().endswith(".json"):
-            continue
+            return None, None
         try:
             content_bytes = await item.read()
-            text = content_bytes.decode("utf-8-sig", errors="ignore")
-            data = json.loads(text)
-            run = CapFrameXParser.parse_dict(data, file_path=fname)
-            if run:
-                parsed_runs.append(run)
-                norm = fname.replace("\\", "/")
-                parts = norm.split("/")
-                if len(parts) > 1 and parts[0]:
-                    detected_folder = parts[0]
+            def _sync_parse(b: bytes, fn: str):
+                text = b.decode("utf-8-sig", errors="ignore")
+                data = json.loads(text)
+                return CapFrameXParser.parse_dict(data, file_path=fn)
+            run = await asyncio.to_thread(_sync_parse, content_bytes, fname)
+            return run, fname
         except Exception:
-            continue
+            return None, None
+
+    parse_results = await asyncio.gather(*[_parse_upload_item(item) for item in files])
+    for run, fname in parse_results:
+        if run and fname:
+            parsed_runs.append(run)
+            norm = fname.replace("\\", "/")
+            parts = norm.split("/")
+            if len(parts) > 1 and parts[0] and detected_folder == "Uploaded Captures":
+                detected_folder = parts[0]
 
     if not parsed_runs and not append:
         raise HTTPException(status_code=400, detail="No valid CapFrameX JSON files found in selection")

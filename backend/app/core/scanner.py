@@ -84,6 +84,8 @@ class FolderScanner:
         # Find direct subdirectories (each is a Test Configuration)
         subdirs = [p for p in root.iterdir() if p.is_dir()]
 
+        image_tasks: List[Tuple[str, str, str]] = []
+
         # If there are subdirectories, treat each as a configuration folder
         if subdirs:
             for subdir in sorted(subdirs, key=lambda p: p.name.lower()):
@@ -105,10 +107,7 @@ class FolderScanner:
                         ext = os.path.splitext(fname)[1].lower()
                         if ext in IMAGE_EXTENSIONS:
                             fpath = os.path.join(dirpath, fname)
-                            scanned_img = cls._process_image(fpath, fname, cfg_name, seen_hashes, duplicates)
-                            if scanned_img:
-                                total_images += 1
-                                cfg.images.append(scanned_img)
+                            image_tasks.append((fpath, fname, cfg_name))
         else:
             # Flat folder: images are directly in root
             cfg_name = root.name
@@ -126,10 +125,54 @@ class FolderScanner:
                     if cls._is_ignored_file(fname):
                         continue
                     if fpath.suffix.lower() in IMAGE_EXTENSIONS:
-                        scanned_img = cls._process_image(str(fpath), fname, cfg_name, seen_hashes, duplicates)
-                        if scanned_img:
-                            total_images += 1
-                            cfg.images.append(scanned_img)
+                        image_tasks.append((str(fpath), fname, cfg_name))
+
+        if image_tasks:
+            import concurrent.futures
+            max_workers = min(4, max(1, (os.cpu_count() or 4) // 2))
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                extracted_data = list(executor.map(
+                    lambda t: cls._extract_image_data(t[0], t[1], t[2]),
+                    image_tasks
+                ))
+
+            for data in extracted_data:
+                if not data:
+                    continue
+                sha256 = data["sha256"]
+                file_path = data["file_path"]
+                cfg_name = data["configuration_name"]
+
+                is_dup = False
+                dup_of = None
+                if sha256 in seen_hashes:
+                    is_dup = True
+                    dup_of = seen_hashes[sha256]
+                    duplicates.append(DuplicateInfo(
+                        original_path=dup_of,
+                        duplicate_path=file_path,
+                        sha256=sha256,
+                        configuration_name=cfg_name
+                    ))
+                else:
+                    seen_hashes[sha256] = file_path
+
+                scanned_img = ScannedImage(
+                    file_path=file_path,
+                    file_name=data["file_name"],
+                    configuration_name=cfg_name,
+                    file_size=data["file_size"],
+                    sha256=sha256,
+                    dhash=data["dhash"],
+                    width=data["width"],
+                    height=data["height"],
+                    identified_benchmark_id=data["identified_benchmark_id"],
+                    identification_confidence=data["identification_confidence"],
+                    is_duplicate=is_dup,
+                    duplicate_of=dup_of
+                )
+                total_images += 1
+                configs_dict[cfg_name].images.append(scanned_img)
 
         # Count recognized vs unknown
         recognized_count = 0
@@ -161,35 +204,18 @@ class FolderScanner:
         return False
 
     @classmethod
-    def _process_image(
+    def _extract_image_data(
         cls,
         file_path: str,
         file_name: str,
-        configuration_name: str,
-        seen_hashes: Dict[str, str],
-        duplicates: List[DuplicateInfo]
-    ) -> Optional[ScannedImage]:
+        configuration_name: str
+    ) -> Optional[dict]:
         try:
             stat = os.stat(file_path)
             file_size = stat.st_size
 
             # Compute SHA256
             sha256 = ImagePreprocessor.compute_sha256(file_path)
-
-            # Check duplicate
-            is_dup = False
-            dup_of = None
-            if sha256 in seen_hashes:
-                is_dup = True
-                dup_of = seen_hashes[sha256]
-                duplicates.append(DuplicateInfo(
-                    original_path=dup_of,
-                    duplicate_path=file_path,
-                    sha256=sha256,
-                    configuration_name=configuration_name
-                ))
-            else:
-                seen_hashes[sha256] = file_path
 
             # Read dimensions quickly with PIL
             width, height = 0, 0
@@ -225,20 +251,61 @@ class FolderScanner:
                 except Exception as err:
                     print(f"[FolderScanner] Visual preview identification error for {file_name}: {err}")
 
-            return ScannedImage(
-                file_path=file_path,
-                file_name=file_name,
-                configuration_name=configuration_name,
-                file_size=file_size,
-                sha256=sha256,
-                dhash=dhash,
-                width=width,
-                height=height,
-                identified_benchmark_id=b_id,
-                identification_confidence=conf,
-                is_duplicate=is_dup,
-                duplicate_of=dup_of
-            )
+            return {
+                "file_path": file_path,
+                "file_name": file_name,
+                "configuration_name": configuration_name,
+                "file_size": file_size,
+                "sha256": sha256,
+                "dhash": dhash,
+                "width": width,
+                "height": height,
+                "identified_benchmark_id": b_id,
+                "identification_confidence": conf
+            }
         except Exception as e:
-            print(f"[FolderScanner] Error processing image {file_path}: {e}")
+            print(f"[FolderScanner] Error extracting image data {file_path}: {e}")
             return None
+
+    @classmethod
+    def _process_image(
+        cls,
+        file_path: str,
+        file_name: str,
+        configuration_name: str,
+        seen_hashes: Dict[str, str],
+        duplicates: List[DuplicateInfo]
+    ) -> Optional[ScannedImage]:
+        data = cls._extract_image_data(file_path, file_name, configuration_name)
+        if not data:
+            return None
+
+        sha256 = data["sha256"]
+        is_dup = False
+        dup_of = None
+        if sha256 in seen_hashes:
+            is_dup = True
+            dup_of = seen_hashes[sha256]
+            duplicates.append(DuplicateInfo(
+                original_path=dup_of,
+                duplicate_path=file_path,
+                sha256=sha256,
+                configuration_name=configuration_name
+            ))
+        else:
+            seen_hashes[sha256] = file_path
+
+        return ScannedImage(
+            file_path=file_path,
+            file_name=file_name,
+            configuration_name=configuration_name,
+            file_size=data["file_size"],
+            sha256=sha256,
+            dhash=data["dhash"],
+            width=data["width"],
+            height=data["height"],
+            identified_benchmark_id=data["identified_benchmark_id"],
+            identification_confidence=data["identification_confidence"],
+            is_duplicate=is_dup,
+            duplicate_of=dup_of
+        )

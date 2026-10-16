@@ -4,6 +4,24 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.4] - 2026-10-17
+### Native Windows IFileOpenDialog Modern Folder Picker, Single-Cancel Fix & Asynchronous Concurrent Ingestion Pipeline
+
+- **Modern Windows File Explorer Folder Picker (`IFileOpenDialog`)**:
+  - Upgraded the folder browsing dialog from legacy Win32 `SHBrowseForFolderW` to modern COM `IFileOpenDialog` (`FOS_PICKFOLDERS | FOS_FORCEFILESYSTEM`).
+  - Matches the modern Windows File Explorer dialog layout used in CapFrameX, complete with Quick Access, address breadcrumbs, navigation panel, and responsive search.
+- **Single-Click Cancel Fix**:
+  - Eliminated the 3-cancel cascade (`ctypes` -> `PowerShell` -> `Tkinter`) by properly capturing `ERROR_CANCELLED` and returning a `(handled, path)` status tuple that aborts the picker immediately on the first cancel.
+- **Asynchronous Concurrent Ingestion Pipeline**:
+  - Redesigned directory and batch image ingestion with a bounded worker pool (`max_workers=min(4, cpu_count // 2)`) running image loading, OpenCV preprocessing, and RapidOCR inference in parallel.
+  - Thread-safe RapidOCR execution with ONNX inference safeguards preventing CPU saturation and thread contention.
+- **Zero-Contention SQLite Batch Persistence**:
+  - Separated OCR extraction workers from database transactions; all results are persisted in a single batched atomic async transaction to prevent SQLite locking.
+- **Smooth Monotonic Progress Updates**:
+  - Implemented atomic progress tracking during concurrent ingestion, ensuring steady, monotonic percentage and count progression in the UI.
+
+---
+
 ## [2.17.3] - 2026-10-08
 ### Offline Font Bundling & Monochromatic Blue Highlight Alignment
 

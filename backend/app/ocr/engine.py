@@ -3,6 +3,8 @@ from typing import List, Optional, Tuple, Union
 import numpy as np
 from app.ocr.preprocessor import ImagePreprocessor
 
+import threading
+
 @dataclass
 class OCRItem:
     text: str
@@ -17,21 +19,26 @@ class OCREngine:
     """
     _instance: Optional["OCREngine"] = None
     _engine = None
+    _init_lock = threading.Lock()
 
     def __new__(cls):
         if cls._instance is None:
-            cls._instance = super(OCREngine, cls).__new__(cls)
-            cls._instance._engine = None
+            with cls._init_lock:
+                if cls._instance is None:
+                    cls._instance = super(OCREngine, cls).__new__(cls)
+                    cls._instance._engine = None
         return cls._instance
 
     def _ensure_engine(self):
         if self._engine is None:
-            try:
-                from rapidocr_onnxruntime import RapidOCR
-                self._engine = RapidOCR()
-            except Exception as e:
-                print(f"[OCREngine] Failed to load RapidOCR: {e}")
-                self._engine = None
+            with self._init_lock:
+                if self._engine is None:
+                    try:
+                        from rapidocr_onnxruntime import RapidOCR
+                        self._engine = RapidOCR()
+                    except Exception as e:
+                        print(f"[OCREngine] Failed to load RapidOCR: {e}")
+                        self._engine = None
 
     def ocr_image(self, image: np.ndarray) -> List[OCRItem]:
         """

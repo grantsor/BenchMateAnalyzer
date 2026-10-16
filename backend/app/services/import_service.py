@@ -1,7 +1,10 @@
+import os
 import json
 import re
+import asyncio
+import concurrent.futures
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, Tuple
 from sqlalchemy import select, delete
 from sqlalchemy.orm import selectinload
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +17,26 @@ from app.db.models import (
 from app.ocr.engine import ocr_engine
 from app.ocr.preprocessor import ImagePreprocessor
 from app.parsers.registry import parser_registry
+
+def _extract_single_image_worker(task: Dict[str, Any]) -> Optional[Tuple[Dict[str, Any], Any]]:
+    """
+    CPU-bound worker executing inside a ThreadPoolExecutor.
+    Loads image from disk, runs RapidOCR inference, and extracts metrics via ParserRegistry.
+    No database operations occur in this worker.
+    """
+    try:
+        cv_img = ImagePreprocessor.load_image(task["file_path"])
+        if cv_img is None:
+            return None
+        extraction = parser_registry.parse_image(
+            cv_img,
+            task["file_name"],
+            forced_benchmark_id=task.get("forced_b_id")
+        )
+        return (task, extraction)
+    except Exception as e:
+        print(f"[ImportService] OCR extraction failed for {task.get('file_name')}: {e}")
+        return None
 
 class ImportService:
     @staticmethod
@@ -129,11 +152,8 @@ class ImportService:
             res = await session.execute(stmt)
             all_images.extend(res.scalars().all())
 
-        total = len(all_images)
-        for i, img in enumerate(all_images):
-            if progress_callback:
-                progress_callback(i + 1, total, img.file_name)
-
+        tasks_to_parse: List[Dict[str, Any]] = []
+        for img in all_images:
             # Check if result already exists for this image
             stmt_res = select(Result).where(Result.source_image_id == img.id)
             res_res = await session.execute(stmt_res)
@@ -149,24 +169,52 @@ class ImportService:
                     await session.execute(delete(OCRRun).where(OCRRun.result_metric_id.in_(rm_ids)))
                     await session.execute(delete(ResultMetric).where(ResultMetric.id.in_(rm_ids)))
                 await session.execute(delete(Result).where(Result.id == existing_result.id))
-                await session.flush()
 
-            # Load image
-            cv_img = ImagePreprocessor.load_image(img.file_path)
-            if cv_img is None:
-                continue
-
-            # Pass benchmark identified by scanner if available
             forced_b_id = None
             if img.file_path in scanned_map:
                 ident_id, conf = scanned_map[img.file_path]
                 if ident_id and ident_id != "unknown" and conf >= 0.60:
                     forced_b_id = ident_id
 
-            # Parse with parser registry
-            extraction = parser_registry.parse_image(cv_img, img.file_name, forced_benchmark_id=forced_b_id)
+            tasks_to_parse.append({
+                "image_id": img.id,
+                "configuration_id": img.configuration_id,
+                "file_path": img.file_path,
+                "file_name": img.file_name,
+                "forced_b_id": forced_b_id
+            })
 
-            # Make sure benchmark exists in DB (even if 'unknown')
+        if tasks_to_parse:
+            await session.commit()
+
+        # Concurrent OCR Extraction (bounded worker pool to prevent CPU thread thrashing)
+        extractions: List[Tuple[Dict[str, Any], Any]] = []
+        total = len(tasks_to_parse)
+        if total > 0:
+            completed_count = 0
+            cpu_count = os.cpu_count() or 4
+            max_workers = min(4, max(1, cpu_count // 2))
+            loop = asyncio.get_running_loop()
+
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                async def _run_worker(t: Dict[str, Any]):
+                    return await loop.run_in_executor(executor, _extract_single_image_worker, t)
+
+                worker_tasks = [_run_worker(t) for t in tasks_to_parse]
+                for coro in asyncio.as_completed(worker_tasks):
+                    res = await coro
+                    completed_count += 1
+                    if res:
+                        t_info, extraction = res
+                        extractions.append((t_info, extraction))
+                        if progress_callback:
+                            progress_callback(completed_count, total, t_info["file_name"])
+                    else:
+                        if progress_callback:
+                            progress_callback(completed_count, total, "Processing...")
+
+        # Batch insert results into SQLite in a single transaction
+        for task_info, extraction in extractions:
             b_id = extraction.benchmark_id
             stmt_b = select(Benchmark).where(Benchmark.id == b_id)
             b_db = (await session.execute(stmt_b)).scalar_one_or_none()
@@ -183,9 +231,9 @@ class ImportService:
             # Save Result
             result_record = Result(
                 project_id=project_id,
-                configuration_id=img.configuration_id,
+                configuration_id=task_info["configuration_id"],
                 benchmark_id=b_id,
-                source_image_id=img.id,
+                source_image_id=task_info["image_id"],
                 parser_id=extraction.parser_id,
                 parser_version=extraction.parser_version,
                 overall_confidence=extraction.overall_confidence,
@@ -196,7 +244,6 @@ class ImportService:
 
             # Save ResultMetrics
             for m_id, m_res in extraction.metrics.items():
-                # Ensure BenchmarkMetric exists
                 stmt_bm = select(BenchmarkMetric).where(
                     BenchmarkMetric.id == m_id,
                     BenchmarkMetric.benchmark_id == b_id
@@ -357,19 +404,43 @@ class ImportService:
         stmt_images = select(SourceImage).join(Configuration).where(Configuration.project_id == project_id)
         images = (await session.execute(stmt_images)).scalars().all()
         total = len(images)
+        if total == 0:
+            return 0
 
-        # 4. Parse each image
-        for i, img in enumerate(images):
-            if progress_callback:
-                progress_callback(i + 1, total, img.file_name)
+        tasks_to_parse = [{
+            "image_id": img.id,
+            "configuration_id": img.configuration_id,
+            "file_path": img.file_path,
+            "file_name": img.file_name,
+            "forced_b_id": None
+        } for img in images]
 
-            cv_img = ImagePreprocessor.load_image(img.file_path)
-            if cv_img is None:
-                continue
+        completed_count = 0
+        extractions: List[Tuple[Dict[str, Any], Any]] = []
+        cpu_count = os.cpu_count() or 4
+        max_workers = min(4, max(1, cpu_count // 2))
+        loop = asyncio.get_running_loop()
 
-            extraction = parser_registry.parse_image(cv_img, img.file_name)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            async def _run_worker(t: Dict[str, Any]):
+                return await loop.run_in_executor(executor, _extract_single_image_worker, t)
+
+            worker_tasks = [_run_worker(t) for t in tasks_to_parse]
+            for coro in asyncio.as_completed(worker_tasks):
+                res = await coro
+                completed_count += 1
+                if res:
+                    t_info, extraction = res
+                    extractions.append((t_info, extraction))
+                    if progress_callback:
+                        progress_callback(completed_count, total, t_info["file_name"])
+                else:
+                    if progress_callback:
+                        progress_callback(completed_count, total, "Processing...")
+
+        # 4. Batch insert results into DB
+        for task_info, extraction in extractions:
             b_id = extraction.benchmark_id
-
             stmt_b = select(Benchmark).where(Benchmark.id == b_id)
             b_db = (await session.execute(stmt_b)).scalar_one_or_none()
             if not b_db:
@@ -384,9 +455,9 @@ class ImportService:
 
             res_record = Result(
                 project_id=project_id,
-                configuration_id=img.configuration_id,
+                configuration_id=task_info["configuration_id"],
                 benchmark_id=b_id,
-                source_image_id=img.id,
+                source_image_id=task_info["image_id"],
                 parser_id=extraction.parser_id,
                 parser_version=extraction.parser_version,
                 overall_confidence=extraction.overall_confidence,
@@ -431,8 +502,5 @@ class ImportService:
                     region_json=json.dumps(m_res.ocr_region) if m_res.ocr_region else None
                 ))
 
-            if (i + 1) % 10 == 0 or (i + 1) == total:
-                await session.commit()
-
         await session.commit()
-        return total
+        return len(extractions)
