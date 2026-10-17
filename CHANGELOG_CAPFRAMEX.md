@@ -4,6 +4,20 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.6] - 2026-10-17
+### BrewedOps Telemetry Sidebar, Keyboard Search & Obsidian Dark Palette
+
+- **BrewedOps Telemetry Sidebar Overhaul**:
+  - Redesigned the game selection sidebar with deep obsidian styling (`#0a0e17`), delicate hairline borders, and subdued telemetry entry cards.
+- **Inline Keyboard Shortcut Search**:
+  - Added instantaneous search focus triggered via `/` keycap pill, filtering games and custom telemetry runs in real time.
+- **Segmented Filter Chips**:
+  - Upgraded filter navigation (All, Games, Custom) with clean segmented chips and subtle active states.
+- **Geist & Geist Mono Typography**:
+  - Integrated tabular figures for run counts and model statistics, eliminating layout shift during telemetry queries.
+
+---
+
 ## [1.1.5] - 2026-10-17
 ### Concurrent Multi-Threaded Ingestion Engine & Unified Modern Windows Folder Picker
 

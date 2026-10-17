@@ -5,8 +5,27 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.4 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.5 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.5 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.6 - v1.0.0)
+
+---
+
+## [1.1.6] - 2026-10-17
+### BrewedOps UI Cleanliness Overhaul, Bundled Offline Geist Typography & Gliding Spring Pill Navigation
+
+- **Bundled Offline Geist & Geist Mono Typography**:
+  - Embedded self-contained WOFF2 font assets for `Geist` (weights 100..900) and `Geist Mono` directly within `frontend/src/assets/fonts/`.
+  - Upgraded global application body typography with tight tracking (`letter-spacing: -0.012em`), crisp font smoothing, and tabular numerical alignment for all statistics and version tags without external cloud dependencies.
+- **BrewedOps Gliding Active Spring Pill (`sidebar-nav-glide`)**:
+  - Replaced noisy per-item gradient buttons with a single shared translucent blue highlight pill (`bg-blue-500/12 border border-blue-400/25`) that glides and stretches vertically using spring easing (`cubic-bezier(0.22, 1, 0.36, 1)`), delivering a high-end Linear/Vercel desktop feel.
+- **Decluttered 3-Section Sidebar Hierarchy**:
+  - Restructured the 11 flat navigation items into three focused micro-sections: **Workflow** (Dashboard, Import, Review, Charts), **Data Explorer** (Results, SSD, Tables, Profiles, Projects), and **Preferences** (Settings, Changelogs).
+  - Streamlined category headers with uppercase 10px tracking and tucked version numbers into a quiet Geist Mono badge.
+- **Minimalist Suite Shell & Header**:
+  - Refined the master desktop application header with deep obsidian styling (`#0a0e17`), 1px hairline borders (`rgba(255, 255, 255, 0.08)`), and clean segmented app switcher pills.
+- **BrewedOps KPI Dashboard & Settings**:
+  - Redesigned the primary Dashboard with large tabular figures, micro-labels, and interactive guided cards.
+  - Refreshed the Settings modal with clean obsidian panels and version parity.
 
 ---
 

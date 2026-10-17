@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.6",
+    date: "2026-10-17",
+    title: "BrewedOps UI Cleanliness Overhaul, Bundled Geist Fonts & Gliding Spring Pill Navigation",
+    isLatest: true,
+    category: "Feature",
+    tags: [
+      "BrewedOps Design System",
+      "Geist & Geist Mono Fonts",
+      "Gliding Spring Pill",
+      "Decluttered Sidebar Groups",
+      "Minimalist Top Header",
+      "Obsidian Dark Palette",
+      "KPI Dashboards Redesign",
+      "Offline Font Bundling"
+    ],
+    highlights: [
+      "Bundled Offline Geist & Geist Mono Typography: Integrated self-contained WOFF2 font assets for Geist (100..900) and Geist Mono, establishing modern micro-typography, tight tracking (-0.012em), and tabular numeral precision across all screens without external cloud requests.",
+      "BrewedOps Gliding Active Spring Pill: Replaced cluttered per-item gradient buttons with a single shared translucent blue highlight pill that glides and stretches vertically with spring physics (cubic-bezier(0.22, 1, 0.36, 1)), delivering a fluid Linear/Vercel desktop feel.",
+      "Decluttered Sidebar Hierarchy: Reorganized 11 flat navigation items into 3 clean, whisper-quiet micro-sections (Workflow, Data Explorer, Preferences) with uppercase 10px tracking and subtle version indicators.",
+      "Minimalist Suite Shell & Header: Upgraded the top application header with a clean obsidian surface (#0a0e17), hairline borders (rgba(255,255,255,0.08)), and refined segmented app switcher pills.",
+      "BrewedOps KPI Dashboard & Settings: Redesigned the primary Dashboard with large tabular figures, micro-labels, and interactive guided cards; refreshed Settings modal with clean obsidian panels and version parity."
+    ]
+  },
+  {
     version: "v1.1.5",
     date: "2026-10-17",
     title: "Native Windows IFileOpenDialog Modern Folder Picker, Single-Cancel Fix & Asynchronous Concurrent Ingestion Engine",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Modern Windows Explorer Dialog",
@@ -181,10 +205,31 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.6",
+    date: "2026-10-17",
+    title: "BrewedOps Telemetry Sidebar, Keyboard Search & Obsidian Dark Palette",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "BrewedOps Design System",
+      "Geist & Geist Mono Fonts",
+      "Keyboard Search (/)",
+      "Segmented Filter Tabs",
+      "Obsidian Dark Theme",
+      "Subtle Telemetry Cards"
+    ],
+    highlights: [
+      "BrewedOps Telemetry Sidebar Overhaul: Redesigned the game selection sidebar with deep obsidian styling (#0a0e17), delicate hairline borders, and subdued telemetry entry cards.",
+      "Inline Keyboard Shortcut Search: Added instantaneous search focus triggered via '/' keycap pill, filtering games and custom telemetry runs in real time.",
+      "Segmented Filter Chips: Upgraded filter navigation (All, Games, Custom) with clean segmented chips and subtle active states.",
+      "Geist & Geist Mono Typography: Integrated tabular figures for run counts and model statistics, eliminating layout shift during telemetry queries."
+    ]
+  },
+  {
     version: "v1.1.5",
     date: "2026-10-17",
     title: "Concurrent Multi-Threaded Ingestion Engine & Unified Modern Windows Folder Picker",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Concurrent Directory Scan",
@@ -320,10 +365,31 @@ export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
 
 export const OCR_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v2.17.5",
+    date: "2026-10-17",
+    title: "BrewedOps Clean Navigation Hierarchy, Gliding Spring Pill & KPI Stat Overhaul",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "BrewedOps Design System",
+      "Geist & Geist Mono Fonts",
+      "Gliding Spring Pill",
+      "3-Section Sidebar Grouping",
+      "Obsidian Theme Palette",
+      "KPI Dashboard Overhaul"
+    ],
+    highlights: [
+      "Gliding Active Spring Pill: Implemented the BrewedOps gliding active pill (sidebar-nav-glide) with spring physics (cubic-bezier(0.22, 1, 0.36, 1)), replacing heavy per-item gradient boxes.",
+      "Decluttered 3-Section Navigation: Restructured the 11-item sidebar into three focused micro-sections (Workflow, Data Explorer, Preferences) with uppercase 10px tracking and subtle version indicators.",
+      "Bundled Offline Geist Typography: Integrated self-contained WOFF2 font assets for Geist and Geist Mono for high-precision tabular numbers and micro-labels.",
+      "Minimalist Top Header & Dashboard: Upgraded the application Navbar with clean obsidian backgrounds (#0a0e17), hairline borders, and redesigned Dashboard KPI cards."
+    ]
+  },
+  {
     version: "v2.17.4",
     date: "2026-10-17",
     title: "Native Modern Windows Folder Picker (IFileOpenDialog), Single-Click Cancel Fix & Concurrent Bounded OCR Pipeline",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "IFileOpenDialog",

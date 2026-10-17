@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
 import { useThemeStore, THEME_OPTIONS } from "../../stores/themeStore";
 import { APP_VERSION_LABEL } from "../../constants/version";
-import { Activity, Cpu, FolderOpen, Moon, Power, RefreshCw } from "lucide-react";
+import { Activity, Cpu, FolderOpen, Moon, Power, RefreshCw, FolderSync } from "lucide-react";
 import { api } from "../../api/client";
 
 interface NavbarProps {
@@ -30,67 +30,67 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
 
   return (
     <>
-      <header className="h-16 bg-brand-surface border-b border-brand-border px-6 flex items-center justify-between z-10 select-none">
+      <header className="h-14 bg-[#0a0e17]/90 backdrop-blur-md border-b border-white/[0.08] px-5 flex items-center justify-between z-10 select-none font-['Geist',sans-serif]">
         {/* Brand & App Name */}
         <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-red to-rose-600 flex items-center justify-center shadow-lg shadow-rose-900/30">
-            <Activity className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/25 flex items-center justify-center shadow-sm">
+            <Activity className="w-4 h-4 text-[#3d8bff]" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h1 className="font-bold text-lg text-white tracking-tight">Benchmark Analyzer</h1>
-              <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-brand-border text-emerald-400 uppercase tracking-wider border border-emerald-500/30">
-                Offline {APP_VERSION_LABEL}
+              <h1 className="font-semibold text-sm text-white tracking-tight">Benchmark Analyzer</h1>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+                {APP_VERSION_LABEL}
               </span>
             </div>
-            <p className="text-xs text-slate-400">Reviewer Automated Data & Chart Engine</p>
+            <p className="text-[11px] text-slate-400 leading-none mt-0.5">Automated Reviewer Suite</p>
           </div>
         </div>
 
-        {/* Center: Current Project Switcher */}
-        <div className="flex items-center space-x-3 bg-brand-card/80 border border-brand-border px-4 py-1.5 rounded-lg shadow-inner">
-          <Cpu className="w-4 h-4 text-brand-red" />
-          <span className="text-xs text-slate-400 font-medium">Active Project:</span>
+        {/* Center: Current Project Switcher (Clean BrewedOps Segmented Pill) */}
+        <div className="flex items-center space-x-2.5 bg-white/[0.03] border border-white/[0.08] px-3 py-1 rounded-lg shadow-sm hover:border-white/15 transition-colors">
+          <Cpu className="w-3.5 h-3.5 text-[#3d8bff]" />
+          <span className="text-[11px] text-slate-400 font-medium">Project:</span>
 
           {projects.length > 0 ? (
             <select
               value={currentProject?.id || ""}
               onChange={(e) => selectProject(e.target.value)}
-              className="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer pr-2"
+              className="bg-transparent text-xs font-medium text-white focus:outline-none cursor-pointer pr-1"
             >
               {projects.map((p) => (
-                <option key={p.id} value={p.id} className="bg-brand-card text-white">
+                <option key={p.id} value={p.id} className="bg-[#111827] text-white">
                   {p.name} {p.product_name ? `(${p.product_name})` : ""}
                 </option>
               ))}
             </select>
           ) : (
-            <span className="text-sm text-slate-400 italic">No project active</span>
+            <span className="text-xs text-slate-500 italic">No project active</span>
           )}
 
           {currentProject && (
             <button
               onClick={() => refreshCurrentProject()}
               title="Refresh active project"
-              className="p-1 hover:bg-brand-border rounded text-slate-400 hover:text-white transition"
+              className="p-1 hover:bg-white/[0.08] rounded text-slate-400 hover:text-white transition cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin text-brand-red" : ""}`} />
+              <RefreshCw className={`w-3 h-3 ${isLoading ? "animate-spin text-[#3d8bff]" : ""}`} />
             </button>
           )}
         </div>
 
         {/* Right Quick Actions & Theme Selector */}
-        <div className="flex items-center space-x-3">
+        <div className="flex items-center space-x-2.5">
           {/* UI Theme Switcher */}
-          <div className="flex items-center bg-brand-card hover:bg-brand-border/60 border border-brand-border px-2.5 py-1.5 rounded-lg transition" title="Change UI Theme">
-            <Moon className="w-3.5 h-3.5 text-brand-red mr-1.5 shrink-0" />
+          <div className="flex items-center bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] px-2.5 py-1 rounded-lg transition-colors" title="Change UI Theme">
+            <Moon className="w-3.5 h-3.5 text-[#3d8bff] mr-1.5 shrink-0" />
             <select
               value={theme}
               onChange={(e) => setTheme(e.target.value as any)}
-              className="bg-transparent text-xs font-semibold text-slate-200 focus:outline-none cursor-pointer pr-1"
+              className="bg-transparent text-xs font-medium text-slate-300 focus:outline-none cursor-pointer pr-1"
             >
               {THEME_OPTIONS.map((t) => (
-                <option key={t.id} value={t.id} className="bg-brand-card text-white">
+                <option key={t.id} value={t.id} className="bg-[#111827] text-white">
                   {t.icon} {t.name}
                 </option>
               ))}
@@ -99,23 +99,24 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
 
           <button
             onClick={onOpenProjects}
-            className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg bg-brand-card hover:bg-brand-border border border-brand-border text-xs font-medium text-slate-200 transition cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] text-xs font-medium text-slate-300 hover:text-white transition active:scale-95 cursor-pointer"
           >
-            <FolderOpen className="w-3.5 h-3.5" />
+            <FolderOpen className="w-3.5 h-3.5 text-slate-400" />
             <span>Projects</span>
           </button>
 
           <button
             onClick={onOpenImport}
-            className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-lg bg-brand-red hover:bg-rose-600 text-xs font-semibold text-white shadow-md shadow-rose-900/30 transition active:scale-95 cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-blue-600/90 hover:bg-blue-500 text-xs font-medium text-white shadow-sm shadow-blue-500/20 transition active:scale-95 cursor-pointer"
           >
+            <FolderSync className="w-3.5 h-3.5" />
             <span>Scan Folder</span>
           </button>
 
           <button
             onClick={() => setShowExitModal(true)}
             title="Stop server & Exit Application"
-            className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 text-xs font-medium text-rose-300 hover:text-rose-200 transition cursor-pointer ml-1"
+            className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/25 text-xs font-medium text-rose-300 hover:text-rose-200 transition cursor-pointer"
           >
             <Power className="w-3.5 h-3.5 text-rose-400" />
             <span>Exit</span>
@@ -125,14 +126,14 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
 
       {/* Exit Confirmation Modal */}
       {showExitModal && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-brand-surface border border-brand-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+        <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-[#0a0e17] border border-white/[0.1] rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4 font-['Geist',sans-serif]">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400">
-                <Power className="w-5 h-5" />
+              <div className="w-9 h-9 rounded-xl bg-rose-500/15 border border-rose-500/25 flex items-center justify-center text-rose-400">
+                <Power className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Exit Benchmark Analyzer?</h3>
+                <h3 className="text-sm font-semibold text-white">Exit Benchmark Analyzer?</h3>
                 <p className="text-xs text-slate-400">Stop the background application server</p>
               </div>
             </div>
@@ -141,12 +142,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
               This will cleanly shut down the local background server and release all system ports and resources. You can then safely close this browser window.
             </p>
 
-            <div className="flex items-center justify-end space-x-3 pt-2">
+            <div className="flex items-center justify-end space-x-2.5 pt-2">
               <button
                 type="button"
                 onClick={() => setShowExitModal(false)}
                 disabled={isShuttingDown}
-                className="px-4 py-2 rounded-xl bg-brand-card hover:bg-brand-border text-slate-300 text-xs font-medium transition"
+                className="px-3.5 py-1.5 rounded-lg bg-white/[0.05] hover:bg-white/[0.09] text-slate-300 text-xs font-medium transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -154,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
                 type="button"
                 onClick={handleConfirmExit}
                 disabled={isShuttingDown}
-                className="px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition flex items-center space-x-1.5 shadow-lg shadow-rose-900/30"
+                className="px-3.5 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold transition flex items-center space-x-1.5 shadow-sm shadow-rose-900/40 cursor-pointer"
               >
                 <Power className="w-3.5 h-3.5" />
                 <span>{isShuttingDown ? "Shutting Down..." : "Exit App"}</span>
@@ -166,12 +167,12 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
 
       {/* Server Shutdown Screen */}
       {isShutdown && (
-        <div className="fixed inset-0 bg-slate-950/95 z-50 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
-          <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-700 flex items-center justify-center text-slate-400 mb-4 shadow-2xl">
-            <Power className="w-8 h-8 text-rose-500" />
+        <div className="fixed inset-0 bg-[#0a0e17]/95 z-50 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md font-['Geist',sans-serif]">
+          <div className="w-14 h-14 rounded-2xl bg-[#111827] border border-white/[0.08] flex items-center justify-center text-slate-400 mb-4 shadow-xl">
+            <Power className="w-6 h-6 text-rose-500" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-2">Benchmark Analyzer has shut down</h2>
-          <p className="text-slate-400 text-sm max-w-md mb-6">
+          <h2 className="text-base font-semibold text-white mb-1.5">Benchmark Analyzer has shut down</h2>
+          <p className="text-slate-400 text-xs max-w-md">
             The local background server has stopped cleanly and freed all system resources. You can now safely close this browser tab.
           </p>
         </div>

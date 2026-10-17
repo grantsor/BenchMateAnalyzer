@@ -29,6 +29,7 @@ import {
   CAPFRAMEX_CHANGELOG,
   ReleaseItem
 } from "../../data/changelogData";
+import { SUITE_VERSION_LABEL } from "../../constants/version";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -190,23 +191,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-[#121215] border border-[#23232a] w-full max-w-4xl h-[88vh] max-h-[820px] rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200 font-['Geist',sans-serif]">
+      <div className="bg-[#0a0e17] border border-white/[0.08] w-full max-w-4xl h-[88vh] max-h-[820px] rounded-2xl shadow-2xl flex flex-col overflow-hidden text-slate-100">
         {/* Modal Header */}
-        <div className="px-6 py-4 border-b border-[#23232a] flex items-center justify-between bg-[#161820]/60">
+        <div className="px-6 py-4 border-b border-white/[0.06] flex items-center justify-between bg-[#0a0e17]">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/25 flex items-center justify-center text-[#3d8bff]">
               <Sliders className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white flex items-center gap-2">
+              <h2 className="text-sm font-semibold text-white flex items-center gap-2">
                 <span>BenchMate Analyzer Settings</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700">
-                  v1.1.0
+                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+                  {SUITE_VERSION_LABEL}
                 </span>
               </h2>
-              <p className="text-xs text-slate-400">
-                Configure global themes, changelogs, customizable shortcuts, and publication defaults
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                Configure global appearance, publication branding, shortcuts, and telemetry storage
               </p>
             </div>
           </div>
@@ -214,98 +215,98 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-[#23232a] transition-colors cursor-pointer"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors cursor-pointer"
             title="Close Settings (Esc)"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Body: Sidebar Tabs + Content Viewport */}
         <div className="flex flex-1 overflow-hidden">
           {/* Settings Sidebar Tabs */}
-          <aside className="w-56 bg-[#0e0e11] border-r border-[#23232a] p-3 space-y-1 shrink-0 overflow-y-auto">
+          <aside className="w-56 bg-[#0a0e17] border-r border-white/[0.06] p-3 space-y-1 shrink-0 overflow-y-auto">
             <button
               type="button"
               onClick={() => setActiveTab("appearance")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "appearance"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <Palette className="w-4 h-4 shrink-0" />
+              <Palette className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Appearance & Theme</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("changelogs")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "changelogs"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <History className="w-4 h-4 shrink-0" />
+              <History className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Changelogs Hub</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("branding")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "branding"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <Tag className="w-4 h-4 shrink-0" />
+              <Tag className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Branding & Smart 9:16</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("shortcuts")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "shortcuts"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <Keyboard className="w-4 h-4 shrink-0" />
+              <Keyboard className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Custom Shortcuts</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("naming")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "naming"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <FileText className="w-4 h-4 shrink-0" />
+              <FileText className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Export File Naming</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveTab("data")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
+              className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium transition-all cursor-pointer ${
                 activeTab === "data"
-                  ? "bg-blue-600 text-white shadow-md shadow-blue-900/40"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#18181b]"
+                  ? "bg-blue-500/12 text-white border border-blue-400/25 font-semibold"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
               }`}
             >
-              <Database className="w-4 h-4 shrink-0" />
+              <Database className="w-3.5 h-3.5 shrink-0 text-[#3d8bff]" />
               <span>Data & Storage</span>
             </button>
           </aside>
 
           {/* Active Content Area */}
-          <main className="flex-1 p-6 overflow-y-auto space-y-6">
+          <main className="flex-1 p-6 overflow-y-auto space-y-6 bg-[#0a0e17]">
             {/* ========================================================= */}
             {/* TAB: APPEARANCE & THEMES                                  */}
             {/* ========================================================= */}

@@ -134,74 +134,74 @@ export function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#09090b] text-slate-100 select-none">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0a0e17] text-slate-100 select-none font-['Geist',sans-serif]">
       {/* Master BenchMate Header (hidden if standalone popout window) */}
       {!isStandalone && (
-        <header className="h-11 min-h-[44px] bg-[#0c0c0e] border-b border-[#23232a] flex items-center justify-between px-3 z-50 shadow-md">
+        <header className="h-11 min-h-[44px] bg-[#0a0e17] border-b border-white/[0.08] flex items-center justify-between px-3.5 z-50">
           {/* Brand Logo & Name */}
-          <div className="flex items-center gap-2.5">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-blue-600/10 border border-blue-500/20 text-blue-400">
-              <Layers className="w-3.5 h-3.5 text-blue-400" />
-              <span className="font-extrabold text-xs tracking-wider text-white">
-                BENCH<span className="text-red-500">MATE</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-400/20 text-[#3d8bff]">
+              <Layers className="w-3.5 h-3.5" />
+              <span className="font-semibold text-xs tracking-tight text-white">
+                Bench<span className="text-[#3d8bff]">Mate</span>
               </span>
-              <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider">Analyzer</span>
+              <span className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Suite</span>
             </div>
-            <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700/60 font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/[0.04] text-slate-400 border border-white/[0.06] font-mono">
               {SUITE_VERSION_LABEL}
             </span>
           </div>
 
-          {/* Dual App Switcher (Clean, without Main/Dedicated badges) */}
-          <div className="flex items-center bg-[#18181b] p-0.5 rounded-lg border border-[#27272a] shadow-inner">
+          {/* Dual App Switcher (BrewedOps Clean Segmented Pill) */}
+          <div className="flex items-center bg-white/[0.03] p-0.5 rounded-lg border border-white/[0.08]">
             <button
               type="button"
               onClick={() => setActiveApp("ocr")}
-              className={`flex items-center gap-2 px-3.5 py-1 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer ${
                 activeApp === "ocr"
-                  ? "bg-blue-600 text-white shadow-sm shadow-blue-900/50"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#23232a]"
+                  ? "bg-blue-600/90 text-white shadow-sm shadow-blue-500/20"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
               }`}
             >
-              <Camera className="w-3.5 h-3.5" />
+              <Camera className="w-3.5 h-3.5 text-[#3d8bff]" />
               <span>Benchmark OCR Analyzer</span>
             </button>
 
             <button
               type="button"
               onClick={() => setActiveApp("capframex")}
-              className={`flex items-center gap-2 px-3.5 py-1 rounded-md text-xs font-semibold transition-all duration-150 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-medium transition-all duration-150 cursor-pointer ${
                 activeApp === "capframex"
-                  ? "bg-emerald-600 text-white shadow-sm shadow-emerald-900/50"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-[#23232a]"
+                  ? "bg-blue-600/90 text-white shadow-sm shadow-blue-500/20"
+                  : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04]"
               }`}
             >
-              <Gamepad2 className="w-3.5 h-3.5" />
+              <Gamepad2 className="w-3.5 h-3.5 text-[#3d8bff]" />
               <span>CapFrameX Analyzer</span>
             </button>
           </div>
 
           {/* Right Action Tools: Import Folder + Settings + Pop Out */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
             {/* Open Active Import Folder Button */}
             <button
               type="button"
               onClick={handleOpenImportFolder}
               title={`Open ${activeApp === "ocr" ? "OCR Screenshots" : "CapFrameX Captures"} Import Folder in Windows Explorer (${formatCombo(shortcuts.open_import_folder?.combo || { key: "i", ctrl: true })})`}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs font-semibold transition cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition active:scale-95 cursor-pointer"
             >
-              <FolderSearch className="w-3.5 h-3.5 text-amber-400" />
+              <FolderSearch className="w-3.5 h-3.5 text-sky-400" />
               <span className="hidden sm:inline">Import Folder</span>
             </button>
 
-            {/* Dedicated Settings Button (Replaced Dual Engines Online) */}
+            {/* Dedicated Settings Button */}
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
               title="Open BenchMate Settings & Changelogs (Ctrl+,)"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs font-semibold transition cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition active:scale-95 cursor-pointer"
             >
-              <Settings className="w-3.5 h-3.5 text-blue-400" />
+              <Settings className="w-3.5 h-3.5 text-[#3d8bff]" />
               <span>Settings</span>
             </button>
 
@@ -210,10 +210,10 @@ export function App() {
               type="button"
               onClick={handlePopOut}
               title={`Pop out ${activeApp === "ocr" ? "OCR Analyzer" : "CapFrameX Analyzer"} into a dedicated window for dual monitors`}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-[#18181b] hover:bg-[#23232a] text-slate-300 hover:text-white border border-[#27272a] text-xs transition cursor-pointer"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-400 hover:text-white border border-white/[0.08] text-xs transition active:scale-95 cursor-pointer"
             >
               <ExternalLink className="w-3 h-3 text-slate-400" />
-              <span className="hidden md:inline">Pop Out Window</span>
+              <span className="hidden md:inline">Pop Out</span>
             </button>
           </div>
         </header>

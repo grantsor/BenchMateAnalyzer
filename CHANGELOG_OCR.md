@@ -4,6 +4,20 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.5] - 2026-10-17
+### BrewedOps Clean Navigation Hierarchy, Gliding Spring Pill & KPI Stat Overhaul
+
+- **Gliding Active Spring Pill (`sidebar-nav-glide`)**:
+  - Implemented the BrewedOps gliding active pill with spring physics (`cubic-bezier(0.22, 1, 0.36, 1)`), replacing heavy per-item gradient boxes with a fluid single indicator.
+- **Decluttered 3-Section Navigation**:
+  - Restructured the 11-item sidebar into three focused micro-sections: **Workflow**, **Data Explorer**, and **Preferences**, with uppercase 10px tracking and subtle version indicators.
+- **Bundled Offline Geist Typography**:
+  - Integrated self-contained WOFF2 font assets for `Geist` and `Geist Mono` for high-precision tabular numbers and micro-labels.
+- **Minimalist Top Header & Dashboard**:
+  - Upgraded the application Navbar with clean obsidian backgrounds (`#0a0e17`), hairline borders, and redesigned Dashboard KPI cards.
+
+---
+
 ## [2.17.4] - 2026-10-17
 ### Native Windows IFileOpenDialog Modern Folder Picker, Single-Cancel Fix & Asynchronous Concurrent Ingestion Pipeline
 
