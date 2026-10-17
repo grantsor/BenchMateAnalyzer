@@ -4,6 +4,26 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.6] - 2026-10-17
+### Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Export Chip Parity
+
+- **Dynamic Vertical Rhythm & Balanced Header Spacing**:
+  - Replaced static lookup magic numbers with mathematical vertical rhythm across all chart export and canvas preview modes.
+  - Symmetrically matched Title $\rightarrow$ Sub-header spacing with Sub-header $\rightarrow$ Legend spacing (`titleItemGap === subToLegendGap = 14px` at 1080p, `8px` preview minimum) across single-line, 2-line, and 3-line titles in 16:9 Landscape and 9:16 Vertical orientations.
+  - Eliminated legend-to-subtitle collisions by computing actual rendered bounding boxes and adding deterministic line heights and zero-padding resets.
+- **Chart Typography Isolation**:
+  - Restored original `Open Sans Condensed`, `Open Sans`, and `Inter` typography for all generated benchmark charts and live interactive previews, while keeping modern `Geist` typography strictly for the application UI shell and tools.
+- **Sidebar Selection Accuracy**:
+  - Fixed active highlight pill alignment with direct on-button styling, eliminating position drift and offset across all zoom levels and scroll states.
+- **Collapsible Sidebar**:
+  - Added toggleable collapsible sidebar (`w-64` $\leftrightarrow$ `w-16` icon-only with native tooltips).
+- **OCR Export Chip Bar Parity**:
+  - Replaced the bulky 12-column sizing grid with the sleek horizontal segmented chip bar from CapFrameX ([16:9 Wide | 9:16 Mobile], [720P | 1080P | 4K], [WEBP | PNG | JPG]).
+- **Zero-Lag Tab & Benchmark Switching**:
+  - Decoupled active selections from redundant background data refetching, eliminating page lag and refresh flickers when toggling tabs or picking benchmarks.
+
+---
+
 ## [2.17.5] - 2026-10-17
 ### BrewedOps Clean Navigation Hierarchy, Gliding Spring Pill & KPI Stat Overhaul
 

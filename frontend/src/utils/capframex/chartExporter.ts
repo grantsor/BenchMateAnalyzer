@@ -255,30 +255,40 @@ export function buildExportEchartsOption(
   const rawTitleText = options.title || dataset.benchmark_name.toUpperCase();
   const titleLayout = formatChartTitle(rawTitleText, isVertical, safeCenteredTitleWidth, scale);
 
+  const subtitle = options.subtitle || "AVERAGE & 1% LOW FPS (HIGHER IS BETTER)";
+  const subColor = options.subtitleColor || "#e63946";
   const subtitleFontSize = Math.round((isVertical ? 17 : 20) * scale);
+  const subtitleLineHeight = Math.round(subtitleFontSize * 1.22);
+  const subtitleLineCount = subtitle ? (subtitle.includes("\n") ? subtitle.split("\n").length : 1) : 0;
+  const subtitleBlockHeight = subtitle ? subtitleLineCount * subtitleLineHeight : 0;
+
   const legendFontSize = Math.round((isVertical ? 17 : 19) * scale);
+  const legendBlockHeight = Math.max(Math.round((isVertical ? 12 : 14) * scale), Math.round(legendFontSize * 1.2));
 
   const titleTop = Math.round(
     (isVertical
-      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 20 : 28)
-      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 24)
-    ) * scale
-  );
-  const titleItemGap = Math.max(4, Math.round((isVertical ? 6 : 8) * scale));
-
-  const legendTop = Math.round(
-    (isVertical
-      ? (titleLayout.lineCount >= 3 ? 134 : titleLayout.lineCount === 2 ? 116 : 94)
-      : (titleLayout.lineCount >= 3 ? 126 : titleLayout.lineCount === 2 ? 108 : 94)
+      ? (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 30)
+      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 20 : 26)
     ) * scale
   );
 
-  const gridTop = Math.round(
-    (isVertical
-      ? (titleLayout.lineCount >= 3 ? 190 : titleLayout.lineCount === 2 ? 172 : 150)
-      : (titleLayout.lineCount >= 3 ? 180 : titleLayout.lineCount === 2 ? 165 : 150)
-    ) * scale
-  );
+  // Equal balanced spacing between Title and Sub-header (14px at 1080p, 8px min in preview)
+  const titleItemGap = Math.max(8, Math.round((isVertical ? 12 : 14) * scale));
+
+  // Rendered height of Title block
+  const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
+
+  // Subtitle bottom coordinate
+  const subtitleBottomY = titleTop + titleBlockHeight + (subtitleBlockHeight > 0 ? titleItemGap + subtitleBlockHeight : 0);
+
+  // Equal balanced spacing between Sub-header and Legend (matches titleItemGap for perfect vertical rhythm)
+  const subToLegendGap = titleItemGap;
+  const legendTop = Math.round(subtitleBottomY + subToLegendGap);
+
+  // Spacing between Legend and Chart Grid (bars)
+  const legendBottomY = legendTop + legendBlockHeight;
+  const legendToGridGap = Math.max(14, Math.round((isVertical ? 20 : 24) * scale));
+  const gridTop = Math.round(legendBottomY + legendToGridGap);
 
   const gridBottom = Math.round((isVertical ? 75 : 65) * scale);
   const totalGridWidth = Math.max(100, width - gridLeft - gridRight);
@@ -664,9 +674,6 @@ export function buildExportEchartsOption(
 
   const cornerSize = Math.round((isVertical ? 85 : 100) * scale);
 
-  const subtitle = options.subtitle || "AVERAGE & 1% LOW FPS (HIGHER IS BETTER)";
-  const subColor = options.subtitleColor || "#e63946";
-
   const highlightGraphics: any[] = [];
   if (options.highlightOptions?.enabled && rows.length > 0) {
     const rowsCount = displayRows.length;
@@ -755,6 +762,7 @@ export function buildExportEchartsOption(
       left: "center",
       top: titleTop,
       itemGap: titleItemGap,
+      padding: 0,
       textStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: textCol,
@@ -770,6 +778,7 @@ export function buildExportEchartsOption(
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: subColor,
         fontSize: subtitleFontSize,
+        lineHeight: subtitleLineHeight,
         fontWeight: "bold",
         letterSpacing: Math.round(1.5 * scale),
         align: "center"
@@ -777,6 +786,7 @@ export function buildExportEchartsOption(
     },
     legend: {
       top: legendTop,
+      padding: 0,
       left: "center",
       orient: "horizontal",
       type: "scroll",

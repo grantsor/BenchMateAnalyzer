@@ -10,10 +10,35 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.7",
+    date: "2026-10-17",
+    title: "Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebars & Global Theme Hub",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Dynamic Vertical Rhythm",
+      "Balanced Header Spacing",
+      "Chart Font Restoration",
+      "Collapsible Sidebars",
+      "Global Theme Switcher",
+      "Zero-Lag Switching",
+      "Export Chips Parity"
+    ],
+    highlights: [
+      "Dynamic Vertical Rhythm & Balanced Header Spacing: Resolved uneven spacing between main chart title, sub-header, and legend across single-line, 2-line, and 3-line layouts. Header-to-sub-header spacing is now mathematically balanced and matched with sub-header-to-legend spacing in both 16:9 and 9:16 aspect ratios across live previews and high-resolution exports.",
+      "Chart Typography Isolation: Restored original Open Sans Condensed, Open Sans, and Inter typography for all generated benchmark charts and live interactive previews, while keeping modern Geist typography strictly for the application UI shell and tools.",
+      "Sidebar Selection Accuracy: Fixed active highlight pill alignment with direct on-button styling, eliminating position drift and offset across all zoom levels and scroll states.",
+      "Collapsible Sidebars: Implemented compact icon-only collapsible sidebars (toggling between w-64 expanded and w-16 collapsed with tooltips) across both OCR and CapFrameX analyzers.",
+      "Global Theme Selector Placement: Relocated the theme switcher to the master suite header alongside Import Folder and Settings, with complete theme synchronization (Dark, Light, OLED, Midnight Navy) across all views.",
+      "Zero-Lag Tab & Benchmark Switching: Eliminated window refresh animations and lag when toggling between Single Tests and Overall Summary or picking benchmarks by decoupling local selections from redundant dataset network refetches.",
+      "OCR Export Chip Bar Parity: Replaced the bulky 12-column sizing grid with the sleek horizontal segmented chip bar from CapFrameX ([16:9 Wide | 9:16 Mobile], [720P | 1080P | 4K], [WEBP | PNG | JPG])."
+    ]
+  },
+  {
     version: "v1.1.6",
     date: "2026-10-17",
     title: "BrewedOps UI Cleanliness Overhaul, Bundled Geist Fonts & Gliding Spring Pill Navigation",
-    isLatest: true,
+    isLatest: false,
     category: "Feature",
     tags: [
       "BrewedOps Design System",

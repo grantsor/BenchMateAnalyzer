@@ -4,6 +4,22 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.7] - 2026-10-17
+### Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Global Theme Hub
+
+- **Dynamic Vertical Rhythm & Balanced Header Spacing**:
+  - Replaced static offset numbers with dynamic geometric calculations across all resolution presets (720p, 1080p, 4K) and aspect ratios (16:9, 9:16).
+  - Ensured Title $\rightarrow$ Sub-header and Sub-header $\rightarrow$ Legend gaps are perfectly symmetrical (`titleItemGap === subToLegendGap = 14px` at 1080p, `8px` in preview).
+  - Explicitly bound subtext line height (`1.22 * fontSize`) and applied zero-padding normalization to eliminate cross-platform font collisions.
+- **Chart Typography Isolation**:
+  - Restored classic `Open Sans Condensed` and `Open Sans` typography across benchmark chart canvas and image exports while keeping modern `Geist` for UI controls.
+- **Collapsible Telemetry Sidebar**:
+  - Added collapse toggle to the game and run sidebar (`w-72` $\leftrightarrow$ `w-16` icon-only with tooltips).
+- **Global Theme Synchronization**:
+  - Synced with the suite-wide theme hub in the master header.
+
+---
+
 ## [1.1.6] - 2026-10-17
 ### BrewedOps Telemetry Sidebar, Keyboard Search & Obsidian Dark Palette
 

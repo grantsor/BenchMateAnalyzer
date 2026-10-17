@@ -5,8 +5,30 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.5 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.6 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.6 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.7 - v1.0.0)
+
+---
+
+## [1.1.7] - 2026-10-17
+### Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebars & Global Theme Hub
+
+- **Dynamic Vertical Rhythm & Balanced Header Spacing**:
+  - Replaced static lookup magic numbers with mathematical vertical rhythm across all chart export and canvas preview modes.
+  - Symmetrically matched Title $\rightarrow$ Sub-header spacing with Sub-header $\rightarrow$ Legend spacing (`titleItemGap === subToLegendGap = 14px` at 1080p, `8px` preview minimum) across single-line, 2-line, and 3-line titles in 16:9 Landscape and 9:16 Vertical orientations.
+  - Eliminated legend-to-subtitle collisions by computing actual rendered bounding boxes and adding deterministic line heights and zero-padding resets.
+- **Chart Typography Isolation**:
+  - Restored original `Open Sans Condensed`, `Open Sans`, and `Inter` typography for all generated benchmark charts and live interactive previews, while keeping modern `Geist` typography strictly for the application UI shell and tools.
+- **Sidebar Active Selection Alignment**:
+  - Replaced floating pill coordinates with direct on-button active styles (`bg-blue-600/15 border-blue-400/35`), ensuring zero drift, zero lag, and instant feedback at all display scales.
+- **Collapsible Sidebars**:
+  - Added toggleable collapsible sidebars (`w-64`/`w-72` $\leftrightarrow$ `w-16` icon-only with native tooltips) across both OCR and CapFrameX applications.
+- **Global Theme Selector in Master Header**:
+  - Relocated the theme switcher to the top master header alongside Import Folder and Settings, synchronizing Dark, Light, OLED, and Midnight Navy across the entire suite.
+- **Zero-Lag Tab & Benchmark Switching**:
+  - Decoupled active selections from redundant background data refetching, eliminating page lag and refresh flickers when toggling tabs or picking benchmarks.
+- **OCR Export Bar Parity**:
+  - Replaced bulky 12-column export options with CapFrameX's horizontal segmented chip bar (`16:9 / 9:16`, `720P / 1080P / 4K`, `WEBP / PNG / JPG`).
 
 ---
 

@@ -316,28 +316,46 @@ export function buildExportEchartsOption(
   const rawTitleText = options.title || dataset.benchmark_name.toUpperCase();
   const titleLayout = formatChartTitle(rawTitleText, isVertical, safeCenteredTitleWidth, scale);
 
+  // Direction subtitle
+  const firstRow = dataset.rows[0];
+  const firstMetricKey = dataset.metric_ids[0];
+  const hib = firstRow?.metrics[firstMetricKey]?.higher_is_better ?? true;
+  const autoSub = hib ? "HIGHER IS BETTER" : "LOWER IS BETTER";
+  const subtitle = options.subtitle || autoSub;
+  const subColor = options.subtitleColor || (subtitle.includes("LOWER") ? "#f59e0b" : "#e63946");
+  const subtitleFontSize = Math.round((isVertical ? 17 : 20) * scale);
+  const subtitleLineHeight = Math.round(subtitleFontSize * 1.22);
+  const subtitleLineCount = subtitle ? (subtitle.includes("\n") ? subtitle.split("\n").length : 1) : 0;
+  const subtitleBlockHeight = subtitle ? subtitleLineCount * subtitleLineHeight : 0;
+
+  const legendFontSize = Math.round((isVertical ? 17 : 19) * scale);
+  const legendBlockHeight = Math.max(Math.round((isVertical ? 12 : 14) * scale), Math.round(legendFontSize * 1.2));
+
   // Dynamic vertical offsets
   const titleTop = Math.round(
     (isVertical
-      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 20 : 28)
-      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 24)
-    ) * scale
-  );
-  const titleItemGap = Math.max(3, Math.round((isVertical ? 5 : 6) * scale));
-
-  const legendTop = Math.round(
-    (isVertical
-      ? (titleLayout.lineCount >= 3 ? 134 : titleLayout.lineCount === 2 ? 116 : 94)
-      : (titleLayout.lineCount >= 3 ? 126 : titleLayout.lineCount === 2 ? 108 : 94)
+      ? (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 30)
+      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 20 : 26)
     ) * scale
   );
 
-  const gridTop = Math.round(
-    (isVertical
-      ? (titleLayout.lineCount >= 3 ? 190 : titleLayout.lineCount === 2 ? 172 : 150)
-      : (titleLayout.lineCount >= 3 ? 180 : titleLayout.lineCount === 2 ? 165 : 150)
-    ) * scale
-  );
+  // Equal balanced spacing between Title and Sub-header (14px at 1080p, 8px min in preview)
+  const titleItemGap = Math.max(8, Math.round((isVertical ? 12 : 14) * scale));
+
+  // Rendered height of Title block
+  const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
+
+  // Subtitle bottom coordinate
+  const subtitleBottomY = titleTop + titleBlockHeight + (subtitleBlockHeight > 0 ? titleItemGap + subtitleBlockHeight : 0);
+
+  // Equal balanced spacing between Sub-header and Legend (matches titleItemGap for perfect vertical rhythm)
+  const subToLegendGap = titleItemGap;
+  const legendTop = Math.round(subtitleBottomY + subToLegendGap);
+
+  // Spacing between Legend and Chart Grid (bars)
+  const legendBottomY = legendTop + legendBlockHeight;
+  const legendToGridGap = Math.max(14, Math.round((isVertical ? 20 : 24) * scale));
+  const gridTop = Math.round(legendBottomY + legendToGridGap);
 
   // Grid margins
   const userGridLeft = options.gridLeftMargin ?? (isVertical ? 135 : 240);
@@ -509,14 +527,6 @@ export function buildExportEchartsOption(
   // Symmetrical solid corner decorations sizing (compact, solid pure colors, no white cutouts)
   const cornerSize = Math.round((isVertical ? 85 : 100) * scale);
 
-  // Direction subtitle
-  const firstRow = dataset.rows[0];
-  const firstMetricKey = dataset.metric_ids[0];
-  const hib = firstRow?.metrics[firstMetricKey]?.higher_is_better ?? true;
-  const autoSub = hib ? "HIGHER IS BETTER" : "LOWER IS BETTER";
-  const subtitle = options.subtitle || autoSub;
-  const subColor = options.subtitleColor || (subtitle.includes("LOWER") ? "#f59e0b" : "#e63946");
-
   // Highlight Graphics (row background shade and dividing lines)
   const highlightGraphics: any[] = [];
   if (options.highlightOptions?.enabled && rows.length > 0) {
@@ -604,6 +614,7 @@ export function buildExportEchartsOption(
       left: "center",
       top: titleTop,
       itemGap: titleItemGap,
+      padding: 0,
       textStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: textCol,
@@ -618,7 +629,8 @@ export function buildExportEchartsOption(
       subtextStyle: {
         fontFamily: options.headerFontFamily || "'Open Sans Condensed', 'Open Sans', 'Inter', sans-serif",
         color: subColor,
-        fontSize: Math.round((isVertical ? 17 : 20) * scale),
+        fontSize: subtitleFontSize,
+        lineHeight: subtitleLineHeight,
         fontWeight: "bold",
         letterSpacing: Math.round(1.5 * scale),
         align: "center"
@@ -626,12 +638,13 @@ export function buildExportEchartsOption(
     },
     legend: {
       top: legendTop,
+      padding: 0,
       left: "center",
       orient: "horizontal",
       type: "scroll", // Strictly keep legend items on a single row in export
       textStyle: {
         color: textCol,
-        fontSize: Math.round((isVertical ? 17 : 19) * scale),
+        fontSize: legendFontSize,
         fontWeight: "600"
       },
       itemGap: Math.round((isVertical ? 20 : 28) * scale),
