@@ -23,7 +23,7 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
   - Replaced floating pill coordinates with direct on-button active styles (`bg-blue-600/15 border-blue-400/35`), ensuring zero drift, zero lag, and instant feedback at all display scales.
 - **Collapsible Sidebars & Distinctive Game Icons**:
   - Added toggleable collapsible sidebars (`w-64`/`w-72` $\leftrightarrow$ `w-16` icon-only with native tooltips) across both OCR and CapFrameX applications.
-  - Replaced repetitive generic gamepad icons in CapFrameX's collapsed navigation with authentic, high-contrast game vector insignia (Counter-Strike 2, Cyberpunk 2077, Black Myth: Wukong, DOTA 2, Assassin's Creed, and 30+ titles) and smart procedural gaming monogram badges for any custom titles, complete with custom icon URL support in Game Profiles.
+  - Replaced repetitive generic gamepad icons in CapFrameX's navigation with authentic, high-resolution official game desktop icons (Counter-Strike 2, Cyberpunk 2077, Black Myth: Wukong, DOTA 2, Assassin's Creed Mirage, Ghost of Tsushima, Hogwarts Legacy, Horizon Forbidden West, Returnal, Far Cry 6, F1, and 30+ titles) bundled locally in `public/game-icons/`, complete with custom icon URL support in Game Profiles.
 - **Global Theme Selector in Master Header**:
   - Relocated the theme switcher to the top master header alongside Import Folder and Settings, synchronizing Dark, Light, OLED, and Midnight Navy across the entire suite.
 - **Zero-Lag Tab & Benchmark Switching**:
