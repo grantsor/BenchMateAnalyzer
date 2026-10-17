@@ -10,10 +10,33 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.8",
+    date: "2026-10-17",
+    title: "Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints",
+    isLatest: true,
+    category: "Feature",
+    tags: [
+      "Multi-Bar Custom Charts",
+      "Editable Column Headers",
+      "Aspect Ratio Scale Fix",
+      "16:9 Single-Row Title",
+      "9:16 Adaptive Title Wrap",
+      "Header Spacing Parity",
+      "Zero-Glitch Chart Switching"
+    ],
+    highlights: [
+      "Multi-Bar Custom Charts with Editable Column Titles: Added full support in CapFrameX Custom Charts (Temps, Power Draw, Battery Life, etc.) to add, rename, and remove custom column bars per row. Column headers can now be named directly in-place (e.g. 'Peak Temp' and 'Idle Temp', or 'Peak Power' and 'Idle Wattage'), updating chart legend swatches, bar series, and hover tooltips immediately.",
+      "Elimination of Aspect Ratio & Canvas Scaling Glitches: Fixed the bug where switching between custom charts (with many rows) and game charts (e.g. Assassin's Creed Mirage with 2 cards) rendered stretched boxes and empty white space. Container sizing is now isolated via absolute inset geometry and explicit ECharts instance resizing, completely eliminating the need to toggle 16:9 -> 9:16 -> 16:9 manually.",
+      "Strict 1-Row Title Constraint (16:9 Landscape): Enforced strict single-line title rendering in 16:9 mode across BOTH OCR and CapFrameX applications with dynamic font downscaling and truncation overflow, ensuring benchmark titles never split onto two rows in landscape exports.",
+      "Adaptive Single/Double-Row Wrapping (9:16 Vertical): In 9:16 mode across both apps, titles remain on a single centered row as long as they do not collide with the publication logo. Only when collision occurs will the title wrap to two rows, with vertical header spacing automatically balanced.",
+      "Harmonized Header Spacing Parity: Aligned CapFrameX header vertical rhythm to match the OCR app, maintaining identical proportional gaps between title, subtitle, legend, and bar grid."
+    ]
+  },
+  {
     version: "v1.1.7",
     date: "2026-10-17",
     title: "Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebars & Global Theme Hub",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Dynamic Vertical Rhythm",

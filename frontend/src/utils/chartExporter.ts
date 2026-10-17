@@ -53,103 +53,84 @@ export function formatChartTitle(
   if (!clean) {
     return {
       text: "",
-      fontSize: Math.round((isVertical ? 30 : 38) * scale),
-      lineHeight: Math.round((isVertical ? 36 : 46) * scale),
+      fontSize: Math.round((isVertical ? 26 : 36) * scale),
+      lineHeight: Math.round((isVertical ? 32 : 44) * scale),
       lineCount: 1
     };
   }
 
   let lines: string[] = [];
+  let baseFontSize: number;
+  const safeScale = scale > 0 ? scale : 1;
+  const availableWidthAtScale1 = safeWidthPx / safeScale;
 
-  if (clean.includes("\n")) {
-    lines = clean.split("\n");
-  } else {
-    const max1Line = isVertical ? 25 : 44;
-    if (clean.length <= max1Line) {
-      lines = [clean];
+  if (!isVertical) {
+    // ------------------------------------------------------------------------
+    // 16:9 LANDSCAPE: The main title MUST NEVER take more than 1 row!
+    // Dynamically downscale font size so it fits safeCenteredTitleWidth.
+    // ------------------------------------------------------------------------
+    lines = [clean.replace(/\n+/g, " ")];
+
+    // Standard landscape base font size: 36 (or 38 if short)
+    let targetBaseFontSize = 36;
+    if (clean.length <= 26) {
+      targetBaseFontSize = 38;
+    } else if (clean.length <= 36) {
+      targetBaseFontSize = 32;
+    } else if (clean.length <= 48) {
+      targetBaseFontSize = 28;
     } else {
-      const maxLines = isVertical ? (clean.length > 44 ? 3 : 2) : (clean.length > 60 ? 3 : 2);
-      const maxCharsPerLine = isVertical ? 26 : 42;
+      targetBaseFontSize = 24;
+    }
 
-      let splitHandled = false;
-      // Try split on ' - ' first
+    // Average char width for uppercase header font: ~0.55 * fontSize
+    // Letter spacing: 1.8px at scale 1
+    const letterSpacingTotal = clean.length * 1.8;
+    const estimatedWidth = clean.length * (targetBaseFontSize * 0.55) + letterSpacingTotal;
+
+    if (estimatedWidth > availableWidthAtScale1) {
+      const fitFontSize = Math.floor((availableWidthAtScale1 - letterSpacingTotal) / (clean.length * 0.55));
+      baseFontSize = Math.max(16, Math.min(targetBaseFontSize, fitFontSize));
+    } else {
+      baseFontSize = targetBaseFontSize;
+    }
+  } else {
+    // ------------------------------------------------------------------------
+    // 9:16 VERTICAL:
+    // Takes up 1 row as long as centered text does NOT overlap the logo.
+    // ONLY IF it would overlap the logo, wraps to 2 rows.
+    // ------------------------------------------------------------------------
+    const singleLineClean = clean.replace(/\n+/g, " ");
+
+    // Standard 1-row vertical font size
+    const singleRowBaseFontSize = singleLineClean.length <= 16 ? 28 : 25;
+    const letterSpacingTotal = singleLineClean.length * 1.2;
+    const singleRowEstimatedWidth = singleLineClean.length * (singleRowBaseFontSize * 0.55) + letterSpacingTotal;
+
+    // Check if 1 row fits safely centered without colliding with the logo
+    if (singleRowEstimatedWidth <= availableWidthAtScale1) {
+      // Safe! Does NOT overlap the logo -> strictly keep on 1 row!
+      lines = [singleLineClean];
+      baseFontSize = singleRowBaseFontSize;
+    } else {
+      // Would overlap the logo -> Wrap into exactly 2 rows
       if (clean.includes(" - ")) {
         const parts = clean.split(" - ");
-        if (parts.length === 2) {
-          const p1 = parts[0].trim();
-          const p2 = parts[1].trim();
-          if (p1.length <= maxCharsPerLine && p2.length <= maxCharsPerLine) {
-            lines = [p1, `- ${p2}`];
-            splitHandled = true;
-          } else if (p1.length > maxCharsPerLine && maxLines >= 3) {
-            const words = p1.split(" ");
-            const mid = Math.ceil(words.length / 2);
-            lines = [words.slice(0, mid).join(" "), words.slice(mid).join(" "), `- ${p2}`];
-            splitHandled = true;
-          }
-        }
-      }
-
-      if (!splitHandled) {
-        // Balanced word-based wrap
-        const words = clean.split(" ");
+        lines = [parts[0].trim(), `- ${parts.slice(1).join(" - ").trim()}`];
+      } else {
+        const words = singleLineClean.split(" ");
         if (words.length <= 1) {
-          lines = [clean];
+          lines = [singleLineClean];
         } else {
-          const targetLen = clean.length / maxLines;
-          const collected: string[] = [];
-          let currentWords: string[] = [];
-          let currentLen = 0;
-
-          for (let i = 0; i < words.length; i++) {
-            const w = words[i];
-            const wouldBe = currentLen + (currentLen > 0 ? 1 : 0) + w.length;
-            if (collected.length < maxLines - 1 && wouldBe > targetLen && currentWords.length > 0) {
-              collected.push(currentWords.join(" "));
-              currentWords = [w];
-              currentLen = w.length;
-            } else {
-              currentWords.push(w);
-              currentLen = wouldBe;
-            }
-          }
-          if (currentWords.length > 0) {
-            collected.push(currentWords.join(" "));
-          }
-          lines = collected;
+          const mid = Math.ceil(words.length / 2);
+          lines = [words.slice(0, mid).join(" "), words.slice(mid).join(" ")];
         }
       }
-    }
-  }
 
-  // Calculate dynamic font size based on line count and max line length
-  const maxLineLen = Math.max(...lines.map((l) => l.length));
-  let baseFontSize: number;
-
-  if (isVertical) {
-    if (lines.length === 1) {
-      if (maxLineLen <= 18) baseFontSize = 30;
-      else if (maxLineLen <= 25) baseFontSize = 25;
-      else baseFontSize = 22;
-    } else if (lines.length === 2) {
-      if (maxLineLen <= 22) baseFontSize = 24;
-      else if (maxLineLen <= 28) baseFontSize = 20;
+      const maxLineLen = Math.max(...lines.map((l) => l.length));
+      if (maxLineLen <= 20) baseFontSize = 24;
+      else if (maxLineLen <= 26) baseFontSize = 21;
       else baseFontSize = 18;
-    } else {
-      if (maxLineLen <= 22) baseFontSize = 19;
-      else baseFontSize = 16;
-    }
-  } else {
-    if (lines.length === 1) {
-      if (maxLineLen <= 32) baseFontSize = 38;
-      else if (maxLineLen <= 44) baseFontSize = 32;
-      else baseFontSize = 26;
-    } else if (lines.length === 2) {
-      if (maxLineLen <= 34) baseFontSize = 30;
-      else if (maxLineLen <= 46) baseFontSize = 25;
-      else baseFontSize = 21;
-    } else {
-      baseFontSize = 19;
     }
   }
 
@@ -163,6 +144,7 @@ export function formatChartTitle(
     lineCount: lines.length
   };
 }
+
 
 export type ExportAspectRatio = "16:9" | "9:16";
 export type ExportResolution = "720p" | "1080p" | "4k";
@@ -623,7 +605,7 @@ export function buildExportEchartsOption(
         fontWeight: "bold",
         letterSpacing: Math.round((isVertical ? 1.2 : 1.8) * scale),
         width: safeCenteredTitleWidth,
-        overflow: "break",
+        overflow: isVertical ? "break" : "truncate",
         align: "center"
       },
       subtextStyle: {

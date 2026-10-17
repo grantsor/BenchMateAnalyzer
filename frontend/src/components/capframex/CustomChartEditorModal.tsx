@@ -15,7 +15,7 @@ import {
   Layers,
   HelpCircle
 } from "lucide-react";
-import { CustomChart, CustomChartRow, BenchmarkMode } from "../../types/capframex";
+import { CustomChart, CustomChartRow, CustomChartColumn, BenchmarkMode } from "../../types/capframex";
 
 interface CustomChartEditorModalProps {
   isOpen: boolean;
@@ -48,9 +48,7 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
   const [unit, setUnit] = useState("°C");
   const [higherIsBetter, setHigherIsBetter] = useState(false);
   const [metricName, setMetricName] = useState("Temperature");
-  const [enableMetric2, setEnableMetric2] = useState(false);
-  const [metric2Name, setMetric2Name] = useState("");
-  const [metric2Unit, setMetric2Unit] = useState("");
+  const [columns, setColumns] = useState<CustomChartColumn[]>([]);
   const [category, setCategory] = useState<"temperatures" | "power" | "battery" | "custom">("temperatures");
   const [rows, setRows] = useState<CustomChartRow[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -63,77 +61,122 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       setUnit(chart.unit || "");
       setHigherIsBetter(chart.higher_is_better ?? false);
       setMetricName(chart.metric_name || "Value");
-      setEnableMetric2(Boolean(chart.metric2_name && chart.metric2_name.trim()));
-      setMetric2Name(chart.metric2_name || "");
-      setMetric2Unit(chart.metric2_unit || "");
       setCategory(chart.category || "custom");
+
+      // Resolve columns (multi-bar support)
+      let initialCols: CustomChartColumn[] = [];
+      if (chart.columns && chart.columns.length > 0) {
+        initialCols = JSON.parse(JSON.stringify(chart.columns));
+      } else if (chart.metric2_name && chart.metric2_name.trim()) {
+        initialCols = [
+          { id: "col_0", name: chart.metric_name || "Primary Metric", unit: chart.unit || "" },
+          { id: "col_1", name: chart.metric2_name, unit: chart.metric2_unit || chart.unit || "" }
+        ];
+      } else {
+        const defaultColName =
+          chart.category === "temperatures"
+            ? "Peak Temp"
+            : chart.category === "power"
+            ? "Peak Power"
+            : chart.metric_name || "Value";
+        initialCols = [{ id: "col_0", name: defaultColName, unit: chart.unit || "" }];
+      }
+      setColumns(initialCols);
+
       if (!chart.rows || chart.rows.length === 0) {
         if (benchmarkMode === "laptop" && availablePowerProfiles.length > 0) {
-          setRows(availablePowerProfiles.map((p, idx) => ({
-            id: `row_profile_${idx}`,
-            label: p,
-            value: null,
-            value2: undefined
-          })));
+          setRows(
+            availablePowerProfiles.map((p, idx) => ({
+              id: `row_profile_${idx}`,
+              label: p,
+              value: null,
+              value2: undefined,
+              values: initialCols.map(() => null)
+            }))
+          );
         } else if (benchmarkMode === "pc" && availableGpus.length > 0) {
-          setRows(availableGpus.map((g, idx) => ({
-            id: `row_gpu_${idx}`,
-            label: g,
-            value: null,
-            value2: undefined
-          })));
+          setRows(
+            availableGpus.map((g, idx) => ({
+              id: `row_gpu_${idx}`,
+              label: g,
+              value: null,
+              value2: undefined,
+              values: initialCols.map(() => null)
+            }))
+          );
         } else {
           setRows([]);
         }
       } else {
-        setRows(JSON.parse(JSON.stringify(chart.rows)));
+        const parsedRows = JSON.parse(JSON.stringify(chart.rows)).map((r: CustomChartRow) => {
+          const vals = Array.isArray(r.values)
+            ? [...r.values]
+            : [r.value ?? null, r.value2 ?? null];
+          return {
+            ...r,
+            values: vals,
+            value: vals[0] ?? null,
+            value2: vals[1] ?? undefined
+          };
+        });
+        setRows(parsedRows);
       }
     } else {
       // New chart defaults based on mode
+      let initialCols: CustomChartColumn[] = [];
       let initialRows: CustomChartRow[] = [];
       if (benchmarkMode === "laptop") {
         setName("CPU Temperatures");
         setTitle("CPU TEMPERATURES");
-        setSubHeader("MAX CPU TEMPERATURES (°C) | LOWER IS BETTER");
+        setSubHeader("MAX CPU & IDLE TEMPERATURES (°C) | LOWER IS BETTER");
         setUnit("°C");
         setHigherIsBetter(false);
         setMetricName("CPU Temp");
         setCategory("temperatures");
+        initialCols = [
+          { id: "peak_temp", name: "Peak Temp", unit: "°C" },
+          { id: "idle_temp", name: "Idle Temp", unit: "°C" }
+        ];
         if (availablePowerProfiles.length > 0) {
           initialRows = availablePowerProfiles.map((p, idx) => ({
             id: `row_profile_${idx}`,
             label: p,
             value: null,
-            value2: undefined
+            value2: null,
+            values: [null, null]
           }));
         } else if (availableLaptops.length > 0) {
           initialRows = availableLaptops.map((l, idx) => ({
             id: `row_laptop_${idx}`,
             label: l,
             value: null,
-            value2: undefined
+            value2: null,
+            values: [null, null]
           }));
         }
       } else {
         setName("GPU Temperatures");
         setTitle("GPU TEMPERATURES");
-        setSubHeader("PEAK LOAD TEMPERATURES (°C) | LOWER IS BETTER");
+        setSubHeader("PEAK LOAD & IDLE TEMPERATURES (°C) | LOWER IS BETTER");
         setUnit("°C");
         setHigherIsBetter(false);
         setMetricName("Temperature");
         setCategory("temperatures");
+        initialCols = [
+          { id: "peak_temp", name: "Peak Temp", unit: "°C" },
+          { id: "idle_temp", name: "Idle Temp", unit: "°C" }
+        ];
         if (availableGpus.length > 0) {
           initialRows = availableGpus.map((g, idx) => ({
             id: `row_gpu_${idx}`,
             label: g,
             value: null,
-            value2: undefined
+            value2: null,
+            values: [null, null]
           }));
         }
       }
-      setEnableMetric2(false);
-      setMetric2Name("");
-      setMetric2Unit("");
+      setColumns(initialCols);
       setRows(initialRows);
     }
   }, [chart, benchmarkMode, isOpen, availablePowerProfiles, availableGpus, availableLaptops]);
@@ -148,19 +191,23 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       setUnit("°C");
       setHigherIsBetter(false);
       setMetricName("Temperature");
+      setColumns([
+        { id: "peak_temp", name: "Peak Temp", unit: "°C" },
+        { id: "idle_temp", name: "Idle Temp", unit: "°C" }
+      ]);
       if (benchmarkMode === "laptop") {
         setName("CPU Temperatures");
         setTitle("CPU TEMPERATURES");
-        setSubHeader("MAX CPU LOAD TEMPERATURES (°C) | LOWER IS BETTER");
+        setSubHeader("MAX CPU & IDLE TEMPERATURES (°C) | LOWER IS BETTER");
         if (isRowsEmptyOrUnfilled && availablePowerProfiles.length > 0) {
-          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null })));
+          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null, values: [null, null] })));
         }
       } else {
         setName("GPU Temperatures");
         setTitle("GPU TEMPERATURES");
-        setSubHeader("PEAK LOAD TEMPERATURES (°C) | LOWER IS BETTER");
+        setSubHeader("PEAK LOAD & IDLE TEMPERATURES (°C) | LOWER IS BETTER");
         if (isRowsEmptyOrUnfilled && availableGpus.length > 0) {
-          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null })));
+          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null, values: [null, null] })));
         }
       }
     } else if (presetType === "power") {
@@ -169,13 +216,17 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       setHigherIsBetter(false);
       setMetricName("Power");
       setName("Power Consumption");
-      setTitle("POWER CONSUMPTION");
-      setSubHeader("TOTAL BOARD POWER (WATTS) | LOWER IS BETTER");
+      setTitle("TOTAL BOARD POWER CONSUMPTION");
+      setSubHeader("PEAK GAMING & IDLE POWER (WATTS) | LOWER IS BETTER");
+      setColumns([
+        { id: "peak_power", name: "Peak Power", unit: "W" },
+        { id: "idle_power", name: "Idle Wattage", unit: "W" }
+      ]);
       if (isRowsEmptyOrUnfilled) {
         if (benchmarkMode === "laptop" && availablePowerProfiles.length > 0) {
-          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null })));
+          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null, values: [null, null] })));
         } else if (availableGpus.length > 0) {
-          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null })));
+          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null, values: [null, null] })));
         }
       }
     } else if (presetType === "battery") {
@@ -186,11 +237,14 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       setName("Battery Life");
       setTitle("BATTERY LIFE RUNTIME");
       setSubHeader("PCMARK 10 MODERN OFFICE (MINUTES) | HIGHER IS BETTER");
+      setColumns([
+        { id: "runtime", name: "Runtime", unit: "mins" }
+      ]);
       if (isRowsEmptyOrUnfilled) {
         if (availablePowerProfiles.length > 0) {
-          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null })));
+          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null, values: [null] })));
         } else if (availableLaptops.length > 0) {
-          setRows(availableLaptops.map((l, idx) => ({ id: `row_l_${idx}`, label: l, value: null })));
+          setRows(availableLaptops.map((l, idx) => ({ id: `row_l_${idx}`, label: l, value: null, values: [null] })));
         }
       }
     } else if (presetType === "custom") {
@@ -214,27 +268,88 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
         setHigherIsBetter(true);
         setSubHeader("BENCHMARK SCORE (PTS) | HIGHER IS BETTER");
       }
+      setColumns([
+        { id: "col_0", name: "Score", unit: "pts" }
+      ]);
 
       if (isRowsEmptyOrUnfilled) {
         if (benchmarkMode === "laptop" && availablePowerProfiles.length > 0) {
-          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null })));
+          setRows(availablePowerProfiles.map((p, idx) => ({ id: `row_p_${idx}`, label: p, value: null, values: [null] })));
         } else if (benchmarkMode === "laptop" && availableLaptops.length > 0) {
-          setRows(availableLaptops.map((l, idx) => ({ id: `row_l_${idx}`, label: l, value: null })));
+          setRows(availableLaptops.map((l, idx) => ({ id: `row_l_${idx}`, label: l, value: null, values: [null] })));
         } else if (availableGpus.length > 0) {
-          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null })));
+          setRows(availableGpus.map((g, idx) => ({ id: `row_g_${idx}`, label: g, value: null, values: [null] })));
         } else if (availableCpus.length > 0) {
-          setRows(availableCpus.map((c, idx) => ({ id: `row_c_${idx}`, label: c, value: null })));
+          setRows(availableCpus.map((c, idx) => ({ id: `row_c_${idx}`, label: c, value: null, values: [null] })));
         }
       }
     }
   };
 
+  const handleAddColumn = () => {
+    const nextIdx = columns.length;
+    const colId = `col_${Date.now()}_${nextIdx}`;
+    let defaultColTitle = `Bar ${nextIdx + 1}`;
+    if (category === "temperatures") {
+      defaultColTitle = nextIdx === 1 ? "Idle Temp" : `Temp ${nextIdx + 1}`;
+    } else if (category === "power") {
+      defaultColTitle = nextIdx === 1 ? "Idle Wattage" : `Power ${nextIdx + 1}`;
+    }
+    const newCol: CustomChartColumn = {
+      id: colId,
+      name: defaultColTitle,
+      unit: unit || ""
+    };
+    setColumns((prev) => [...prev, newCol]);
+
+    setRows((prev) =>
+      prev.map((r) => {
+        const curVals = Array.isArray(r.values)
+          ? [...r.values]
+          : [r.value ?? null, r.value2 ?? null];
+        while (curVals.length <= nextIdx) {
+          curVals.push(null);
+        }
+        return {
+          ...r,
+          values: curVals
+        };
+      })
+    );
+  };
+
+  const handleColumnNameChange = (colIndex: number, newName: string) => {
+    setColumns((prev) =>
+      prev.map((col, idx) => (idx === colIndex ? { ...col, name: newName } : col))
+    );
+  };
+
+  const handleDeleteColumn = (colIndex: number) => {
+    if (columns.length <= 1) return;
+    setColumns((prev) => prev.filter((_, idx) => idx !== colIndex));
+    setRows((prev) =>
+      prev.map((r) => {
+        const curVals = Array.isArray(r.values)
+          ? r.values.filter((_, idx) => idx !== colIndex)
+          : [r.value ?? null];
+        return {
+          ...r,
+          values: curVals,
+          value: curVals[0] ?? null,
+          value2: curVals[1] ?? undefined
+        };
+      })
+    );
+  };
+
   const handleAddRow = (labelName: string = "") => {
+    const initVals = columns.map(() => null);
     const newRow: CustomChartRow = {
       id: `row_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       label: labelName || `Model ${rows.length + 1}`,
       value: null,
-      value2: enableMetric2 ? null : undefined
+      value2: undefined,
+      values: initVals
     };
     setRows((prev) => [...prev, newRow]);
   };
@@ -256,7 +371,8 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       id: `row_${Date.now()}_${idx}`,
       label: item,
       value: null,
-      value2: enableMetric2 ? null : undefined
+      value2: undefined,
+      values: columns.map(() => null)
     }));
 
     setRows((prev) => [...prev, ...newRows]);
@@ -268,6 +384,30 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
       copy[index] = { ...copy[index], [field]: val };
       return copy;
     });
+  };
+
+  const handleRowValChange = (rowIndex: number, colIndex: number, rawVal: string) => {
+    const parsed = rawVal === "" ? null : parseFloat(rawVal);
+    const num = parsed !== null && !isNaN(parsed) ? parsed : null;
+
+    setRows((prev) =>
+      prev.map((r, rIdx) => {
+        if (rIdx !== rowIndex) return r;
+        const curVals = Array.isArray(r.values)
+          ? [...r.values]
+          : [r.value ?? null, r.value2 ?? null];
+        while (curVals.length <= colIndex) {
+          curVals.push(null);
+        }
+        curVals[colIndex] = num;
+        return {
+          ...r,
+          values: curVals,
+          value: curVals[0] ?? null,
+          value2: curVals[1] ?? undefined
+        };
+      })
+    );
   };
 
   const handleDeleteRow = (index: number) => {
@@ -295,12 +435,35 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
 
     setIsSaving(true);
     try {
-      const cleanRows = rows.map((r, idx) => ({
-        id: r.id || `row_${idx}`,
-        label: (r.label || "").trim() || `Model ${idx + 1}`,
-        value: typeof r.value === "number" && !isNaN(r.value) ? r.value : null,
-        value2: enableMetric2 && typeof r.value2 === "number" && !isNaN(r.value2) ? r.value2 : undefined
+      const cleanColumns: CustomChartColumn[] = (columns.length > 0 ? columns : [{ id: "col_0", name: "Value", unit: unit.trim() }]).map((col, idx) => ({
+        id: col.id || `col_${idx}`,
+        name: (col.name || "").trim() || `Bar ${idx + 1}`,
+        unit: (col.unit || unit || "").trim()
       }));
+
+      const cleanRows = rows.map((r, idx) => {
+        const rowValues = cleanColumns.map((col, cIdx) => {
+          if (Array.isArray(r.values) && r.values.length > cIdx) {
+            const v = r.values[cIdx];
+            return typeof v === "number" && !isNaN(v) ? v : null;
+          }
+          if (cIdx === 0) return typeof r.value === "number" && !isNaN(r.value) ? r.value : null;
+          if (cIdx === 1) return typeof r.value2 === "number" && !isNaN(r.value2) ? r.value2 : null;
+          return null;
+        });
+
+        return {
+          id: r.id || `row_${idx}_${Date.now()}`,
+          label: (r.label || "").trim() || `Model ${idx + 1}`,
+          value: rowValues[0] ?? null,
+          value2: rowValues[1] ?? undefined,
+          values: rowValues,
+          gpu: r.gpu,
+          cpu: r.cpu,
+          motherboard: r.motherboard,
+          tier_rank: r.tier_rank
+        };
+      });
 
       const chartId =
         chart?.id ||
@@ -315,9 +478,10 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
         sub_header: subHeader.trim(),
         unit: unit.trim(),
         higher_is_better: higherIsBetter,
-        metric_name: metricName.trim() || "Value",
-        metric2_name: enableMetric2 ? (metric2Name.trim() || "Metric 2") : "",
-        metric2_unit: enableMetric2 ? (metric2Unit.trim() || unit.trim()) : "",
+        metric_name: cleanColumns[0]?.name || "Value",
+        metric2_name: cleanColumns.length > 1 ? cleanColumns[1]?.name : "",
+        metric2_unit: cleanColumns.length > 1 ? (cleanColumns[1]?.unit || unit.trim()) : "",
+        columns: cleanColumns,
         rows: cleanRows
       };
 
@@ -487,26 +651,22 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
               />
             </div>
 
-            {/* Metric Configuration */}
+            {/* Default Unit & Sorting Direction */}
             <div>
               <label className="text-[11px] font-semibold text-slate-300 block mb-1">
-                Primary Metric Name & Unit:
+                Default Unit ({unit || "none"}):
               </label>
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={metricName}
-                  onChange={(e) => setMetricName(e.target.value)}
-                  placeholder="Metric Name (e.g. Temp)"
-                  required
-                  className="flex-1 bg-[#121215] border border-[#2a2a32] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-blue-500"
-                />
-                <input
-                  type="text"
                   value={unit}
-                  onChange={(e) => setUnit(e.target.value)}
-                  placeholder="Unit (°C)"
-                  className="w-20 bg-[#121215] border border-[#2a2a32] rounded-lg px-3 py-1.5 text-xs text-center text-white focus:outline-none focus:border-blue-500"
+                  onChange={(e) => {
+                    const u = e.target.value;
+                    setUnit(u);
+                    setColumns((prev) => prev.map((c) => ({ ...c, unit: u })));
+                  }}
+                  placeholder="Unit (e.g. °C, W, fps)"
+                  className="flex-1 bg-[#121215] border border-[#2a2a32] rounded-lg px-3 py-1.5 text-xs text-center text-white font-mono focus:outline-none focus:border-blue-500"
                 />
               </div>
               <div className="flex gap-1.5 mt-1.5 flex-wrap">
@@ -514,7 +674,10 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
                   <button
                     key={u}
                     type="button"
-                    onClick={() => setUnit(u)}
+                    onClick={() => {
+                      setUnit(u);
+                      setColumns((prev) => prev.map((c) => ({ ...c, unit: u })));
+                    }}
                     className={`px-2 py-0.5 rounded text-[10px] font-mono border transition ${
                       unit === u
                         ? "bg-blue-600/30 border-blue-500 text-blue-300"
@@ -567,18 +730,18 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
 
           {/* Rows & Values Table */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <label className="text-[12px] font-bold text-white block">
-                  Models & Values Table ({rows.length} rows):
+                  Models & Values Table ({rows.length} rows, {columns.length} {columns.length === 1 ? "bar" : "bars"}):
                 </label>
                 <span className="text-[10.5px] text-slate-400">
-                  Input benchmark numbers directly. Rows can be reordered or pre-filled from active components.
+                  Input benchmark numbers directly. Edit column titles directly in the table header to name each bar.
                 </span>
               </div>
 
-              {/* Pre-fill Actions */}
-              <div className="flex items-center gap-2">
+              {/* Actions & Pre-fill */}
+              <div className="flex items-center gap-2 flex-wrap">
                 {benchmarkMode === "pc" ? (
                   <>
                     {availableGpus.length > 0 && (
@@ -631,6 +794,16 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
 
                 <button
                   type="button"
+                  onClick={handleAddColumn}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-300 border border-indigo-500/40 text-[11px] font-semibold transition shadow-sm"
+                  title="Add a new column / bar to each row (e.g. Idle Temp, Load Temp, Peak Power, Idle Wattage)"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>+ Add Column / Bar</span>
+                </button>
+
+                <button
+                  type="button"
                   onClick={() => handleAddRow()}
                   className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-semibold transition shadow-sm"
                 >
@@ -640,91 +813,125 @@ export const CustomChartEditorModal: React.FC<CustomChartEditorModalProps> = ({
               </div>
             </div>
 
-            {/* Table */}
+            {/* Multi-Column Data Table */}
             <div className="border border-[#23232a] rounded-xl overflow-hidden bg-[#121215]">
-              <div className="grid grid-cols-12 gap-2 px-3 py-2 bg-[#18181f] border-b border-[#23232a] text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
-                <div className="col-span-1 text-center">#</div>
-                <div className="col-span-7">Hardware Model / Power Profile</div>
-                <div className="col-span-3 text-right">Value ({unit || "Num"})</div>
-                <div className="col-span-1 text-center">Actions</div>
-              </div>
-
-              <div className="max-h-72 overflow-y-auto divide-y divide-[#1e1e24]">
-                {rows.map((r, idx) => (
-                  <div
-                    key={r.id || idx}
-                    className="grid grid-cols-12 gap-2 px-3 py-1.5 items-center hover:bg-white/[0.02] transition"
-                  >
-                    <div className="col-span-1 flex items-center justify-center gap-1 text-slate-500 font-mono text-[10px]">
-                      <span>{idx + 1}</span>
-                      <div className="flex flex-col">
-                        <button
-                          type="button"
-                          disabled={idx === 0}
-                          onClick={() => handleMoveRow(idx, "up")}
-                          className="hover:text-white disabled:opacity-20"
-                        >
-                          <ArrowUp className="w-2.5 h-2.5" />
-                        </button>
-                        <button
-                          type="button"
-                          disabled={idx === rows.length - 1}
-                          onClick={() => handleMoveRow(idx, "down")}
-                          className="hover:text-white disabled:opacity-20"
-                        >
-                          <ArrowDown className="w-2.5 h-2.5" />
-                        </button>
+              <div className="overflow-x-auto">
+                <div className="min-w-full inline-block align-middle">
+                  {/* Table Header */}
+                  <div className="flex items-center gap-2 px-3 py-2 bg-[#18181f] border-b border-[#23232a] text-[10.5px] font-bold text-slate-400 uppercase tracking-wider min-w-max">
+                    <div className="w-10 text-center shrink-0">#</div>
+                    <div className="w-64 sm:w-80 shrink-0">Hardware Model / Power Profile</div>
+                    {columns.map((col, cIdx) => (
+                      <div key={col.id || cIdx} className="w-36 shrink-0 flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={col.name}
+                          onChange={(e) => handleColumnNameChange(cIdx, e.target.value)}
+                          placeholder={`Bar ${cIdx + 1}`}
+                          className="w-full bg-[#121215] border border-[#2a2a32] focus:border-blue-500 rounded px-2 py-1 text-xs text-blue-300 font-bold text-center"
+                          title="Click to rename this bar column (updates chart legend and tooltip)"
+                        />
+                        {columns.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteColumn(cIdx)}
+                            className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition shrink-0"
+                            title={`Delete "${col.name}" column`}
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+                        )}
                       </div>
-                    </div>
+                    ))}
+                    <div className="w-12 text-center shrink-0">Actions</div>
+                  </div>
 
-                    <div className="col-span-7">
-                      <input
-                        type="text"
-                        value={r.label}
-                        onChange={(e) => handleRowChange(idx, "label", e.target.value)}
-                        placeholder="e.g. RTX 5090 FE or Performance Mode"
-                        className="w-full bg-[#18181f] border border-[#2a2a32] rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
-
-                    <div className="col-span-3">
-                      <input
-                        type="number"
-                        step="any"
-                        value={r.value !== null && r.value !== undefined ? r.value : ""}
-                        onChange={(e) =>
-                          handleRowChange(
-                            idx,
-                            "value",
-                            e.target.value === "" ? null : parseFloat(e.target.value)
-                          )
-                        }
-                        placeholder={`0.0 ${unit}`}
-                        className="w-full bg-[#18181f] border border-[#2a2a32] rounded px-2.5 py-1 text-xs text-right text-emerald-400 font-mono font-bold focus:outline-none focus:border-blue-500"
-                      />
-                    </div>
-
-                    <div className="col-span-1 flex items-center justify-center">
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteRow(idx)}
-                        className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition"
-                        title="Delete row"
+                  {/* Table Body */}
+                  <div className="max-h-80 overflow-y-auto divide-y divide-[#1e1e24]">
+                    {rows.map((r, idx) => (
+                      <div
+                        key={r.id || idx}
+                        className="flex items-center gap-2 px-3 py-1.5 hover:bg-white/[0.02] transition min-w-max"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                        <div className="w-10 flex items-center justify-center gap-1 text-slate-500 font-mono text-[10px] shrink-0">
+                          <span>{idx + 1}</span>
+                          <div className="flex flex-col">
+                            <button
+                              type="button"
+                              disabled={idx === 0}
+                              onClick={() => handleMoveRow(idx, "up")}
+                              className="hover:text-white disabled:opacity-20"
+                            >
+                              <ArrowUp className="w-2.5 h-2.5" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={idx === rows.length - 1}
+                              onClick={() => handleMoveRow(idx, "down")}
+                              className="hover:text-white disabled:opacity-20"
+                            >
+                              <ArrowDown className="w-2.5 h-2.5" />
+                            </button>
+                          </div>
+                        </div>
 
-                {rows.length === 0 && (
-                  <div className="py-8 text-center text-slate-500 space-y-2">
-                    <p className="text-xs">No component rows added yet.</p>
-                    <p className="text-[11px] text-slate-600">
-                      Click <b>"Add Row"</b> or <b>"Pre-fill"</b> above to populate models automatically!
-                    </p>
+                        <div className="w-64 sm:w-80 shrink-0">
+                          <input
+                            type="text"
+                            value={r.label}
+                            onChange={(e) => handleRowChange(idx, "label", e.target.value)}
+                            placeholder="e.g. RTX 5090 FE or Performance Mode"
+                            className="w-full bg-[#18181f] border border-[#2a2a32] rounded px-2.5 py-1 text-xs text-white focus:outline-none focus:border-blue-500"
+                          />
+                        </div>
+
+                        {columns.map((col, cIdx) => {
+                          const val =
+                            Array.isArray(r.values) && r.values.length > cIdx
+                              ? r.values[cIdx]
+                              : cIdx === 0
+                              ? r.value
+                              : cIdx === 1
+                              ? r.value2
+                              : null;
+
+                          return (
+                            <div key={col.id || cIdx} className="w-36 shrink-0">
+                              <input
+                                type="number"
+                                step="any"
+                                value={val !== null && val !== undefined ? val : ""}
+                                onChange={(e) => handleRowValChange(idx, cIdx, e.target.value)}
+                                placeholder={`0.0 ${col.unit || unit}`}
+                                className="w-full bg-[#18181f] border border-[#2a2a32] rounded px-2.5 py-1 text-xs text-right text-emerald-400 font-mono font-bold focus:outline-none focus:border-blue-500"
+                              />
+                            </div>
+                          );
+                        })}
+
+                        <div className="w-12 flex items-center justify-center shrink-0">
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteRow(idx)}
+                            className="p-1 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition"
+                            title="Delete row"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+
+                    {rows.length === 0 && (
+                      <div className="py-8 text-center text-slate-500 space-y-2">
+                        <p className="text-xs">No component rows added yet.</p>
+                        <p className="text-[11px] text-slate-600">
+                          Click <b>"Add Row"</b> or <b>"Pre-fill"</b> above to populate models automatically!
+                        </p>
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

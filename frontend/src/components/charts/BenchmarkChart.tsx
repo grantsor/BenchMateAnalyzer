@@ -125,7 +125,16 @@ export const BenchmarkChart: React.FC<BenchmarkChartProps> = ({
     const observer = new ResizeObserver(updateSize);
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, [isVertical]);
+  }, [isVertical, dataset.benchmark_id, options.aspectRatio]);
+
+  useEffect(() => {
+    if (chartRef.current) {
+      const instance = chartRef.current.getEchartsInstance?.();
+      if (instance) {
+        instance.resize();
+      }
+    }
+  }, [dimensions, isVertical]);
 
   const echartsOption = useMemo(() => {
     return buildExportEchartsOption(
@@ -140,13 +149,13 @@ export const BenchmarkChart: React.FC<BenchmarkChartProps> = ({
   const isLight = options.theme === "light";
 
   return (
-    <div className="relative flex flex-col items-center w-full">
+    <div className="relative flex flex-col items-center w-full min-h-0 min-w-0">
       {/* Chart Canvas Card: flat rectangle matching exact export canvas with sharp 90-deg corners, no outer glow/shadow */}
       <div
         ref={containerRef}
         style={{ fontFamily: "'Open Sans', Inter, sans-serif" }}
-        className={`relative overflow-hidden ${
-          isVertical ? "max-w-[440px] w-full aspect-[9/16]" : "w-full aspect-[16/9]"
+        className={`relative overflow-hidden w-full ${
+          isVertical ? "max-w-[440px] aspect-[9/16]" : "aspect-[16/9]"
         } ${
           isLight
             ? "bg-white border border-slate-300 text-slate-900"
@@ -155,11 +164,12 @@ export const BenchmarkChart: React.FC<BenchmarkChartProps> = ({
       >
         {/* Apache ECharts Core (Renders canvas elements including corner decorations and publication logo) */}
         <ReactECharts
+          key={`${dataset.benchmark_id}_${options.aspectRatio}_${options.theme}`}
           ref={chartRef}
           option={echartsOption}
           notMerge={true}
-          lazyUpdate={true}
-          style={{ width: "100%", height: "100%" }}
+          lazyUpdate={false}
+          style={{ width: "100%", height: "100%", position: "absolute", inset: 0 }}
           opts={{ renderer: "canvas" }}
         />
       </div>

@@ -1,4 +1,4 @@
-import { CapFrameChartItem, GroupedBenchmarkDataset, GameProfile, GameProfilesMap, CustomChart } from "../types/capframex";
+import { CapFrameChartItem, GroupedBenchmarkDataset, GameProfile, GameProfilesMap, CustomChart, CustomChartColumn } from "../types/capframex";
 
 const API_BASE = window.location.port === "5173" ? "http://127.0.0.1:8742/api/capframex" : "/api/capframex";
 
@@ -508,35 +508,44 @@ export function convertToGroupedDataset(
 }
 
 export function convertCustomChartToGroupedDataset(chart: CustomChart): GroupedBenchmarkDataset {
-  const metric1Id = "primary_metric";
-  const metric2Id = "secondary_metric";
-  const hasMetric2 = Boolean(chart.metric2_name && chart.metric2_name.trim());
-  const metricIds = hasMetric2 ? [metric1Id, metric2Id] : [metric1Id];
+  const columns: CustomChartColumn[] =
+    chart.columns && chart.columns.length > 0
+      ? chart.columns
+      : chart.metric2_name && chart.metric2_name.trim()
+      ? [
+          { id: "col_0", name: chart.metric_name || "Value", unit: chart.unit || "" },
+          { id: "col_1", name: chart.metric2_name, unit: chart.metric2_unit || chart.unit || "" }
+        ]
+      : [
+          { id: "col_0", name: chart.metric_name || "Value", unit: chart.unit || "" }
+        ];
+
+  const metricIds = columns.map((col, idx) => col.id || `col_${idx}`);
 
   const rows = (chart.rows || []).map((row, idx) => {
-    const metrics: Record<string, any> = {
-      [metric1Id]: {
-        metric_id: metric1Id,
-        metric_display_name: chart.metric_name || "Value",
-        unit: chart.unit || "",
-        higher_is_better: chart.higher_is_better ?? false,
-        value: typeof row.value === "number" ? row.value : null,
-        confidence: 1.0,
-        status: "verified"
-      }
-    };
+    const metrics: Record<string, any> = {};
 
-    if (hasMetric2) {
-      metrics[metric2Id] = {
-        metric_id: metric2Id,
-        metric_display_name: chart.metric2_name!,
-        unit: chart.metric2_unit || chart.unit || "",
+    columns.forEach((col, colIdx) => {
+      const metricId = col.id || `col_${colIdx}`;
+      let val: number | null = null;
+      if (Array.isArray(row.values) && row.values.length > colIdx) {
+        val = typeof row.values[colIdx] === "number" ? row.values[colIdx] : null;
+      } else if (colIdx === 0) {
+        val = typeof row.value === "number" ? row.value : null;
+      } else if (colIdx === 1) {
+        val = typeof row.value2 === "number" ? row.value2 : null;
+      }
+
+      metrics[metricId] = {
+        metric_id: metricId,
+        metric_display_name: col.name || `Metric ${colIdx + 1}`,
+        unit: col.unit || chart.unit || "",
         higher_is_better: chart.higher_is_better ?? false,
-        value: typeof row.value2 === "number" ? row.value2 : null,
+        value: val,
         confidence: 1.0,
         status: "verified"
       };
-    }
+    });
 
     return {
       configuration_id: row.id || `row_${idx}_${row.label}`,
@@ -561,3 +570,4 @@ export function convertCustomChartToGroupedDataset(chart: CustomChart): GroupedB
     rows: rows
   };
 }
+

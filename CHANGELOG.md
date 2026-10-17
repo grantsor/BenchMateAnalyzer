@@ -5,8 +5,29 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.6 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.7 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.7 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.8 - v1.0.0)
+
+---
+
+## [1.1.8] - 2026-10-17
+### Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints
+
+- **Multi-Bar Custom Charts with Editable Column Headers**:
+  - Expanded CapFrameX Custom Charts (Temps, Power Consumption, Battery Life, etc.) to support adding, deleting, and editing multiple columns (bars per row).
+  - Users can now directly click and edit column titles in the table header (e.g., "Peak Temp" and "Idle Temp", or "Peak Power" and "Idle Wattage"), immediately updating chart legends, series definitions, and hover tooltips.
+  - Dynamically mapped multi-column row data into grouped bar datasets with matching color palettes and swatches.
+- **Elimination of Chart Aspect Ratio & Canvas Scaling Glitches**:
+  - Resolved the canvas stretching and aspect-ratio glitch where switching between custom charts (with many rows) and game charts (e.g. Assassin's Creed Mirage with 2 cards) rendered tall boxes and large empty white areas.
+  - Isolated chart canvas containers with absolute inset geometry, preventing internal ECharts DIVs from preventing parent container aspect ratio collapse.
+  - Added deterministic `.resize()` lifecycle triggers and keyed re-instantiation on benchmark ID and aspect ratio switches, guaranteeing instant, clean rendering without needing manual 16:9 $\rightarrow$ 9:16 $\rightarrow$ 16:9 toggling.
+- **Strict 1-Row Title Constraint in 16:9 Landscape**:
+  - Main benchmark titles and game titles across BOTH OCR and CapFrameX applications are strictly constrained to never wrap onto more than 1 row in 16:9 mode, with automatic font downscaling and text truncation overflow.
+- **Adaptive Single/Double-Row Wrapping in 9:16 Vertical**:
+  - In 9:16 vertical mode across both applications, titles remain centered on a single line as long as they do not collide with the publication logo.
+  - Titles wrap onto two lines ONLY if collision would occur, with vertical rhythm and spacing between title, subtitle, and legend automatically balanced.
+- **Harmonized Header Spacing Parity**:
+  - Unified CapFrameX header vertical rhythm to match the OCR app, maintaining identical proportional gaps between title, subtitle, legend, and chart grid.
 
 ---
 

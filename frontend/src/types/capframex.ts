@@ -217,11 +217,18 @@ export interface GameProfile {
 
 export type GameProfilesMap = Record<string, GameProfile>;
 
+export interface CustomChartColumn {
+  id: string;
+  name: string;
+  unit?: string;
+}
+
 export interface CustomChartRow {
   id: string;
   label: string;
   value: number | null;
   value2?: number | null;
+  values?: (number | null)[];
   gpu?: string;
   cpu?: string;
   motherboard?: string;
@@ -240,6 +247,8 @@ export interface CustomChart {
   metric_name: string;
   metric2_name?: string;
   metric2_unit?: string;
+  columns?: CustomChartColumn[];
   rows: CustomChartRow[];
   notes?: string;
 }
+

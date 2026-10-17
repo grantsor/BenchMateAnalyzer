@@ -4,6 +4,24 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.8] - 2026-10-17
+### Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints
+
+- **Multi-Bar Custom Charts with In-Place Editable Headers**:
+  - Full support to add, delete, and rename custom column bars per row in custom charts (e.g. Temps with "Peak Temp" & "Idle Temp", Power Draw with "Peak Power" & "Idle Wattage").
+  - Directly editable column titles within the table header, instantly updating chart legend names, series definitions, and hover tooltips.
+- **Aspect Ratio Scale Stabilization & Glitch Elimination**:
+  - Resolved chart scaling issues and white space glitches when switching between custom charts and game charts.
+  - Sizing container isolated via `absolute inset-0`, with keyed re-instantiation and explicit ECharts `.resize()` triggers eliminating the need to toggle aspect ratios manually.
+- **Strict 1-Row Title Constraint in 16:9 Landscape**:
+  - Main game titles never wrap onto more than 1 row in 16:9 mode, with automatic font downscaling and text truncation overflow.
+- **Adaptive Single/Double-Row Wrapping in 9:16 Vertical**:
+  - Titles remain on a single centered line as long as they don't collide with the logo, and wrap onto two lines with balanced vertical rhythm only when necessary.
+- **Harmonized Header Spacing**:
+  - Full vertical rhythm parity with the OCR app for consistent, balanced header proportions.
+
+---
+
 ## [1.1.7] - 2026-10-17
 ### Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Global Theme Hub
 

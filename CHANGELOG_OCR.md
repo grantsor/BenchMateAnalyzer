@@ -4,6 +4,20 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.7] - 2026-10-17
+### 16:9 Single-Row Title Enforcement, 9:16 Adaptive Collision Wrapping & Canvas Scaling Stabilization
+
+- **Strict 1-Row Title Constraint in 16:9 Landscape**:
+  - Main benchmark titles across all OCR benchmark suites are strictly constrained to never wrap onto more than 1 row in 16:9 mode.
+  - Dynamically calculates the exact fitting font size within the safe logo-cleared boundary with text truncation overflow, preventing multi-row wrapping on wide monitors.
+- **Adaptive Single/Double-Row Wrapping in 9:16 Vertical**:
+  - In 9:16 vertical mode, benchmark titles remain centered on a single line as long as they do not collide with the publication logo.
+  - Titles wrap onto two rows ONLY if collision with the logo would occur, with vertical rhythm, line heights, and spacing automatically re-balanced.
+- **Canvas Container Aspect Ratio Stabilization**:
+  - Isolated the chart preview container with absolute inset positioning, keyed re-instantiation, and explicit ECharts `.resize()` triggers, preventing stale canvas dimensions on orientation changes.
+
+---
+
 ## [2.17.6] - 2026-10-17
 ### Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Export Chip Parity
 

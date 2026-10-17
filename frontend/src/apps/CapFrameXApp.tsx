@@ -854,6 +854,21 @@ export const CapFrameXApp: React.FC = () => {
     const ds = convertCustomChartToGroupedDataset(effectiveChart);
     setDatasets({ custom: ds });
     setActiveTab("custom");
+
+    // Automatically synchronize metrics, clear stale config selection, and set appropriate aspect ratio
+    const rowCount = effectiveChart.rows?.length || 0;
+    const targetRatio: ExportAspectRatio =
+      rowCount > (branding.autoSwitchThreshold || 8) ? "9:16" : (branding.defaultAspectRatio || "16:9");
+    setChartOptions((prev) => ({
+      ...prev,
+      selectedMetrics: ds.metric_ids,
+      selectedConfigIds: [],
+      aspectRatio: targetRatio
+    }));
+    setExportConfig((prev) => ({
+      ...prev,
+      aspectRatio: targetRatio
+    }));
   };
 
   const handleAddNewCustomChart = () => {
@@ -921,6 +936,17 @@ export const CapFrameXApp: React.FC = () => {
     if (activeTab === "custom") {
       setActiveTab("all");
     }
+    const defaultRatio: ExportAspectRatio = branding.defaultAspectRatio || "16:9";
+    setChartOptions((prev) => ({
+      ...prev,
+      selectedMetrics: ["average_fps", "p1_fps"],
+      selectedConfigIds: [],
+      aspectRatio: defaultRatio
+    }));
+    setExportConfig((prev) => ({
+      ...prev,
+      aspectRatio: defaultRatio
+    }));
     applyGameProfile(game, gameProfilesRef.current);
   };
 

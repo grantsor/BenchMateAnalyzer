@@ -13,12 +13,16 @@ DEFAULT_CHARTS: List[Dict[str, Any]] = [
         "mode": "pc",
         "category": "temperatures",
         "title": "GPU TEMPERATURES",
-        "sub_header": "PEAK LOAD TEMPERATURES (°C) | LOWER IS BETTER",
+        "sub_header": "PEAK LOAD & IDLE TEMPERATURES (°C) | LOWER IS BETTER",
         "unit": "°C",
         "higher_is_better": False,
-        "metric_name": "Temperature",
-        "metric2_name": "",
-        "metric2_unit": "",
+        "metric_name": "Peak Temp",
+        "metric2_name": "Idle Temp",
+        "metric2_unit": "°C",
+        "columns": [
+            {"id": "peak_temp", "name": "Peak Temp", "unit": "°C"},
+            {"id": "idle_temp", "name": "Idle Temp", "unit": "°C"}
+        ],
         "rows": [],
         "notes": ""
     },
@@ -28,12 +32,16 @@ DEFAULT_CHARTS: List[Dict[str, Any]] = [
         "mode": "pc",
         "category": "power",
         "title": "TOTAL BOARD POWER CONSUMPTION",
-        "sub_header": "PEAK GAMING POWER (WATTS) | LOWER IS BETTER",
+        "sub_header": "PEAK GAMING & IDLE POWER (WATTS) | LOWER IS BETTER",
         "unit": "W",
         "higher_is_better": False,
-        "metric_name": "Power",
-        "metric2_name": "",
-        "metric2_unit": "",
+        "metric_name": "Peak Power",
+        "metric2_name": "Idle Wattage",
+        "metric2_unit": "W",
+        "columns": [
+            {"id": "peak_power", "name": "Peak Power", "unit": "W"},
+            {"id": "idle_power", "name": "Idle Wattage", "unit": "W"}
+        ],
         "rows": [],
         "notes": ""
     },
@@ -183,6 +191,7 @@ class CustomChartService:
             "metric_name": str(chart_data.get("metric_name") or "Value").strip(),
             "metric2_name": str(chart_data.get("metric2_name") or "").strip(),
             "metric2_unit": str(chart_data.get("metric2_unit") or "").strip(),
+            "columns": chart_data.get("columns") or [],
             "rows": chart_data.get("rows") or [],
             "notes": str(chart_data.get("notes") or "").strip()
         }

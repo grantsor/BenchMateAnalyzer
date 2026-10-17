@@ -771,7 +771,7 @@ export function buildExportEchartsOption(
         fontWeight: "bold",
         letterSpacing: Math.round((isVertical ? 1.2 : 1.8) * scale),
         width: safeCenteredTitleWidth,
-        overflow: "break",
+        overflow: isVertical ? "break" : "truncate",
         align: "center"
       },
       subtextStyle: {
