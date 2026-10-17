@@ -372,6 +372,7 @@ export const api = {
     title?: string;
     sub_header?: string;
     notes?: string;
+    icon_url?: string;
   }): Promise<{
     status: string;
     profiles: GameProfilesMap;

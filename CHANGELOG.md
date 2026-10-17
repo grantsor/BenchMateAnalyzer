@@ -21,8 +21,9 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
   - Restored original `Open Sans Condensed`, `Open Sans`, and `Inter` typography for all generated benchmark charts and live interactive previews, while keeping modern `Geist` typography strictly for the application UI shell and tools.
 - **Sidebar Active Selection Alignment**:
   - Replaced floating pill coordinates with direct on-button active styles (`bg-blue-600/15 border-blue-400/35`), ensuring zero drift, zero lag, and instant feedback at all display scales.
-- **Collapsible Sidebars**:
+- **Collapsible Sidebars & Distinctive Game Icons**:
   - Added toggleable collapsible sidebars (`w-64`/`w-72` $\leftrightarrow$ `w-16` icon-only with native tooltips) across both OCR and CapFrameX applications.
+  - Replaced repetitive generic gamepad icons in CapFrameX's collapsed navigation with authentic, high-contrast game vector insignia (Counter-Strike 2, Cyberpunk 2077, Black Myth: Wukong, DOTA 2, Assassin's Creed, and 30+ titles) and smart procedural gaming monogram badges for any custom titles, complete with custom icon URL support in Game Profiles.
 - **Global Theme Selector in Master Header**:
   - Relocated the theme switcher to the top master header alongside Import Folder and Settings, synchronizing Dark, Light, OLED, and Midnight Navy across the entire suite.
 - **Zero-Lag Tab & Benchmark Switching**:

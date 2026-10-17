@@ -42,6 +42,7 @@ const BUILTIN_RELEASES: ReleaseItem[] = [
     tags: [
       "Chart Font Restoration",
       "Balanced Header Spacing",
+      "Matching Game Icons",
       "Collapsible Sidebars",
       "Global Theme Switcher",
       "Zero-Lag Switching",
@@ -49,6 +50,7 @@ const BUILTIN_RELEASES: ReleaseItem[] = [
       "Active Selection Alignment"
     ],
     highlights: [
+      "Matching Game Icons in Navigation: Replaced generic gamepad icons in CapFrameX's collapsible sidebar with authentic game vector insignia for over 30 top benchmark titles (CS2, Cyberpunk 2077, Black Myth: Wukong, DOTA 2, AC Mirage, etc.) and smart procedural monogram badges for unlisted games, plus custom icon URL support in Game Profiles.",
       "Dynamic Vertical Rhythm & Balanced Header Spacing: Resolved uneven spacing between main chart title, sub-header, and legend across single-line, 2-line, and 3-line layouts. Header-to-sub-header spacing is now mathematically balanced and matched with sub-header-to-legend spacing in both 16:9 and 9:16 aspect ratios across live previews and high-resolution exports.",
       "Chart Typography Isolation: Restored original Open Sans Condensed, Open Sans, and Inter typography for all generated benchmark charts and live interactive previews, while keeping modern Geist typography strictly for the application UI shell and tools.",
       "Sidebar Selection Accuracy: Fixed active highlight pill alignment with direct on-button styling, eliminating position drift and offset across all zoom levels and scroll states.",

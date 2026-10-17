@@ -104,12 +104,17 @@ class GameProfileService:
         title = (profile_data.get("title") or clean_name).strip()
         sub_header = (profile_data.get("sub_header") or "").strip()
         notes = (profile_data.get("notes") or "").strip()
+        icon_url = (profile_data.get("icon_url") or "").strip()
 
-        self._profiles[target_key] = {
+        data_to_save: Dict[str, str] = {
             "title": title,
             "sub_header": sub_header,
             "notes": notes
         }
+        if icon_url:
+            data_to_save["icon_url"] = icon_url
+
+        self._profiles[target_key] = data_to_save
 
         return self._write_to_disk()
 

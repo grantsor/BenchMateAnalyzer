@@ -13,8 +13,9 @@ This application is also bundled as a dedicated analysis app within the unified 
   - Explicitly bound subtext line height (`1.22 * fontSize`) and applied zero-padding normalization to eliminate cross-platform font collisions.
 - **Chart Typography Isolation**:
   - Restored classic `Open Sans Condensed` and `Open Sans` typography across benchmark chart canvas and image exports while keeping modern `Geist` for UI controls.
-- **Collapsible Telemetry Sidebar**:
+- **Collapsible Telemetry Sidebar & Matching Game Icons**:
   - Added collapse toggle to the game and run sidebar (`w-72` $\leftrightarrow$ `w-16` icon-only with tooltips).
+  - Replaced repetitive generic gamepad icons with matching game insignia (CS2, Cyberpunk 2077, Black Myth: Wukong, DOTA 2, AC Mirage, and 30+ titles) and smart procedural monogram gaming badges for any unlisted or custom titles, plus custom icon URL support in Game Profiles.
 - **Global Theme Synchronization**:
   - Synced with the suite-wide theme hub in the master header.
 

@@ -212,6 +212,7 @@ export interface GameProfile {
   title: string;
   sub_header: string;
   notes: string;
+  icon_url?: string;
 }
 
 export type GameProfilesMap = Record<string, GameProfile>;

@@ -414,6 +414,8 @@ async def save_game_profile(body: Dict[str, Any] = Body(...)):
             "sub_header": str(body.get("sub_header", "")),
             "notes": str(body.get("notes", ""))
         }
+        if "icon_url" in body and body["icon_url"]:
+            profile_data["icon_url"] = str(body["icon_url"]).strip()
         success = game_profile_service.save_profile(game_name, profile_data)
     else:
         success = game_profile_service.save_all_profiles(body)

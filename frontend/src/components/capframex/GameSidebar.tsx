@@ -12,7 +12,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen
 } from "lucide-react";
-import { CustomChart, BenchmarkMode } from "../../types/capframex";
+import { CustomChart, BenchmarkMode, GameProfilesMap } from "../../types/capframex";
+import { GameIcon } from "./GameIcon";
 
 interface GameSidebarProps {
   games: string[];
@@ -25,6 +26,7 @@ interface GameSidebarProps {
   onEditCustomChart: (chart: CustomChart) => void;
   benchmarkMode?: BenchmarkMode;
   gameResolutionsMap?: Record<string, string[]>;
+  gameProfiles?: GameProfilesMap;
 }
 
 export const GameSidebar: React.FC<GameSidebarProps> = ({
@@ -36,7 +38,8 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({
   onSelectCustomChart,
   onAddNewCustomChart,
   onEditCustomChart,
-  benchmarkMode = "pc"
+  benchmarkMode = "pc",
+  gameProfiles = {}
 }) => {
   const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
     try {
@@ -330,6 +333,11 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({
 
             {filteredGames.map((g) => {
               const isSelected = selectedGame === g && !selectedCustomChartId;
+              const profile =
+                gameProfiles?.[g] ||
+                Object.entries(gameProfiles).find(([k]) => k.trim().toLowerCase() === g.trim().toLowerCase())?.[1];
+              const iconUrl = profile?.icon_url;
+
               if (isCollapsed) {
                 return (
                   <button
@@ -337,13 +345,17 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({
                     type="button"
                     onClick={() => onSelectGame(g)}
                     title={g}
-                    className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer ${
+                    className={`w-10 h-10 mx-auto rounded-xl flex items-center justify-center transition-all cursor-pointer relative ${
                       isSelected
-                        ? "bg-blue-500/20 border border-blue-400/40 text-white shadow-sm"
-                        : "text-slate-400 hover:text-white hover:bg-white/[0.04]"
+                        ? "bg-blue-600/25 border border-blue-400/50 shadow-sm ring-1 ring-blue-400/30"
+                        : "text-slate-400 hover:text-white hover:bg-white/[0.04] border border-transparent"
                     }`}
                   >
-                    <Gamepad2 className="w-4 h-4 text-[#3d8bff]" />
+                    <GameIcon
+                      gameName={g}
+                      customIconUrl={iconUrl}
+                      className="w-7 h-7"
+                    />
                   </button>
                 );
               }
@@ -353,23 +365,30 @@ export const GameSidebar: React.FC<GameSidebarProps> = ({
                   key={g}
                   type="button"
                   onClick={() => onSelectGame(g)}
-                  className={`w-full text-left px-3 py-2 rounded-xl text-xs transition-all flex flex-col gap-0.5 border cursor-pointer ${
+                  className={`w-full text-left px-2.5 py-2 rounded-xl text-xs transition-all flex items-center gap-2.5 border cursor-pointer ${
                     isSelected
                       ? "bg-blue-500/12 border-blue-400/30 text-white font-medium shadow-sm"
                       : "bg-white/[0.02] border-brand-border/60 text-slate-300 hover:bg-white/[0.04] hover:text-white hover:border-brand-border"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="truncate">{g}</span>
-                    {isSelected && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#3d8bff] shadow-[0_0_8px_rgba(61,139,255,0.8)]" />
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
-                    <Layers className="w-3 h-3 text-[#3d8bff]/80" />
-                    <span>
-                      {benchmarkMode === "laptop" ? "Power Profiles" : "1080p • 1440p • 4K"}
-                    </span>
+                  <GameIcon
+                    gameName={g}
+                    customIconUrl={iconUrl}
+                    className="w-7 h-7 shrink-0"
+                  />
+                  <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+                    <div className="flex items-center justify-between">
+                      <span className="truncate font-medium">{g}</span>
+                      {isSelected && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#3d8bff] shadow-[0_0_8px_rgba(61,139,255,0.8)] shrink-0 ml-1" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400 font-mono">
+                      <Layers className="w-3 h-3 text-[#3d8bff]/80 shrink-0" />
+                      <span className="truncate">
+                        {benchmarkMode === "laptop" ? "Power Profiles" : "1080p • 1440p • 4K"}
+                      </span>
+                    </div>
                   </div>
                 </button>
               );

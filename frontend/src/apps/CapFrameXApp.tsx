@@ -1392,6 +1392,7 @@ export const CapFrameXApp: React.FC = () => {
           onAddNewCustomChart={handleAddNewCustomChart}
           onEditCustomChart={handleEditCustomChart}
           benchmarkMode={benchmarkMode}
+          gameProfiles={gameProfiles}
         />
 
         {/* Center Resolution Tabs & Chart Viewport */}
