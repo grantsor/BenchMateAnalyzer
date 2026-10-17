@@ -57,7 +57,8 @@ export const BenchmarkChart: React.FC<BenchmarkChartProps> = ({
     <div className="relative flex flex-col items-center w-full">
       <div
         ref={containerRef}
-        className={`relative overflow-hidden transition-all duration-300 ${
+        style={{ fontFamily: "'Open Sans', Inter, sans-serif" }}
+        className={`relative overflow-hidden ${
           isVertical ? "max-w-[560px] w-full aspect-[9/16]" : "w-full aspect-[16/9]"
         } ${
           isLight

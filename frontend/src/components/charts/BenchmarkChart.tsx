@@ -144,7 +144,8 @@ export const BenchmarkChart: React.FC<BenchmarkChartProps> = ({
       {/* Chart Canvas Card: flat rectangle matching exact export canvas with sharp 90-deg corners, no outer glow/shadow */}
       <div
         ref={containerRef}
-        className={`relative overflow-hidden transition-all duration-300 ${
+        style={{ fontFamily: "'Open Sans', Inter, sans-serif" }}
+        className={`relative overflow-hidden ${
           isVertical ? "max-w-[440px] w-full aspect-[9/16]" : "w-full aspect-[16/9]"
         } ${
           isLight

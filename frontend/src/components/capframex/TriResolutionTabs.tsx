@@ -122,13 +122,13 @@ export const TriResolutionTabs: React.FC<TriResolutionTabsProps> = ({
     : datasets[activeTab];
 
   return (
-    <div className="flex flex-col flex-1 h-full overflow-hidden bg-[#0e0e11]">
+    <div className="flex flex-col flex-1 h-full overflow-hidden bg-brand-surface">
       {/* 1. Horizontal Sizing & Export Bar */}
-      <div className="bg-[#121216] border-b border-[#23232a] px-6 py-2.5 flex items-center justify-between gap-4 flex-shrink-0 text-xs">
+      <div className="bg-brand-card border-b border-brand-border px-6 py-2.5 flex items-center justify-between gap-4 flex-shrink-0 text-xs">
         {/* Left: Aspect Ratio, Resolution & Format */}
         <div className="flex items-center gap-3">
           {/* Aspect Ratio Toggle */}
-          <div className="flex items-center bg-[#18181c] p-1 rounded-lg border border-[#23232a]">
+          <div className="flex items-center bg-brand-surface p-1 rounded-lg border border-brand-border">
             <Tv className="w-3.5 h-3.5 text-blue-400 ml-1 mr-1" />
             <button
               type="button"
@@ -161,7 +161,7 @@ export const TriResolutionTabs: React.FC<TriResolutionTabsProps> = ({
           </div>
 
           {/* Export Resolution */}
-          <div className="flex items-center bg-[#18181c] p-1 rounded-lg border border-[#23232a]">
+          <div className="flex items-center bg-brand-surface p-1 rounded-lg border border-brand-border">
             <Monitor className="w-3.5 h-3.5 text-blue-400 ml-1 mr-1" />
             {(["720p", "1080p", "4k"] as const).map((r) => (
               <button
@@ -180,7 +180,7 @@ export const TriResolutionTabs: React.FC<TriResolutionTabsProps> = ({
           </div>
 
           {/* File Format */}
-          <div className="flex items-center bg-[#18181c] p-1 rounded-lg border border-[#23232a]">
+          <div className="flex items-center bg-brand-surface p-1 rounded-lg border border-brand-border">
             {(["webp", "png", "jpg"] as const).map((fmt) => (
               <button
                 key={fmt}

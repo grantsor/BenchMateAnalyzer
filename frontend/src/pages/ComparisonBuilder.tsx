@@ -36,7 +36,8 @@ import {
   Trash2,
   Bookmark,
   Star,
-  ArrowLeftRight
+  ArrowLeftRight,
+  Tv
 } from "lucide-react";
 import {
   ExportConfig,
@@ -826,7 +827,14 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
       isMounted = false;
       if (pollTimer) clearInterval(pollTimer);
     };
-  }, [currentProject?.id, initialBenchmarkId]);
+  }, [currentProject?.id]);
+
+  // Synchronize external initialBenchmarkId (e.g. from Results / Database navigation) without re-fetching datasets
+  useEffect(() => {
+    if (initialBenchmarkId && initialBenchmarkId !== selectedBenchmarkId) {
+      setSelectedBenchmarkId(initialBenchmarkId);
+    }
+  }, [initialBenchmarkId]);
 
   const handleAutoLoadFolder = async () => {
     setIsAutoLoadingFolder(true);
@@ -3616,84 +3624,70 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-                {/* Aspect Ratio Selector */}
-                <div className="md:col-span-4 space-y-1">
-                  <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
-                    Aspect Ratio
-                  </span>
-                  <div className="grid grid-cols-2 gap-1.5 bg-brand-surface p-1 rounded-xl border border-brand-border/70">
-                    <button
-                      type="button"
-                      onClick={() => handleAspectRatioChange("16:9")}
-                      className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-                        exportConfig.aspectRatio === "16:9"
-                          ? "bg-brand-red text-white shadow"
-                          : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      <Monitor className="w-3.5 h-3.5" />
-                      <span>16:9 (Wide)</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleAspectRatioChange("9:16")}
-                      className={`flex items-center justify-center space-x-1.5 py-1.5 rounded-lg text-xs font-semibold transition ${
-                        exportConfig.aspectRatio === "9:16"
-                          ? "bg-brand-red text-white shadow"
-                          : "text-slate-400 hover:text-white"
-                      }`}
-                    >
-                      <Smartphone className="w-3.5 h-3.5" />
-                      <span>9:16 (Mobile)</span>
-                    </button>
-                  </div>
+              {/* Aspect Ratio, Resolution & Format Chip Bar (CapFrameX Parity) */}
+              <div className="flex flex-wrap items-center gap-3 bg-brand-surface p-2 rounded-xl border border-brand-border">
+                {/* Aspect Ratio Toggle */}
+                <div className="flex items-center bg-white/[0.03] p-1 rounded-lg border border-brand-border">
+                  <Tv className="w-3.5 h-3.5 text-[#3d8bff] ml-1 mr-1" />
+                  <button
+                    type="button"
+                    onClick={() => handleAspectRatioChange("16:9")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer ${
+                      exportConfig.aspectRatio === "16:9"
+                        ? "bg-blue-600 text-white shadow-sm"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    16:9 Wide
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleAspectRatioChange("9:16")}
+                    className={`px-2.5 py-1 rounded text-[11px] font-semibold transition cursor-pointer ${
+                      exportConfig.aspectRatio === "9:16"
+                        ? "bg-purple-600 text-white shadow-sm"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    9:16 Mobile
+                  </button>
                 </div>
 
-                {/* Resolution Selector */}
-                <div className="md:col-span-4 space-y-1">
-                  <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
-                    Resolution
-                  </span>
-                  <div className="grid grid-cols-3 gap-1 bg-brand-surface p-1 rounded-xl border border-brand-border/70">
-                    {(["720p", "1080p", "4k"] as ExportResolution[]).map((res) => (
-                      <button
-                        key={res}
-                        type="button"
-                        onClick={() => setExportConfig((prev) => ({ ...prev, resolution: res }))}
-                        className={`py-1.5 rounded-lg text-xs font-semibold uppercase transition ${
-                          exportConfig.resolution === res
-                            ? "bg-brand-red text-white shadow"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        {res}
-                      </button>
-                    ))}
-                  </div>
+                {/* Export Resolution */}
+                <div className="flex items-center bg-white/[0.03] p-1 rounded-lg border border-brand-border">
+                  <Monitor className="w-3.5 h-3.5 text-[#3d8bff] ml-1 mr-1" />
+                  {(["720p", "1080p", "4k"] as ExportResolution[]).map((res) => (
+                    <button
+                      key={res}
+                      type="button"
+                      onClick={() => setExportConfig((prev) => ({ ...prev, resolution: res }))}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold uppercase transition cursor-pointer ${
+                        exportConfig.resolution === res
+                          ? "bg-blue-600 text-white shadow-sm"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {res}
+                    </button>
+                  ))}
                 </div>
 
                 {/* Format Selector */}
-                <div className="md:col-span-4 space-y-1">
-                  <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
-                    Format
-                  </span>
-                  <div className="grid grid-cols-3 gap-1 bg-brand-surface p-1 rounded-xl border border-brand-border/70">
-                    {(["png", "jpg", "webp"] as ExportFormat[]).map((fmt) => (
-                      <button
-                        key={fmt}
-                        type="button"
-                        onClick={() => setExportConfig((prev) => ({ ...prev, format: fmt }))}
-                        className={`py-1.5 rounded-lg text-xs font-semibold uppercase transition ${
-                          exportConfig.format === fmt
-                            ? "bg-brand-red text-white shadow"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        {fmt}
-                      </button>
-                    ))}
-                  </div>
+                <div className="flex items-center bg-white/[0.03] p-1 rounded-lg border border-brand-border">
+                  {(["webp", "png", "jpg"] as ExportFormat[]).map((fmt) => (
+                    <button
+                      key={fmt}
+                      type="button"
+                      onClick={() => setExportConfig((prev) => ({ ...prev, format: fmt }))}
+                      className={`px-2.5 py-1 rounded text-[11px] font-semibold uppercase transition cursor-pointer ${
+                        exportConfig.format === fmt
+                          ? "bg-blue-600 text-white shadow-sm"
+                          : "text-slate-400 hover:text-white"
+                      }`}
+                    >
+                      {fmt}
+                    </button>
+                  ))}
                 </div>
               </div>
 

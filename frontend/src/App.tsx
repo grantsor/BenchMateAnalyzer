@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { OcrApp } from "./apps/OcrApp";
 import { CapFrameXApp } from "./apps/CapFrameXApp";
-import { Camera, Gamepad2, ExternalLink, Layers, Settings, FolderSearch } from "lucide-react";
+import { Camera, Gamepad2, ExternalLink, Layers, Settings, FolderSearch, Moon } from "lucide-react";
 import { SettingsModal } from "./components/settings/SettingsModal";
 import { useShortcutStore, isShortcutMatch, formatCombo } from "./stores/shortcutStore";
-import { useThemeStore } from "./stores/themeStore";
+import { useThemeStore, THEME_OPTIONS } from "./stores/themeStore";
 import { useImportStore } from "./stores/useImportStore";
 import { useProjectStore } from "./stores/projectStore";
 import { SUITE_VERSION_LABEL } from "./constants/version";
@@ -35,7 +35,7 @@ export function App() {
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const { shortcuts } = useShortcutStore();
-  const { cycleTheme } = useThemeStore();
+  const { theme, setTheme, cycleTheme } = useThemeStore();
 
   const isStandalone = (() => {
     try {
@@ -134,10 +134,10 @@ export function App() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#0a0e17] text-slate-100 select-none font-['Geist',sans-serif]">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-brand-surface text-slate-100 select-none font-['Geist',sans-serif]">
       {/* Master BenchMate Header (hidden if standalone popout window) */}
       {!isStandalone && (
-        <header className="h-11 min-h-[44px] bg-[#0a0e17] border-b border-white/[0.08] flex items-center justify-between px-3.5 z-50">
+        <header className="h-11 min-h-[44px] bg-brand-surface/95 backdrop-blur-md border-b border-brand-border flex items-center justify-between px-3.5 z-50">
           {/* Brand Logo & Name */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-400/20 text-[#3d8bff]">
@@ -147,13 +147,13 @@ export function App() {
               </span>
               <span className="text-[10px] text-slate-400 uppercase tracking-wider font-medium">Suite</span>
             </div>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/[0.04] text-slate-400 border border-white/[0.06] font-mono">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-white/[0.04] text-slate-400 border border-brand-border font-mono">
               {SUITE_VERSION_LABEL}
             </span>
           </div>
 
           {/* Dual App Switcher (BrewedOps Clean Segmented Pill) */}
-          <div className="flex items-center bg-white/[0.03] p-0.5 rounded-lg border border-white/[0.08]">
+          <div className="flex items-center bg-white/[0.03] p-0.5 rounded-lg border border-brand-border">
             <button
               type="button"
               onClick={() => setActiveApp("ocr")}
@@ -181,25 +181,44 @@ export function App() {
             </button>
           </div>
 
-          {/* Right Action Tools: Import Folder + Settings + Pop Out */}
+          {/* Right Action Tools: Import Folder + Global Theme + Settings + Pop Out */}
           <div className="flex items-center gap-1.5">
             {/* Open Active Import Folder Button */}
             <button
               type="button"
               onClick={handleOpenImportFolder}
               title={`Open ${activeApp === "ocr" ? "OCR Screenshots" : "CapFrameX Captures"} Import Folder in Windows Explorer (${formatCombo(shortcuts.open_import_folder?.combo || { key: "i", ctrl: true })})`}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-brand-border text-xs font-medium transition active:scale-95 cursor-pointer"
             >
               <FolderSearch className="w-3.5 h-3.5 text-sky-400" />
               <span className="hidden sm:inline">Import Folder</span>
             </button>
+
+            {/* Global UI Theme Switcher */}
+            <div
+              className="flex items-center bg-white/[0.03] hover:bg-white/[0.06] border border-brand-border px-2 py-1 rounded-lg transition-colors"
+              title="Change UI Theme (All Apps)"
+            >
+              <Moon className="w-3.5 h-3.5 text-[#3d8bff] mr-1.5 shrink-0" />
+              <select
+                value={theme}
+                onChange={(e) => setTheme(e.target.value as any)}
+                className="bg-transparent text-xs font-medium text-slate-300 focus:outline-none cursor-pointer pr-1"
+              >
+                {THEME_OPTIONS.map((t) => (
+                  <option key={t.id} value={t.id} className="bg-[#111827] text-white">
+                    {t.icon} {t.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
             {/* Dedicated Settings Button */}
             <button
               type="button"
               onClick={() => setIsSettingsOpen(true)}
               title="Open BenchMate Settings & Changelogs (Ctrl+,)"
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-white/[0.08] text-xs font-medium transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-brand-border text-xs font-medium transition active:scale-95 cursor-pointer"
             >
               <Settings className="w-3.5 h-3.5 text-[#3d8bff]" />
               <span>Settings</span>
@@ -210,7 +229,7 @@ export function App() {
               type="button"
               onClick={handlePopOut}
               title={`Pop out ${activeApp === "ocr" ? "OCR Analyzer" : "CapFrameX Analyzer"} into a dedicated window for dual monitors`}
-              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-400 hover:text-white border border-white/[0.08] text-xs transition active:scale-95 cursor-pointer"
+              className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-400 hover:text-white border border-brand-border text-xs transition active:scale-95 cursor-pointer"
             >
               <ExternalLink className="w-3 h-3 text-slate-400" />
               <span className="hidden md:inline">Pop Out</span>

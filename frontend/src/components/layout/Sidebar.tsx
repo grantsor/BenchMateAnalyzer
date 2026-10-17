@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   BarChart3,
   CheckSquare,
@@ -10,7 +10,9 @@ import {
   Layers,
   Settings,
   Sliders,
-  Table
+  Table,
+  PanelLeftClose,
+  PanelLeftOpen
 } from "lucide-react";
 
 import { APP_VERSION_LABEL } from "../../constants/version";
@@ -44,13 +46,23 @@ interface NavSection {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const activeBtnRef = useRef<HTMLButtonElement | null>(null);
-  const [pillStyle, setPillStyle] = useState<{ top: number; height: number; opacity: number }>({
-    top: 0,
-    height: 34,
-    opacity: 0
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem("benchmate_ocr_sidebar_collapsed") === "true";
+    } catch {
+      return false;
+    }
   });
+
+  const toggleCollapse = () => {
+    setIsCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("benchmate_ocr_sidebar_collapsed", String(next));
+      } catch {}
+      return next;
+    });
+  };
 
   const sections: NavSection[] = [
     {
@@ -86,40 +98,44 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
     }
   ];
 
-  // Update gliding pill position with spring physics
-  useEffect(() => {
-    if (activeBtnRef.current && containerRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const btnRect = activeBtnRef.current.getBoundingClientRect();
-      const relativeTop = btnRect.top - containerRect.top;
-
-      setPillStyle({
-        top: relativeTop,
-        height: btnRect.height,
-        opacity: 1
-      });
-    }
-  }, [activeTab]);
-
   return (
-    <aside className="w-64 bg-[#0a0e17] border-r border-white/[0.08] flex flex-col justify-between select-none font-['Geist',sans-serif]">
-      {/* Scrollable Navigation Body */}
-      <div className="flex-1 overflow-y-auto px-3 py-4 space-y-5 relative" ref={containerRef}>
-        {/* BrewedOps Gliding Active Spring Pill */}
-        <div
-          className="absolute left-3 right-3 rounded-xl bg-blue-500/12 border border-blue-400/25 pointer-events-none transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]"
-          style={{
-            transform: `translateY(${pillStyle.top}px)`,
-            height: `${pillStyle.height}px`,
-            opacity: pillStyle.opacity
-          }}
-        />
+    <aside
+      className={`${
+        isCollapsed ? "w-16" : "w-64"
+      } bg-brand-surface border-r border-brand-border flex flex-col justify-between select-none transition-[width] duration-200 shrink-0 font-['Geist',sans-serif]`}
+    >
+      {/* Top Header Row with Collapse / Expand Toggle */}
+      <div
+        className={`flex items-center px-3 py-2 border-b border-brand-border/60 ${
+          isCollapsed ? "justify-center" : "justify-between"
+        }`}
+      >
+        {!isCollapsed && (
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider pl-1">
+            Navigation
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={toggleCollapse}
+          className="p-1.5 rounded-lg hover:bg-white/[0.06] text-slate-400 hover:text-white transition cursor-pointer"
+          title={isCollapsed ? "Expand sidebar (w-64)" : "Collapse sidebar (w-16)"}
+        >
+          {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+        </button>
+      </div>
 
+      {/* Scrollable Navigation Body */}
+      <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4">
         {sections.map((section) => (
           <div key={section.title} className="space-y-1">
-            <div className="px-3 py-1 text-[10px] font-semibold text-slate-500 tracking-[0.08em] uppercase">
-              {section.title}
-            </div>
+            {!isCollapsed ? (
+              <div className="px-3 py-1 text-[10px] font-semibold text-slate-500 tracking-[0.08em] uppercase">
+                {section.title}
+              </div>
+            ) : (
+              <div className="h-px bg-white/[0.06] mx-2 my-1" />
+            )}
 
             <div className="space-y-0.5">
               {section.items.map((item) => {
@@ -127,23 +143,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
                 return (
                   <button
                     key={item.id}
-                    ref={isActive ? activeBtnRef : null}
                     onClick={() => onTabChange(item.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-colors relative z-10 ${
+                    title={isCollapsed ? item.label : undefined}
+                    className={`w-full flex items-center rounded-xl text-xs font-medium transition-all relative ${
+                      isCollapsed
+                        ? "justify-center h-10 w-10 mx-auto px-0"
+                        : "justify-between px-3 py-2"
+                    } ${
                       isActive
-                        ? "text-white font-semibold"
-                        : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.03]"
+                        ? "bg-blue-600/15 border border-blue-400/35 text-white font-semibold shadow-sm"
+                        : "text-slate-400 hover:text-slate-200 hover:bg-white/[0.04] border border-transparent"
                     }`}
                   >
-                    <div className="flex items-center space-x-2.5">
+                    <div className={`flex items-center ${isCollapsed ? "justify-center" : "space-x-2.5"}`}>
                       <span className={isActive ? "text-[#3d8bff]" : "text-slate-400"}>
                         {item.icon}
                       </span>
-                      <span>{item.label}</span>
+                      {!isCollapsed && <span>{item.label}</span>}
                     </div>
 
-                    {item.badge && (
-                      <span className="text-[10px] font-medium font-mono px-1.5 py-0.5 rounded-md bg-white/[0.06] text-slate-300 border border-white/[0.08]">
+                    {!isCollapsed && item.badge && (
+                      <span className="text-[10px] font-medium font-mono px-1.5 py-0.5 rounded-md bg-white/[0.06] text-slate-300 border border-brand-border">
                         {item.badge}
                       </span>
                     )}
@@ -155,26 +175,38 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, onTabChange }) => {
         ))}
       </div>
 
-      {/* Footer Info: Minimalist BrewedOps Card */}
-      <div className="p-3 border-t border-white/[0.06] bg-white/[0.01]">
-        <div className="rounded-xl border border-white/[0.06] bg-[#111827]/70 p-3 space-y-1.5">
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
-            <span className="text-slate-400 font-medium">OCR Engine:</span>
-            <span className="font-medium text-emerald-400 flex items-center gap-1.5">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+      {/* Footer Info: RapidOCR Engine Status Card */}
+      <div className="p-2.5 border-t border-brand-border/60 bg-white/[0.01]">
+        {!isCollapsed ? (
+          <div className="rounded-xl border border-brand-border bg-brand-card/70 p-3 space-y-1.5">
+            <div className="flex items-center justify-between text-[11px] text-slate-400">
+              <span className="text-slate-400 font-medium">OCR Engine:</span>
+              <span className="font-medium text-emerald-400 flex items-center gap-1.5">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                RapidOCR PP-v4
               </span>
-              RapidOCR PP-v4
+            </div>
+            <div className="flex items-center justify-between text-[11px] text-slate-400">
+              <span className="text-slate-400 font-medium">Operation:</span>
+              <span className="font-mono text-[10px] text-slate-300 px-1.5 py-0.5 rounded bg-white/[0.05] border border-brand-border">
+                100% Offline
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div
+            className="flex justify-center py-1 cursor-default"
+            title="RapidOCR PP-v4: Online & 100% Offline"
+          >
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
             </span>
           </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-400">
-            <span className="text-slate-400 font-medium">Operation:</span>
-            <span className="font-mono text-[10px] text-slate-300 px-1.5 py-0.5 rounded bg-white/[0.05] border border-white/[0.06]">
-              100% Offline
-            </span>
-          </div>
-        </div>
+        )}
       </div>
     </aside>
   );

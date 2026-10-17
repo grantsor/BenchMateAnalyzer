@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { useProjectStore } from "../../stores/projectStore";
-import { useThemeStore, THEME_OPTIONS } from "../../stores/themeStore";
 import { APP_VERSION_LABEL } from "../../constants/version";
-import { Activity, Cpu, FolderOpen, Moon, Power, RefreshCw, FolderSync } from "lucide-react";
+import { Activity, Cpu, FolderOpen, Power, RefreshCw, FolderSync } from "lucide-react";
 import { api } from "../../api/client";
 
 interface NavbarProps {
@@ -12,7 +11,6 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) => {
   const { currentProject, projects, selectProject, refreshCurrentProject, isLoading } = useProjectStore();
-  const { theme, setTheme } = useThemeStore();
   const [showExitModal, setShowExitModal] = useState(false);
   const [isShuttingDown, setIsShuttingDown] = useState(false);
   const [isShutdown, setIsShutdown] = useState(false);
@@ -30,7 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
 
   return (
     <>
-      <header className="h-14 bg-[#0a0e17]/90 backdrop-blur-md border-b border-white/[0.08] px-5 flex items-center justify-between z-10 select-none font-['Geist',sans-serif]">
+      <header className="h-14 bg-brand-surface/90 backdrop-blur-md border-b border-brand-border px-5 flex items-center justify-between z-10 select-none font-['Geist',sans-serif]">
         {/* Brand & App Name */}
         <div className="flex items-center space-x-3">
           <div className="w-8 h-8 rounded-lg bg-blue-500/15 border border-blue-400/25 flex items-center justify-center shadow-sm">
@@ -39,7 +37,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
           <div>
             <div className="flex items-center space-x-2">
               <h1 className="font-semibold text-sm text-white tracking-tight">Benchmark Analyzer</h1>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-white/[0.05] text-slate-300 border border-brand-border">
                 {APP_VERSION_LABEL}
               </span>
             </div>
@@ -48,7 +46,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
         </div>
 
         {/* Center: Current Project Switcher (Clean BrewedOps Segmented Pill) */}
-        <div className="flex items-center space-x-2.5 bg-white/[0.03] border border-white/[0.08] px-3 py-1 rounded-lg shadow-sm hover:border-white/15 transition-colors">
+        <div className="flex items-center space-x-2.5 bg-white/[0.03] border border-brand-border px-3 py-1 rounded-lg shadow-sm hover:border-brand-border/80 transition-colors">
           <Cpu className="w-3.5 h-3.5 text-[#3d8bff]" />
           <span className="text-[11px] text-slate-400 font-medium">Project:</span>
 
@@ -59,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
               className="bg-transparent text-xs font-medium text-white focus:outline-none cursor-pointer pr-1"
             >
               {projects.map((p) => (
-                <option key={p.id} value={p.id} className="bg-[#111827] text-white">
+                <option key={p.id} value={p.id} className="bg-brand-card text-white">
                   {p.name} {p.product_name ? `(${p.product_name})` : ""}
                 </option>
               ))}
@@ -79,27 +77,11 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenProjects, onOpenImport }) 
           )}
         </div>
 
-        {/* Right Quick Actions & Theme Selector */}
+        {/* Right Quick Actions */}
         <div className="flex items-center space-x-2.5">
-          {/* UI Theme Switcher */}
-          <div className="flex items-center bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] px-2.5 py-1 rounded-lg transition-colors" title="Change UI Theme">
-            <Moon className="w-3.5 h-3.5 text-[#3d8bff] mr-1.5 shrink-0" />
-            <select
-              value={theme}
-              onChange={(e) => setTheme(e.target.value as any)}
-              className="bg-transparent text-xs font-medium text-slate-300 focus:outline-none cursor-pointer pr-1"
-            >
-              {THEME_OPTIONS.map((t) => (
-                <option key={t.id} value={t.id} className="bg-[#111827] text-white">
-                  {t.icon} {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
           <button
             onClick={onOpenProjects}
-            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] text-xs font-medium text-slate-300 hover:text-white transition active:scale-95 cursor-pointer"
+            className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] border border-brand-border text-xs font-medium text-slate-300 hover:text-white transition active:scale-95 cursor-pointer"
           >
             <FolderOpen className="w-3.5 h-3.5 text-slate-400" />
             <span>Projects</span>

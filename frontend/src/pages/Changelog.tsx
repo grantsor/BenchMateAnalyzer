@@ -34,10 +34,33 @@ interface ReleaseItem {
 
 const BUILTIN_RELEASES: ReleaseItem[] = [
   {
+    version: "v2.17.6",
+    date: "2026-10-17",
+    title: "Graph Font Isolation, Collapsible Sidebars, Global Theme Architecture & Export Chip Parity",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Chart Font Restoration",
+      "Collapsible Sidebars",
+      "Global Theme Switcher",
+      "Zero-Lag Switching",
+      "Export Chips Parity",
+      "Active Selection Alignment"
+    ],
+    highlights: [
+      "Chart Typography Isolation: Restored original Open Sans Condensed, Open Sans, and Inter typography for all generated benchmark charts and live interactive previews, while keeping modern Geist typography strictly for the application UI shell and tools.",
+      "Sidebar Selection Accuracy: Fixed active highlight pill alignment with direct on-button styling, eliminating position drift and offset across all zoom levels and scroll states.",
+      "Collapsible Sidebars: Implemented compact icon-only collapsible sidebars (toggling between w-64 expanded and w-16 collapsed with tooltips) across both OCR and CapFrameX analyzers.",
+      "Global Theme Selector Placement: Relocated the theme switcher to the master suite header alongside Import Folder and Settings, with complete theme synchronization (Dark, Light, OLED, Midnight Navy) across all views.",
+      "Zero-Lag Tab & Benchmark Switching: Eliminated window refresh animations and lag when toggling between Single Tests and Overall Summary or picking benchmarks by decoupling local selections from redundant dataset network refetches.",
+      "OCR Export Chip Bar Parity: Replaced the bulky 12-column sizing grid with the sleek horizontal segmented chip bar from CapFrameX ([16:9 Wide | 9:16 Mobile], [720P | 1080P | 4K], [WEBP | PNG | JPG])."
+    ]
+  },
+  {
     version: "v2.17.1",
     date: "2026-09-28",
     title: "9:16 Long Title Word-Wrapping & Backend Direct Downloads Delivery",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "9:16 Title Wrapping",

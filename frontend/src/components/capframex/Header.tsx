@@ -72,7 +72,7 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="bg-[#121215] border-b border-[#23232a] px-6 py-3 flex items-center justify-between sticky top-0 z-30 select-none">
+    <header className="bg-brand-card border-b border-brand-border px-6 py-3 flex items-center justify-between sticky top-0 z-30 select-none">
       {/* Hidden browser file/folder pickers for instant, foolproof native selection */}
       <input
         type="file"
@@ -94,7 +94,7 @@ export const Header: React.FC<HeaderProps> = ({
       />
 
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-lg bg-[#161820] border border-[#2b2e3e] flex items-center justify-center p-1.5 shadow-sm shadow-black/40">
+        <div className="w-9 h-9 rounded-lg bg-brand-surface border border-brand-border flex items-center justify-center p-1.5 shadow-sm shadow-black/40">
           <img
             src="/capframex-icon.png"
             alt="CapFrameX Logo"
@@ -159,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         {/* Folder Input + Browse Button Group */}
-        <div className="flex items-center bg-[#18181b] border border-[#23232a] rounded-lg overflow-hidden focus-within:border-blue-500">
+        <div className="flex items-center bg-brand-surface border border-brand-border rounded-lg overflow-hidden focus-within:border-blue-500">
           <button
             type="button"
             onClick={async () => {
@@ -190,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             onClick={() => folderInputRef.current?.click()}
             disabled={isScanning}
-            className="flex items-center gap-1 px-2.5 py-1.5 bg-[#23232a] hover:bg-[#2c2c35] text-slate-300 text-xs font-semibold border-l border-[#23232a] transition-colors disabled:opacity-60"
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-brand-card hover:bg-white/[0.08] text-slate-300 text-xs font-semibold border-l border-brand-border transition-colors disabled:opacity-60 cursor-pointer"
             title="Select benchmark folder directly via native OS popup"
           >
             <FolderOpen className="w-3.5 h-3.5 text-amber-400" />
@@ -201,7 +201,7 @@ export const Header: React.FC<HeaderProps> = ({
             type="button"
             onClick={() => filesInputRef.current?.click()}
             disabled={isScanning}
-            className="flex items-center gap-1 px-2 py-1.5 bg-[#23232a] hover:bg-[#2c2c35] text-slate-400 hover:text-slate-200 text-xs font-semibold border-l border-[#202028] transition-colors disabled:opacity-60"
+            className="flex items-center gap-1 px-2 py-1.5 bg-brand-card hover:bg-white/[0.08] text-slate-400 hover:text-slate-200 text-xs font-semibold border-l border-brand-border transition-colors disabled:opacity-60 cursor-pointer"
             title="Select specific CapFrameX JSON files directly"
           >
             <Files className="w-3.5 h-3.5 text-emerald-400" />
@@ -237,7 +237,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenGpuHierarchyModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#18181b] hover:bg-[#23232a] border border-[#23232a] text-xs text-slate-300 font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-surface hover:bg-white/[0.06] border border-brand-border text-xs text-slate-300 font-medium transition-colors cursor-pointer"
             title="Configure GPU Model Hierarchy Priority & Rankings"
           >
             <Layers className="w-3.5 h-3.5 text-blue-400" />
@@ -254,7 +254,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             type="button"
             onClick={onOpenGameProfilesModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#18181b] hover:bg-[#23232a] border border-[#23232a] text-xs text-slate-300 font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-surface hover:bg-white/[0.06] border border-brand-border text-xs text-slate-300 font-medium transition-colors cursor-pointer"
             title="Configure Game Chart Titles, Presets & Notes (Editable with Notepad)"
           >
             <Gamepad2 className="w-3.5 h-3.5 text-purple-400" />
@@ -271,7 +271,7 @@ export const Header: React.FC<HeaderProps> = ({
         <button
           type="button"
           onClick={onToggleUiTheme}
-          className="p-2 rounded-lg bg-[#18181b] hover:bg-[#23232a] border border-[#23232a] text-slate-300 transition-colors"
+          className="p-2 rounded-lg bg-brand-surface hover:bg-white/[0.06] border border-brand-border text-slate-300 transition-colors cursor-pointer"
           title={`Active Theme: ${uiTheme}. Click to cycle themes (Dark, Light, OLED, Midnight).`}
         >
           {uiTheme === "light" ? (
