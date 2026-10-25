@@ -306,11 +306,11 @@ async def open_presets_folder():
     file_path = settings.DATA_DIR / "export_presets.json"
     try:
         if file_path.exists():
-            subprocess.Popen(f'explorer /select,"{str(file_path)}"')
+            subprocess.Popen(["explorer.exe", f"/select,{str(file_path)}"])
         elif os.name == "nt":
             os.startfile(folder_path)
         else:
             subprocess.Popen(["xdg-open", folder_path])
-        return {"status": "success", "folder_path": folder_path}
+        return {"status": "success", "folder_path": folder_path, "file_path": str(file_path)}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to open presets folder: {e}")

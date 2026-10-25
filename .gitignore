@@ -13,6 +13,8 @@ env/
 backend/data/*.db
 backend/data/exports/
 data/
+!backend/data/export_presets.json
+!backend/data/ai_settings.json
 
 # Node / Frontend
 frontend/node_modules/

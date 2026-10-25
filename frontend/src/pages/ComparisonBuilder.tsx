@@ -38,7 +38,8 @@ import {
   Star,
   ArrowLeftRight,
   Tv,
-  GripVertical
+  GripVertical,
+  ChevronUp
 } from "lucide-react";
 import {
   ExportConfig,
@@ -264,16 +265,28 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
   const [isCreatingPreset, setIsCreatingPreset] = useState<boolean>(false);
   const [newPresetName, setNewPresetName] = useState<string>("");
 
-  // Load physical JSON presets from disk on mount
+  // Load physical JSON presets from disk on mount with localStorage backup
   useEffect(() => {
+    const localPrefs = getStoredPreferences();
+    const localPresets = localPrefs.customExportPresets || [];
+
     api.getExportPresets().then((res) => {
       if (res && res.file_path) {
         setPresetsFilePath(res.file_path);
       }
       if (res && res.presets && Array.isArray(res.presets) && res.presets.length > 0) {
         setCustomExportPresets(res.presets);
+        storePreferences({ customExportPresets: res.presets });
+      } else if (localPresets.length > 0) {
+        setCustomExportPresets(localPresets);
+        api.saveExportPresets(localPresets).catch(console.warn);
       }
-    }).catch(console.warn);
+    }).catch((err) => {
+      console.warn("Failed to load presets from disk, falling back to local storage:", err);
+      if (localPresets.length > 0) {
+        setCustomExportPresets(localPresets);
+      }
+    });
   }, []);
 
 
@@ -305,25 +318,32 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
 
   const handleConfigDragOver = (e: React.DragEvent, configId: string) => {
     e.preventDefault();
+    e.stopPropagation();
     e.dataTransfer.dropEffect = "move";
     if (dragOverConfigId !== configId) {
       setDragOverConfigId(configId);
     }
   };
 
+  const handleConfigDragEnd = () => {
+    setDraggedConfigId(null);
+    setDragOverConfigId(null);
+  };
+
   const handleConfigDrop = (e: React.DragEvent, targetConfigId: string) => {
     e.preventDefault();
+    e.stopPropagation();
+    const sourceId = draggedConfigId;
+    setDraggedConfigId(null);
     setDragOverConfigId(null);
-    if (!draggedConfigId || draggedConfigId === targetConfigId) {
-      setDraggedConfigId(null);
+    if (!sourceId || sourceId === targetConfigId) {
       return;
     }
 
     const currentRows = getOrderedRows();
-    const fromIdx = currentRows.findIndex((r) => r.configuration_id === draggedConfigId);
+    const fromIdx = currentRows.findIndex((r) => r.configuration_id === sourceId);
     const toIdx = currentRows.findIndex((r) => r.configuration_id === targetConfigId);
-    if (fromIdx === -1 || toIdx === -1) {
-      setDraggedConfigId(null);
+    if (fromIdx === -1 || toIdx === -1 || fromIdx === toIdx) {
       return;
     }
 
@@ -331,14 +351,39 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     const [moved] = newRows.splice(fromIdx, 1);
     newRows.splice(toIdx, 0, moved);
 
-    const newIds = newRows.map((r) => r.configuration_id);
+    const checkedSet = new Set(chartOptions.selectedConfigIds);
+    const newSelectedIds = newRows
+      .map((r) => r.configuration_id)
+      .filter((id) => checkedSet.has(id));
 
     setChartOptions((prev) => ({
       ...prev,
-      selectedConfigIds: newIds,
+      selectedConfigIds: newSelectedIds.length > 0 ? newSelectedIds : newRows.map((r) => r.configuration_id),
       sortOrder: "custom"
     }));
-    setDraggedConfigId(null);
+  };
+
+  const handleMoveConfig = (configId: string, direction: "up" | "down") => {
+    const currentRows = getOrderedRows();
+    const idx = currentRows.findIndex((r) => r.configuration_id === configId);
+    if (idx === -1) return;
+    const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+    if (targetIdx < 0 || targetIdx >= currentRows.length) return;
+
+    const newRows = [...currentRows];
+    const [moved] = newRows.splice(idx, 1);
+    newRows.splice(targetIdx, 0, moved);
+
+    const checkedSet = new Set(chartOptions.selectedConfigIds);
+    const newSelectedIds = newRows
+      .map((r) => r.configuration_id)
+      .filter((id) => checkedSet.has(id));
+
+    setChartOptions((prev) => ({
+      ...prev,
+      selectedConfigIds: newSelectedIds.length > 0 ? newSelectedIds : newRows.map((r) => r.configuration_id),
+      sortOrder: "custom"
+    }));
   };
   const [batchSearchFilter, setBatchSearchFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -1460,6 +1505,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     setCustomExportPresets(updated);
     setNewPresetName("");
     setIsCreatingPreset(false);
+    storePreferences({ customExportPresets: updated });
     api.saveExportPresets(updated).then((res) => {
       if (res && res.file_path) setPresetsFilePath(res.file_path);
     }).catch(console.warn);
@@ -1479,6 +1525,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     e.stopPropagation();
     const updated = customExportPresets.filter((p) => p.id !== presetId);
     setCustomExportPresets(updated);
+    storePreferences({ customExportPresets: updated });
     api.saveExportPresets(updated).catch(console.warn);
   };
 
@@ -2055,8 +2102,13 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                       draggable={editingConfigId !== r.configuration_id}
                       onDragStart={(e) => handleConfigDragStart(e, r.configuration_id)}
                       onDragOver={(e) => handleConfigDragOver(e, r.configuration_id)}
+                      onDragLeave={(e) => {
+                        e.stopPropagation();
+                        if (dragOverConfigId === r.configuration_id) setDragOverConfigId(null);
+                      }}
                       onDrop={(e) => handleConfigDrop(e, r.configuration_id)}
-                      className={`flex items-center justify-between p-2 rounded-xl border text-xs transition ${
+                      onDragEnd={handleConfigDragEnd}
+                      className={`flex items-center justify-between p-2 rounded-xl border text-xs transition select-none ${
                         isDragOver
                           ? "border-brand-red bg-brand-red/15 scale-[1.01]"
                           : isHighlighted
@@ -2066,7 +2118,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                           : isChecked
                           ? "bg-brand-surface border-brand-border/60 hover:border-slate-500"
                           : "bg-brand-surface/40 border-brand-border/30 opacity-50 hover:opacity-75"
-                      } ${isDragging ? "opacity-30" : ""}`}
+                      } ${isDragging ? "opacity-40 border-brand-red/80 ring-1 ring-brand-red/50 shadow-inner" : ""}`}
                     >
                       {editingConfigId === r.configuration_id ? (
                         <div className="flex items-center gap-1.5 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
@@ -2100,9 +2152,37 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                         </div>
                       ) : (
                         <div className="flex items-center space-x-2 flex-1 min-w-0 group">
-                          <span title="Drag up or down to reorder on graph">
-                            <GripVertical className="w-3.5 h-3.5 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing shrink-0" />
-                          </span>
+                          <div className="flex items-center space-x-1 shrink-0">
+                            <span title="Drag up or down to reorder on graph">
+                              <GripVertical className="w-3.5 h-3.5 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing shrink-0" />
+                            </span>
+                            <div className="flex flex-col opacity-0 group-hover:opacity-100 transition-opacity">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleMoveConfig(r.configuration_id, "up");
+                                }}
+                                className="p-0.5 text-slate-500 hover:text-white hover:bg-slate-700/60 rounded transition cursor-pointer"
+                                title="Move configuration up"
+                              >
+                                <ChevronUp className="w-2.5 h-2.5" />
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  handleMoveConfig(r.configuration_id, "down");
+                                }}
+                                className="p-0.5 text-slate-500 hover:text-white hover:bg-slate-700/60 rounded transition cursor-pointer"
+                                title="Move configuration down"
+                              >
+                                <ChevronDown className="w-2.5 h-2.5" />
+                              </button>
+                            </div>
+                          </div>
                           <input
                             type="checkbox"
                             checked={isChecked}

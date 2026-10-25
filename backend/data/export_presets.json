@@ -1,0 +1,23 @@
+{
+  "presets": [
+    {
+      "id": "preset_standard_13",
+      "name": "Standard 13 Suite",
+      "keys": [
+        "arithmetic_benchmark_superpi_32m",
+        "arithmetic_benchmark_wprime_1024m",
+        "cinebench_r15",
+        "cinebench_r20",
+        "cinebench_r23",
+        "cinebench_2024",
+        "geekbench_6",
+        "blender_benchmark",
+        "corona_benchmark",
+        "vray_benchmark",
+        "threedmark_firestrike_overall",
+        "threedmark_timespy_overall",
+        "threedmark_speedway_steelnomad_steelnomad"
+      ]
+    }
+  ]
+}

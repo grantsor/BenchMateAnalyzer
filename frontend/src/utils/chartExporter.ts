@@ -67,30 +67,22 @@ export function formatChartTitle(
   if (!isVertical) {
     // ------------------------------------------------------------------------
     // 16:9 LANDSCAPE: The main title MUST NEVER take more than 1 row!
-    // Dynamically downscale font size so it fits safeCenteredTitleWidth.
+    // Maintain standard 40px base title font size, dynamically scaling down
+    // ONLY if extreme title length exceeds available safe width.
     // ------------------------------------------------------------------------
     lines = [clean.replace(/\n+/g, " ")];
 
-    // Standard landscape base font size: 36 (or 38 if short)
-    let targetBaseFontSize = 36;
-    if (clean.length <= 26) {
-      targetBaseFontSize = 38;
-    } else if (clean.length <= 36) {
-      targetBaseFontSize = 32;
-    } else if (clean.length <= 48) {
-      targetBaseFontSize = 28;
-    } else {
-      targetBaseFontSize = 24;
-    }
+    // Standard original landscape base font size: 40px at 1080p
+    const targetBaseFontSize = 40;
 
-    // Average char width for uppercase header font: ~0.55 * fontSize
-    // Letter spacing: 1.8px at scale 1
-    const letterSpacingTotal = clean.length * 1.8;
-    const estimatedWidth = clean.length * (targetBaseFontSize * 0.55) + letterSpacingTotal;
+    // Average char width for Open Sans Condensed: ~0.44 * fontSize
+    // Letter spacing: 1.5px at scale 1
+    const letterSpacingTotal = clean.length * 1.5;
+    const estimatedWidth = clean.length * (targetBaseFontSize * 0.44) + letterSpacingTotal;
 
     if (estimatedWidth > availableWidthAtScale1) {
-      const fitFontSize = Math.floor((availableWidthAtScale1 - letterSpacingTotal) / (clean.length * 0.55));
-      baseFontSize = Math.max(16, Math.min(targetBaseFontSize, fitFontSize));
+      const fitFontSize = Math.floor((availableWidthAtScale1 - letterSpacingTotal) / (clean.length * 0.44));
+      baseFontSize = Math.max(26, Math.min(targetBaseFontSize, fitFontSize));
     } else {
       baseFontSize = targetBaseFontSize;
     }
@@ -102,10 +94,10 @@ export function formatChartTitle(
     // ------------------------------------------------------------------------
     const singleLineClean = clean.replace(/\n+/g, " ");
 
-    // Standard 1-row vertical font size
-    const singleRowBaseFontSize = singleLineClean.length <= 16 ? 28 : 25;
+    // Standard 1-row vertical font size: 34 (or 32 for medium titles)
+    const singleRowBaseFontSize = singleLineClean.length <= 16 ? 34 : 32;
     const letterSpacingTotal = singleLineClean.length * 1.2;
-    const singleRowEstimatedWidth = singleLineClean.length * (singleRowBaseFontSize * 0.55) + letterSpacingTotal;
+    const singleRowEstimatedWidth = singleLineClean.length * (singleRowBaseFontSize * 0.46) + letterSpacingTotal;
 
     // Check if 1 row fits safely centered without colliding with the logo
     if (singleRowEstimatedWidth <= availableWidthAtScale1) {
@@ -128,14 +120,16 @@ export function formatChartTitle(
       }
 
       const maxLineLen = Math.max(...lines.map((l) => l.length));
-      if (maxLineLen <= 20) baseFontSize = 24;
-      else if (maxLineLen <= 26) baseFontSize = 21;
-      else baseFontSize = 18;
+      if (maxLineLen <= 20) baseFontSize = 28;
+      else if (maxLineLen <= 26) baseFontSize = 25;
+      else baseFontSize = 22;
     }
   }
 
-  const fontSize = Math.max(12, Math.round(baseFontSize * scale));
-  const lineHeight = Math.round(fontSize * 1.18);
+  // Ensure title maintains clear visual hierarchy in preview without being crushed to tiny text
+  const minTitleFontSize = isVertical ? 15 : 18;
+  const fontSize = Math.max(minTitleFontSize, Math.round(baseFontSize * scale));
+  const lineHeight = Math.round(fontSize * 1.2);
 
   return {
     text: lines.join("\n"),
