@@ -32,12 +32,53 @@ interface ReleaseItem {
   tags: string[];
 }
 
-const BUILTIN_RELEASES: ReleaseItem[] = [
+const BUILTIN_RELEASES: ReleaseItem[] = [  {
+    version: "v2.17.8",
+    date: "2026-10-26",
+    title: "Smooth Review Progression, 1-Click Ignore, Drag-and-Drop Pill Ordering & Compact Profiles Auto-Save",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Smooth Review Progression",
+      "1-Click Ignore Result",
+      "Drag-and-Drop Pill Ordering",
+      "Compact Profiles Auto-Save",
+      "Live Chart Title Sync",
+      "Accurate Export Checklist"
+    ],
+    highlights: [
+      "OCR Review Smooth Progression: Eliminated full-page reload and scroll resets upon accepting or reparsing OCR benchmarks. The view updates silently and moves focus smoothly to the next item.",
+      "1-Click Ignore & Restore: Added prominent 'Ignore Result' and 'Restore' buttons to quickly exclude unwanted runs from charts.",
+      "Drag-and-Drop Pill Ordering: Added drag handles to 'INCLUDED CONFIGURATIONS' in Comparison Chart Builder to customize bar order on charts.",
+      "Compact Benchmark Profiles with Live Auto-Save: Cut profile card height by >60% and added debounced auto-save with immediate real-time chart title sync.",
+      "Batch Export Checklist Count Accuracy & Physical Presets: Selected counter matches valid active targets, and presets are physically saved to backend/data/export_presets.json with Explorer folder reveal."
+    ]
+  },
+  {
+    version: "v2.17.7",
+    date: "2026-10-17",
+    title: "16:9 Single-Row Title Enforcement, 9:16 Adaptive Collision Wrapping & Canvas Scaling Stabilization",
+    isLatest: false,
+    category: "Enhancement",
+    tags: [
+      "16:9 Single-Row Title",
+      "9:16 Adaptive Wrap",
+      "Canvas Scaling Fix",
+      "Aspect Ratio Resizing",
+      "Vertical Rhythm Parity"
+    ],
+    highlights: [
+      "Strict 1-Row Title Constraint in 16:9 Landscape: Main benchmark titles across all OCR benchmark suites are strictly constrained to never wrap onto more than 1 row in 16:9 mode, dynamically downscaling and truncating text before the logo boundary.",
+      "Adaptive Single/Double-Row Wrapping in 9:16 Vertical: In 9:16 vertical mode, benchmark titles remain centered on a single line as long as they do not collide with the publication logo. Titles wrap onto two rows ONLY if collision would occur, automatically re-balancing vertical spacing.",
+      "Canvas Container Aspect Ratio Stabilization: Isolated the chart preview container with absolute inset positioning, keyed re-instantiation, and explicit ECharts .resize() triggers, preventing stale canvas dimensions on orientation changes."
+    ]
+  },
+
   {
     version: "v2.17.6",
     date: "2026-10-17",
     title: "Graph Font Isolation, Collapsible Sidebars, Global Theme Architecture & Export Chip Parity",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Chart Font Restoration",

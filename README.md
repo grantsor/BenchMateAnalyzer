@@ -1,11 +1,11 @@
-# BenchMate Analyzer & Chart Generator v1.1.4
+# BenchMate Analyzer & Chart Generator v1.1.9
 
 A professional, 100% offline Windows desktop application engineered for technology reviewers at **Gadget Pilipinas**. **BenchMate Analyzer** merges the **Benchmark OCR Analyzer** and the **CapFrameX Analyzer** into a unified, high-performance workstation suite capable of running off a single standalone executable.
 
 ### 📜 Changelogs & Release Notes
-- 🌐 [Master BenchMate Suite Changelog](CHANGELOG.md) (v1.1.4)
-- 🔍 [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.3)
-- 🎮 [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.4)
+- 🌐 [Master BenchMate Suite Changelog](CHANGELOG.md) (v1.1.9)
+- 🔍 [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.8)
+- 🎮 [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.9)
 
 ---
 
@@ -38,7 +38,7 @@ Run the pre-compiled executable directly:
 ```text
 dist\BenchMate-Analyzer\BenchMate-Analyzer.exe
 ```
-*(Or unzip `release\BenchMate-Analyzer-v1.0.0-Windows.zip` anywhere on your PC and double-click `BenchMate-Analyzer.exe`)*
+*(Or unzip `release\BenchMate-Analyzer-v1.1.9-Windows.zip` anywhere on your PC and double-click `BenchMate-Analyzer.exe`)*
 
 ### Option 2: Run via Batch Launcher
 ```bat
@@ -132,7 +132,7 @@ python package_app.py
 
 Outputs:
 - **Executable**: `dist/BenchMate-Analyzer/BenchMate-Analyzer.exe`
-- **Release ZIP**: `release/BenchMate-Analyzer-v1.1.1-Windows.zip`
+- **Release ZIP**: `release/BenchMate-Analyzer-v1.1.9-Windows.zip`
 
 ---
 

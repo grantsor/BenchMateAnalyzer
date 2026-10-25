@@ -85,7 +85,49 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
       "Zero-Lag Tab & Benchmark Switching: Eliminated window refresh animations and lag when toggling between Single Tests and Overall Summary or picking benchmarks by decoupling local selections from redundant dataset network refetches.",
       "OCR Export Chip Bar Parity: Replaced the bulky 12-column sizing grid with the sleek horizontal segmented chip bar from CapFrameX ([16:9 Wide | 9:16 Mobile], [720P | 1080P | 4K], [WEBP | PNG | JPG])."
     ]
+  },  {
+    version: "v1.1.8",
+    date: "2026-10-17",
+    title: "Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints",
+    isLatest: false,
+    category: "Feature",
+    tags: [
+      "Multi-Bar Custom Charts",
+      "Editable Column Headers",
+      "Aspect Ratio Scale Fix",
+      "16:9 Single-Row Title",
+      "9:16 Adaptive Title Wrap",
+      "Header Spacing Parity"
+    ],
+    highlights: [
+      "Multi-Bar Custom Charts with In-Place Editable Headers: Added full support in CapFrameX Custom Charts (Temps, Power Draw, Battery Life) to add, delete, and rename custom column bars per row (e.g. 'Peak Temp' and 'Idle Temp', or 'Peak Power' and 'Idle Wattage'), updating chart legend swatches, series, and hover tooltips immediately.",
+      "Aspect Ratio Scale Stabilization & Glitch Elimination: Fixed canvas scaling and empty whitespace glitches when switching between custom charts and game charts via absolute inset geometry and explicit ECharts resizing.",
+      "Strict 1-Row Title Constraint in 16:9: Enforced strict single-line title rendering in 16:9 landscape mode with dynamic font downscaling and truncation overflow.",
+      "Adaptive Single/Double-Row Wrapping in 9:16: In 9:16 vertical mode, titles remain centered on one line as long as they don't collide with the logo, and wrap onto two rows with balanced spacing only when needed.",
+      "Harmonized Header Spacing: Aligned CapFrameX header vertical rhythm to match the OCR app, maintaining identical proportional gaps between title, subtitle, legend, and bar grid."
+    ]
   },
+  {
+    version: "v1.1.7",
+    date: "2026-10-17",
+    title: "Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Matching Game Icons",
+    isLatest: false,
+    category: "Enhancement",
+    tags: [
+      "Dynamic Vertical Rhythm",
+      "Balanced Header Spacing",
+      "Matching Game Icons",
+      "Chart Font Restoration",
+      "Collapsible Telemetry Sidebar"
+    ],
+    highlights: [
+      "Dynamic Vertical Rhythm & Balanced Header Spacing: Replaced static lookup magic numbers with mathematical vertical rhythm across all chart export and canvas preview modes, ensuring title-to-sub-header and sub-header-to-legend spacing are perfectly symmetrical.",
+      "Chart Typography Isolation: Restored original Open Sans Condensed and Open Sans typography across benchmark chart canvas and image exports while keeping modern Geist for UI controls.",
+      "Collapsible Telemetry Sidebar & Matching Game Icons: Added collapse toggle to the game sidebar (w-72 <-> w-16 icon-only with tooltips) and replaced generic gamepad icons with authentic official desktop game icons for over 30 titles in public/game-icons/.",
+      "Global Theme Hub Parity: Fully synchronized with the suite-wide theme hub in the master header."
+    ]
+  },
+
   {
     version: "v1.1.6",
     date: "2026-10-17",
@@ -480,7 +522,48 @@ export const OCR_CHANGELOG: ReleaseItem[] = [
       "Compact Benchmark Profiles with Live Auto-Save: Cut profile card height by >60% and added debounced auto-save with immediate real-time chart title sync.",
       "Batch Export Checklist Count Accuracy & Physical Presets: Selected counter matches valid active targets, and presets are physically saved to backend/data/export_presets.json with Explorer folder reveal."
     ]
+  },  {
+    version: "v2.17.7",
+    date: "2026-10-17",
+    title: "16:9 Single-Row Title Enforcement, 9:16 Adaptive Collision Wrapping & Canvas Scaling Stabilization",
+    isLatest: false,
+    category: "Enhancement",
+    tags: [
+      "16:9 Single-Row Title",
+      "9:16 Adaptive Wrap",
+      "Canvas Scaling Fix",
+      "Aspect Ratio Resizing",
+      "Vertical Rhythm Parity"
+    ],
+    highlights: [
+      "Strict 1-Row Title Constraint in 16:9 Landscape: Main benchmark titles across all OCR benchmark suites are strictly constrained to never wrap onto more than 1 row in 16:9 mode, dynamically downscaling and truncating text before the logo boundary.",
+      "Adaptive Single/Double-Row Wrapping in 9:16 Vertical: In 9:16 vertical mode, benchmark titles remain centered on a single line as long as they do not collide with the publication logo. Titles wrap onto two rows ONLY if collision would occur, automatically re-balancing vertical spacing.",
+      "Canvas Container Aspect Ratio Stabilization: Isolated the chart preview container with absolute inset positioning, keyed re-instantiation, and explicit ECharts .resize() triggers, preventing stale canvas dimensions on orientation changes."
+    ]
   },
+  {
+    version: "v2.17.6",
+    date: "2026-10-17",
+    title: "Dynamic Vertical Rhythm, Graph Font Restoration, Collapsible Sidebar & Export Chip Parity",
+    isLatest: false,
+    category: "Enhancement",
+    tags: [
+      "Dynamic Vertical Rhythm",
+      "Balanced Header Spacing",
+      "Chart Font Restoration",
+      "Collapsible Sidebar",
+      "OCR Export Chip Bar",
+      "Zero-Lag Tab Switching"
+    ],
+    highlights: [
+      "Dynamic Vertical Rhythm & Balanced Header Spacing: Replaced static lookup magic numbers with mathematical vertical rhythm across all chart export and canvas preview modes, matching title-to-sub-header gap with sub-header-to-legend gap.",
+      "Chart Typography Isolation: Restored original Open Sans Condensed, Open Sans, and Inter typography for all generated benchmark charts and live interactive previews, while keeping modern Geist typography strictly for the application UI shell and tools.",
+      "Collapsible Sidebar: Added toggleable collapsible sidebar (w-64 <-> w-16 icon-only with native tooltips) and fixed active highlight pill alignment.",
+      "OCR Export Chip Bar Parity: Replaced bulky 12-column sizing grid with the sleek horizontal segmented chip bar ([16:9 Wide | 9:16 Mobile], [720P | 1080P | 4K], [WEBP | PNG | JPG]).",
+      "Zero-Lag Tab & Benchmark Switching: Decoupled active selections from redundant background data refetching, eliminating page lag and refresh flickers when toggling tabs or picking benchmarks."
+    ]
+  },
+
   {
     version: "v2.17.5",
     date: "2026-10-17",
