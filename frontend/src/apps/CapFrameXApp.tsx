@@ -581,7 +581,9 @@ export const CapFrameXApp: React.FC = () => {
   };
 
   const updateStateFromScan = (res: any) => {
-    setFolder(res.folder);
+    if (res.folder && (!folder || (res.folder.includes(":") || res.folder.includes("/") || res.folder.includes("\\")))) {
+      setFolder(res.folder);
+    }
     setRunsCount(res.runs_count);
     setGames(res.games || []);
     if (res.games && res.games.length > 0) {
@@ -628,7 +630,8 @@ export const CapFrameXApp: React.FC = () => {
   const handleScan = async (targetFolder?: string) => {
     setIsScanning(true);
     try {
-      const res = await api.scan(targetFolder, benchmarkMode);
+      const folderToScan = targetFolder || folder;
+      const res = await api.scan(folderToScan, benchmarkMode);
       setSelectedCustomChartId(null);
       setFilterGpu("");
       setFilterCpu("");

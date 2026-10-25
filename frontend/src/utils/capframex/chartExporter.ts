@@ -1088,24 +1088,25 @@ export function buildChartFileName(
   formatOrExportPhrase?: ExportFormat | string,
   exportPhrase?: string
 ): string {
-  const isRes = /^(1080p|1440p|4k|2160p|720p)/i.test(resolutionOrFormat.trim());
   let res = "";
   let fmt: ExportFormat = "webp";
   let phrase = "";
 
-  if (isRes) {
-    res = resolutionOrFormat.trim();
-    if (formatOrExportPhrase === "jpg" || formatOrExportPhrase === "png" || formatOrExportPhrase === "webp") {
-      fmt = formatOrExportPhrase as ExportFormat;
-      phrase = exportPhrase || "";
-    } else {
-      phrase = (formatOrExportPhrase as string) || "";
-    }
+  const isFormat = (v?: string): v is ExportFormat => v === "jpg" || v === "png" || v === "webp";
+
+  if (isFormat(formatOrExportPhrase)) {
+    // Standard 5-arg signature: (product, title, res, format, exportPhrase)
+    fmt = formatOrExportPhrase;
+    phrase = exportPhrase || "";
+    res = resolutionOrFormat || "";
+  } else if (isFormat(resolutionOrFormat)) {
+    // Legacy 4-arg signature: (product, title, format, exportPhrase)
+    fmt = resolutionOrFormat;
+    phrase = (formatOrExportPhrase as string) || exportPhrase || "";
+    res = "";
   } else {
-    // Legacy 4-arg signature: (productName, benchmarkTitle, format, exportPhrase)
-    if (resolutionOrFormat === "jpg" || resolutionOrFormat === "png" || resolutionOrFormat === "webp") {
-      fmt = resolutionOrFormat as ExportFormat;
-    }
+    // Fallback: resolution is first, phrase might be formatOrExportPhrase or exportPhrase
+    res = resolutionOrFormat || "";
     phrase = (formatOrExportPhrase as string) || exportPhrase || "";
   }
 

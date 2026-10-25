@@ -228,6 +228,10 @@ export function buildExportEchartsOption(
       const nameB = (options.customConfigLabels?.[b.configuration_id] || b.display_name || "").toLowerCase();
       return nameA.localeCompare(nameB);
     });
+  } else if (options.sortOrder === "custom") {
+    const orderMap = new Map<string, number>();
+    matchingConfigIds.forEach((id, idx) => orderMap.set(id, idx));
+    rows = [...rows].sort((a, b) => (orderMap.get(a.configuration_id) ?? 9999) - (orderMap.get(b.configuration_id) ?? 9999));
   }
 
   const isLight = options.theme === "light";

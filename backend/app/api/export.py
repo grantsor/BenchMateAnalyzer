@@ -253,3 +253,64 @@ async def download_file(filename: str):
         media_type="application/octet-stream"
     )
 
+class ExportPresetPayload(BaseModel):
+    presets: List[dict]
+
+@router.get("/presets")
+async def get_export_presets():
+    file_path = settings.DATA_DIR / "export_presets.json"
+    folder_path = str(settings.DATA_DIR)
+    if not file_path.exists():
+        return {
+            "presets": [],
+            "file_path": str(file_path),
+            "folder_path": folder_path
+        }
+    try:
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            presets = data if isinstance(data, list) else data.get("presets", [])
+            return {
+                "presets": presets,
+                "file_path": str(file_path),
+                "folder_path": folder_path
+            }
+    except Exception as e:
+        return {
+            "presets": [],
+            "file_path": str(file_path),
+            "folder_path": folder_path,
+            "error": str(e)
+        }
+
+@router.post("/presets")
+async def save_export_presets(payload: ExportPresetPayload):
+    file_path = settings.DATA_DIR / "export_presets.json"
+    folder_path = str(settings.DATA_DIR)
+    settings.DATA_DIR.mkdir(parents=True, exist_ok=True)
+    try:
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump({"presets": payload.presets}, f, indent=2)
+        return {
+            "status": "success",
+            "count": len(payload.presets),
+            "file_path": str(file_path),
+            "folder_path": folder_path
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to save presets: {e}")
+
+@router.post("/presets/open-folder")
+async def open_presets_folder():
+    folder_path = str(settings.DATA_DIR)
+    file_path = settings.DATA_DIR / "export_presets.json"
+    try:
+        if file_path.exists():
+            subprocess.Popen(f'explorer /select,"{str(file_path)}"')
+        elif os.name == "nt":
+            os.startfile(folder_path)
+        else:
+            subprocess.Popen(["xdg-open", folder_path])
+        return {"status": "success", "folder_path": folder_path}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to open presets folder: {e}")

@@ -37,7 +37,8 @@ import {
   Bookmark,
   Star,
   ArrowLeftRight,
-  Tv
+  Tv,
+  GripVertical
 } from "lucide-react";
 import {
   ExportConfig,
@@ -98,7 +99,7 @@ interface SavedChartPreferences {
   logoAspectRatio?: number;
   isCustomLogo?: boolean;
   theme?: "light" | "dark";
-  sortOrder?: "desc" | "asc" | "alpha" | "original";
+  sortOrder?: "desc" | "asc" | "alpha" | "original" | "custom";
   labelFontSize?: number;
   gridLeftMargin?: number;
   barValuePosition?: "auto" | "inside" | "outside";
@@ -259,8 +260,86 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     const p = getStoredPreferences();
     return p.customExportPresets || [];
   });
+  const [presetsFilePath, setPresetsFilePath] = useState<string>("backend/data/export_presets.json");
   const [isCreatingPreset, setIsCreatingPreset] = useState<boolean>(false);
   const [newPresetName, setNewPresetName] = useState<string>("");
+
+  // Load physical JSON presets from disk on mount
+  useEffect(() => {
+    api.getExportPresets().then((res) => {
+      if (res && res.file_path) {
+        setPresetsFilePath(res.file_path);
+      }
+      if (res && res.presets && Array.isArray(res.presets) && res.presets.length > 0) {
+        setCustomExportPresets(res.presets);
+      }
+    }).catch(console.warn);
+  }, []);
+
+
+
+  // Drag-and-drop state for Included Configurations
+  const [draggedConfigId, setDraggedConfigId] = useState<string | null>(null);
+  const [dragOverConfigId, setDragOverConfigId] = useState<string | null>(null);
+
+  const getOrderedRows = () => {
+    const rawRows = isSummaryActive && summaryResult ? summaryResult.summaryDataset.rows : activeDataset?.rows || [];
+    if (!chartOptions.selectedConfigIds || chartOptions.selectedConfigIds.length === 0) {
+      return rawRows;
+    }
+    const idMap = new Map<string, number>();
+    chartOptions.selectedConfigIds.forEach((id, idx) => idMap.set(id, idx));
+
+    return [...rawRows].sort((a, b) => {
+      const idxA = idMap.has(a.configuration_id) ? idMap.get(a.configuration_id)! : 9999;
+      const idxB = idMap.has(b.configuration_id) ? idMap.get(b.configuration_id)! : 9999;
+      return idxA - idxB;
+    });
+  };
+
+  const handleConfigDragStart = (e: React.DragEvent, configId: string) => {
+    setDraggedConfigId(configId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", configId);
+  };
+
+  const handleConfigDragOver = (e: React.DragEvent, configId: string) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverConfigId !== configId) {
+      setDragOverConfigId(configId);
+    }
+  };
+
+  const handleConfigDrop = (e: React.DragEvent, targetConfigId: string) => {
+    e.preventDefault();
+    setDragOverConfigId(null);
+    if (!draggedConfigId || draggedConfigId === targetConfigId) {
+      setDraggedConfigId(null);
+      return;
+    }
+
+    const currentRows = getOrderedRows();
+    const fromIdx = currentRows.findIndex((r) => r.configuration_id === draggedConfigId);
+    const toIdx = currentRows.findIndex((r) => r.configuration_id === targetConfigId);
+    if (fromIdx === -1 || toIdx === -1) {
+      setDraggedConfigId(null);
+      return;
+    }
+
+    const newRows = [...currentRows];
+    const [moved] = newRows.splice(fromIdx, 1);
+    newRows.splice(toIdx, 0, moved);
+
+    const newIds = newRows.map((r) => r.configuration_id);
+
+    setChartOptions((prev) => ({
+      ...prev,
+      selectedConfigIds: newIds,
+      sortOrder: "custom"
+    }));
+    setDraggedConfigId(null);
+  };
   const [batchSearchFilter, setBatchSearchFilter] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeImportProgress, setActiveImportProgress] = useState<{
@@ -887,6 +966,27 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     ? summaryResult?.summaryDataset || datasets[0]
     : datasets.find((d) => d.benchmark_id === selectedBenchmarkId) || datasets[0];
 
+  // Listen for real-time benchmark profile name updates from BenchmarkProfilesPage
+  useEffect(() => {
+    const handleProfileUpdated = (e: any) => {
+      const { id, name } = e.detail || {};
+      if (!id || !name) return;
+      setChartOptions((prev) => ({
+        ...prev,
+        customBenchmarkTitles: {
+          ...(prev.customBenchmarkTitles || {}),
+          [id]: name
+        },
+        title: activeDataset?.benchmark_id === id ? name : prev.title
+      }));
+      setDatasets((prev) =>
+        prev.map((d) => (d.benchmark_id === id ? { ...d, benchmark_name: name } : d))
+      );
+    };
+    window.addEventListener("gp_benchmark_profile_updated", handleProfileUpdated);
+    return () => window.removeEventListener("gp_benchmark_profile_updated", handleProfileUpdated);
+  }, [activeDataset?.benchmark_id]);
+
   // When active dataset changes, initialize options for that dataset while preserving user design preferences
   useEffect(() => {
     if (activeDataset) {
@@ -1295,35 +1395,47 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     return Array.from(map.values());
   }, [allAvailableTargets]);
 
-  // Initialize selection with stored keys if available, otherwise Split Sub-Charts Only by default
+  // Compute valid selected targets in current dataset
+  const validSelectedTargets = useMemo(() => {
+    return allAvailableTargets.filter((t) => selectedExportKeys.has(t.exportKey));
+  }, [allAvailableTargets, selectedExportKeys]);
+
+  const validSelectedCount = validSelectedTargets.length;
+
+  // Initialize and prune batch selection against allAvailableTargets
   useEffect(() => {
-    if (allAvailableTargets.length > 0 && selectedExportKeys.size === 0) {
-      const stored = getStoredPreferences();
-      if (stored.batchSelectedKeys && stored.batchSelectedKeys.length > 0) {
-        const availableKeySet = new Set(allAvailableTargets.map((t) => t.exportKey));
-        const validStoredKeys = stored.batchSelectedKeys.filter((k) => availableKeySet.has(k));
-        if (validStoredKeys.length > 0) {
-          setSelectedExportKeys(new Set(validStoredKeys));
-          return;
+    if (allAvailableTargets.length === 0) return;
+    const availableKeySet = new Set(allAvailableTargets.map((t) => t.exportKey));
+
+    setSelectedExportKeys((prev) => {
+      if (prev.size === 0) {
+        const stored = getStoredPreferences();
+        if (stored.batchSelectedKeys && stored.batchSelectedKeys.length > 0) {
+          const valid = stored.batchSelectedKeys.filter((k) => availableKeySet.has(k));
+          if (valid.length > 0) return new Set(valid);
         }
-      }
 
-      const defaultKeys = new Set<string>();
-      const benchmarkIdsWithSubGroups = new Set(
-        allAvailableTargets.filter((t) => t.isSubGroup).map((t) => t.benchmarkId)
-      );
-
-      for (const t of allAvailableTargets) {
-        if (benchmarkIdsWithSubGroups.has(t.benchmarkId)) {
-          if (t.isSubGroup) {
+        const defaultKeys = new Set<string>();
+        const benchmarkIdsWithSubGroups = new Set(
+          allAvailableTargets.filter((t) => t.isSubGroup).map((t) => t.benchmarkId)
+        );
+        for (const t of allAvailableTargets) {
+          if (benchmarkIdsWithSubGroups.has(t.benchmarkId)) {
+            if (t.isSubGroup) defaultKeys.add(t.exportKey);
+          } else {
             defaultKeys.add(t.exportKey);
           }
-        } else {
-          defaultKeys.add(t.exportKey);
         }
+        return defaultKeys;
       }
-      setSelectedExportKeys(defaultKeys);
-    }
+
+      // Prune any stale keys that do not belong to the current dataset targets
+      const pruned = Array.from(prev).filter((k) => availableKeySet.has(k));
+      if (pruned.length !== prev.size) {
+        return new Set(pruned);
+      }
+      return prev;
+    });
   }, [allAvailableTargets]);
 
   const handleSaveCustomPreset = () => {
@@ -1348,6 +1460,9 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
     setCustomExportPresets(updated);
     setNewPresetName("");
     setIsCreatingPreset(false);
+    api.saveExportPresets(updated).then((res) => {
+      if (res && res.file_path) setPresetsFilePath(res.file_path);
+    }).catch(console.warn);
   };
 
   const handleApplyCustomPreset = (preset: CustomExportPreset) => {
@@ -1362,7 +1477,17 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
 
   const handleDeleteCustomPreset = (presetId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    setCustomExportPresets((prev) => prev.filter((p) => p.id !== presetId));
+    const updated = customExportPresets.filter((p) => p.id !== presetId);
+    setCustomExportPresets(updated);
+    api.saveExportPresets(updated).catch(console.warn);
+  };
+
+  const handleOpenPresetsFolder = async () => {
+    try {
+      await api.openPresetsFolder();
+    } catch (err: any) {
+      alert("Failed to open presets folder: " + err.message);
+    }
   };
 
   const selectAllTargets = () => {
@@ -1915,25 +2040,33 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
 
               {/* Configurations List with Checkboxes & Star Highlighting */}
               <div className="space-y-1.5 max-h-52 overflow-y-auto pr-1">
-                {(isSummaryActive && summaryResult ? summaryResult.summaryDataset.rows : activeDataset?.rows || []).map((r) => {
+                {getOrderedRows().map((r) => {
                   const isChecked = chartOptions.selectedConfigIds.includes(r.configuration_id);
                   const isHighlighted =
                     chartOptions.highlightOptions?.enabled &&
                     chartOptions.highlightOptions.highlightedConfigIds?.includes(r.configuration_id);
                   const isRef = isSummaryActive && summaryResult && r.configuration_id === summaryResult.referenceConfigId;
+                  const isDragging = draggedConfigId === r.configuration_id;
+                  const isDragOver = dragOverConfigId === r.configuration_id;
 
                   return (
                     <div
                       key={r.configuration_id}
+                      draggable={editingConfigId !== r.configuration_id}
+                      onDragStart={(e) => handleConfigDragStart(e, r.configuration_id)}
+                      onDragOver={(e) => handleConfigDragOver(e, r.configuration_id)}
+                      onDrop={(e) => handleConfigDrop(e, r.configuration_id)}
                       className={`flex items-center justify-between p-2 rounded-xl border text-xs transition ${
-                        isHighlighted
+                        isDragOver
+                          ? "border-brand-red bg-brand-red/15 scale-[1.01]"
+                          : isHighlighted
                           ? "bg-amber-500/10 border-amber-500/40"
                           : isRef
                           ? "bg-brand-red/10 border-brand-red/40"
                           : isChecked
                           ? "bg-brand-surface border-brand-border/60 hover:border-slate-500"
                           : "bg-brand-surface/40 border-brand-border/30 opacity-50 hover:opacity-75"
-                      }`}
+                      } ${isDragging ? "opacity-30" : ""}`}
                     >
                       {editingConfigId === r.configuration_id ? (
                         <div className="flex items-center gap-1.5 flex-1 min-w-0" onClick={(e) => e.stopPropagation()}>
@@ -1966,7 +2099,10 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                           </button>
                         </div>
                       ) : (
-                        <div className="flex items-center space-x-2.5 flex-1 min-w-0 group">
+                        <div className="flex items-center space-x-2 flex-1 min-w-0 group">
+                          <span title="Drag up or down to reorder on graph">
+                            <GripVertical className="w-3.5 h-3.5 text-slate-500 hover:text-white cursor-grab active:cursor-grabbing shrink-0" />
+                          </span>
                           <input
                             type="checkbox"
                             checked={isChecked}
@@ -3061,6 +3197,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                       <option value="asc">Lowest First</option>
                       <option value="alpha">Alphabetical (A-Z)</option>
                       <option value="original">Folder Order</option>
+                      <option value="custom">Custom (Drag Order)</option>
                     </select>
                   </div>
                 </div>
@@ -4200,10 +4337,21 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
               {/* Quick Preset Buttons & Search */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
                 <div className="flex flex-wrap items-center gap-1.5 flex-1">
-                  <span className="text-xs text-slate-400 mr-1 font-medium flex items-center space-x-1">
-                    <Bookmark className="w-3 h-3 text-slate-400" />
-                    <span>Presets:</span>
-                  </span>
+                  <div className="flex items-center space-x-1.5 mr-1">
+                    <span className="text-xs text-slate-400 font-medium flex items-center space-x-1">
+                      <Bookmark className="w-3 h-3 text-slate-400" />
+                      <span>Presets:</span>
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleOpenPresetsFolder}
+                      className="px-2 py-0.5 rounded-lg bg-brand-surface hover:bg-slate-700 text-sky-400 border border-sky-500/30 text-[10px] font-semibold transition active:scale-95 cursor-pointer flex items-center space-x-1"
+                      title={`Open presets directory in File Explorer (${presetsFilePath})`}
+                    >
+                      <FolderOpen className="w-3 h-3 text-sky-400" />
+                      <span>Explorer</span>
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={selectSubChartsOnly}
@@ -4496,7 +4644,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
             {/* Modal Footer */}
             <div className="px-6 py-3.5 border-t border-brand-border/80 bg-brand-surface/60 flex items-center justify-between">
               <div className="text-xs font-semibold text-slate-300">
-                <span className="text-brand-red font-bold">{selectedExportKeys.size}</span> of{" "}
+                <span className="text-brand-red font-bold">{validSelectedCount}</span> of{" "}
                 <span className="text-white font-bold">{allAvailableTargets.length}</span> charts selected
               </div>
 
@@ -4511,7 +4659,7 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                 </button>
                 <button
                   type="button"
-                  disabled={isExporting || selectedExportKeys.size === 0}
+                  disabled={isExporting || validSelectedCount === 0}
                   onClick={handleExecuteBatchExport}
                   className="flex items-center space-x-2 px-5 py-2 rounded-xl bg-brand-red hover:bg-rose-600 text-white text-xs font-extrabold shadow-lg shadow-rose-900/40 active:scale-95 transition disabled:opacity-50 cursor-pointer"
                 >
@@ -4523,12 +4671,12 @@ export const ComparisonBuilderPage: React.FC<ComparisonBuilderProps> = ({
                   ) : batchMode === "individual" ? (
                     <>
                       <Download className="w-4 h-4" />
-                      <span>Export {selectedExportKeys.size} Charts (Separate)</span>
+                      <span>Export {validSelectedCount} Charts (Separate)</span>
                     </>
                   ) : (
                     <>
                       <FileArchive className="w-4 h-4" />
-                      <span>Export {selectedExportKeys.size} Charts (ZIP)</span>
+                      <span>Export {validSelectedCount} Charts (ZIP)</span>
                     </>
                   )}
                 </button>

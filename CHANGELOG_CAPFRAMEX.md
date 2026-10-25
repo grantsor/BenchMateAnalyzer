@@ -4,6 +4,19 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.1.9] - 2026-10-26
+### Telemetry Upload Mode Auto-Detection, Folder Path Persistence & Export Naming Fix
+
+- **Automatic Laptop / Desktop Session Mode Ingestion**:
+  - Fixed blank game and hardware list (`Games (0)`) when uploading laptop benchmark captures.
+  - Ingestion pipeline now automatically detects telemetry hardware session type and serves games and hardware for the detected session mode immediately upon upload.
+- **Folder Path Scan Persistence**:
+  - Maintained original directory paths across scan requests so clicking "Scan" does not wipe or reset active capture folders.
+- **Export File Naming Correction**:
+  - Fixed parameter alignment in `buildChartFileName` where single and batch ZIP exports prepended "webp" into the filename instead of the user's custom review tag.
+
+---
+
 ## [1.1.8] - 2026-10-17
 ### Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints
 

@@ -89,22 +89,23 @@ async def browse_folder(req: BrowseFolderRequest = Body(default=BrowseFolderRequ
 async def scan_folder(req: ScanRequest = Body(default=ScanRequest())):
     target_dir = req.folder or settings.DEFAULT_DATA_DIR
     count = data_service.scan_directory(target_dir, mode=req.mode)
-    info = data_service.get_dataset_info(req.mode)
+    effective_mode = data_service.current_mode
+    info = data_service.get_dataset_info(effective_mode)
 
     # Intelligently populate power profiles / hardware models into custom charts
     custom_chart_service.auto_sync_hardware(
-        mode=req.mode,
-        power_profiles=data_service.get_available_power_profiles(mode=req.mode),
-        gpus=data_service.get_available_gpus(mode=req.mode),
-        cpus=data_service.get_available_cpus(mode=req.mode),
-        laptops=data_service.get_available_laptops(mode=req.mode)
+        mode=effective_mode,
+        power_profiles=data_service.get_available_power_profiles(mode=effective_mode),
+        gpus=data_service.get_available_gpus(mode=effective_mode),
+        cpus=data_service.get_available_cpus(mode=effective_mode),
+        laptops=data_service.get_available_laptops(mode=effective_mode)
     )
 
     return {
         "status": "success",
         "folder": target_dir,
         "runs_count": count,
-        "games": data_service.get_games(req.mode),
+        "games": data_service.get_games(effective_mode),
         "detected_mode": info["detected_mode"],
         "laptop_names": info["laptop_names"],
         "power_profiles": info["power_profiles"]
@@ -157,22 +158,22 @@ async def upload_captures(
         raise HTTPException(status_code=400, detail="No valid CapFrameX JSON files found in selection")
 
     count = data_service.ingest_runs(parsed_runs, folder_name=detected_folder, mode=mode, append=append)
-    info = data_service.get_dataset_info(mode)
+    effective_mode = data_service.current_mode
+    info = data_service.get_dataset_info(effective_mode)
 
-    active_mode = "laptop" if (mode == "laptop" or "laptop" in (info.get("detected_mode") or "").lower()) else (mode or "pc")
     custom_chart_service.auto_sync_hardware(
-        mode=active_mode,
-        power_profiles=data_service.get_available_power_profiles(mode=active_mode),
-        gpus=data_service.get_available_gpus(mode=active_mode),
-        cpus=data_service.get_available_cpus(mode=active_mode),
-        laptops=data_service.get_available_laptops(mode=active_mode)
+        mode=effective_mode,
+        power_profiles=data_service.get_available_power_profiles(mode=effective_mode),
+        gpus=data_service.get_available_gpus(mode=effective_mode),
+        cpus=data_service.get_available_cpus(mode=effective_mode),
+        laptops=data_service.get_available_laptops(mode=effective_mode)
     )
 
     return {
         "status": "success",
         "folder": detected_folder,
         "runs_count": count,
-        "games": data_service.get_games(active_mode),
+        "games": data_service.get_games(effective_mode),
         "detected_mode": info["detected_mode"],
         "laptop_names": info["laptop_names"],
         "power_profiles": info["power_profiles"]

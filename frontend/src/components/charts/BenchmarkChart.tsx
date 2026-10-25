@@ -31,7 +31,7 @@ export interface ChartDesignOptions {
   aspectRatio: "16:9" | "9:16" | "4:3" | "custom";
   publicationLogoText: string;
   showDecorations: boolean;
-  sortOrder: "desc" | "asc" | "alpha" | "original";
+  sortOrder: "desc" | "asc" | "alpha" | "original" | "custom";
   selectedMetrics: string[];
   selectedConfigIds: string[];
   manuallyExcludedConfigIds?: string[];

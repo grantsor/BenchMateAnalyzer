@@ -10,10 +10,37 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.9",
+    date: "2026-10-26",
+    title: "Smooth OCR Verification, Drag-and-Drop Chart Ordering, Compact Profiles Auto-Save, Physical Preset Storage & CapFrameX Ingestion Stabilization",
+    isLatest: true,
+    category: "Feature",
+    tags: [
+      "Smooth OCR Review",
+      "1-Click Ignore Result",
+      "Drag & Drop Config Ordering",
+      "Compact Profiles Auto-Save",
+      "Live Chart Title Sync",
+      "Accurate Export Checklist",
+      "Physical JSON Presets",
+      "CapFrameX Upload Fix",
+      "Export File Naming Fix"
+    ],
+    highlights: [
+      "Smooth OCR Review Flow: Eliminated page reloads and scroll resets when accepting or reparsing OCR benchmarks. The review list silently updates and focus smoothly moves to the next pending item.",
+      "1-Click Ignore Result: Added prominent 'Ignore Result' and 'Restore' buttons in OCR Review to quickly exclude unwanted benchmark screenshots from charts.",
+      "Drag-and-Drop Pill Ordering: Added drag handles to 'INCLUDED CONFIGURATIONS' in Comparison Chart Builder. Custom pill order directly controls bar order on generated charts.",
+      "Compact Benchmark Profiles with Live Auto-Save: Redesigned profile cards to be ~60% more compact and added debounced auto-save on typing and blur with real-time sync to open charts.",
+      "Accurate Batch Export Checklist & Physical Presets: Fixed count discrepancies in the batch export checklist and added physical JSON storage in backend/data/export_presets.json with Windows File Explorer reveal button.",
+      "CapFrameX Ingestion Mode Auto-Detection & Path Retention: Fixed blank screens on capture folder uploads by auto-detecting laptop vs desktop session mode, and preserved full folder paths across re-scans.",
+      "CapFrameX Export Naming Fix: Resolved argument order issue in buildChartFileName where format string ('webp') was prepended to exported file names instead of the custom review tag."
+    ]
+  },
+  {
     version: "v1.1.8",
     date: "2026-10-17",
     title: "Multi-Bar Custom Charts, Editable Column Headers, Aspect Ratio Scale Stabilization & Single-Row Title Constraints",
-    isLatest: true,
+    isLatest: false,
     category: "Feature",
     tags: [
       "Multi-Bar Custom Charts",
@@ -255,10 +282,28 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.1.9",
+    date: "2026-10-26",
+    title: "Telemetry Upload Mode Auto-Detection, Folder Path Persistence & Export Naming Fix",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Upload Mode Auto-Detection",
+      "Folder Path Persistence",
+      "Export Naming Fix",
+      "Laptop Telemetry Parity"
+    ],
+    highlights: [
+      "Automatic Telemetry Session Detection: Ingestion pipeline now automatically detects laptop vs desktop hardware runs and populates game and hardware lists immediately upon upload.",
+      "Folder Path Scan Persistence: Preserved original directory paths across scan requests so clicking 'Scan' re-scans active capture directories reliably.",
+      "Export File Naming Correction: Fixed parameter alignment in buildChartFileName where single and batch ZIP exports prepended 'webp' into the filename instead of the user's custom review tag."
+    ]
+  },
+  {
     version: "v1.1.6",
     date: "2026-10-17",
     title: "BrewedOps Telemetry Sidebar, Keyboard Search & Obsidian Dark Palette",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "BrewedOps Design System",
@@ -415,10 +460,32 @@ export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
 
 export const OCR_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v2.17.8",
+    date: "2026-10-26",
+    title: "Smooth Review Progression, 1-Click Ignore, Drag-and-Drop Pill Ordering & Compact Profiles Auto-Save",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Smooth Review Progression",
+      "1-Click Ignore Result",
+      "Drag-and-Drop Pill Ordering",
+      "Compact Profiles Auto-Save",
+      "Live Chart Title Sync",
+      "Accurate Export Checklist"
+    ],
+    highlights: [
+      "OCR Review Smooth Progression: Eliminated full-page reload and scroll resets upon accepting or reparsing OCR benchmarks. The view updates silently and moves focus smoothly to the next item.",
+      "1-Click Ignore & Restore: Added prominent 'Ignore Result' and 'Restore' buttons to quickly exclude unwanted runs from charts.",
+      "Drag-and-Drop Pill Ordering: Added drag handles to 'INCLUDED CONFIGURATIONS' in Comparison Chart Builder to customize bar order on charts.",
+      "Compact Benchmark Profiles with Live Auto-Save: Cut profile card height by >60% and added debounced auto-save with immediate real-time chart title sync.",
+      "Batch Export Checklist Count Accuracy & Physical Presets: Selected counter matches valid active targets, and presets are physically saved to backend/data/export_presets.json with Explorer folder reveal."
+    ]
+  },
+  {
     version: "v2.17.5",
     date: "2026-10-17",
     title: "BrewedOps Clean Navigation Hierarchy, Gliding Spring Pill & KPI Stat Overhaul",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "BrewedOps Design System",

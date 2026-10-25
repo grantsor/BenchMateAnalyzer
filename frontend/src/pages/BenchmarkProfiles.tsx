@@ -147,7 +147,7 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
   const handleFieldChange = (bId: string, field: "name" | "version" | "category", val: string) => {
     storeCachedProfile(bId, { [field]: val });
 
-    // Sync to chart preferences immediately if name changed
+    // Sync to chart preferences immediately and dispatch real-time event
     if (field === "name") {
       try {
         const raw = localStorage.getItem("gp_benchmark_chart_preferences_v1");
@@ -158,6 +158,12 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
         };
         localStorage.setItem("gp_benchmark_chart_preferences_v1", JSON.stringify(prefs));
       } catch (err) {}
+
+      window.dispatchEvent(
+        new CustomEvent("gp_benchmark_profile_updated", {
+          detail: { id: bId, name: val }
+        })
+      );
     }
 
     setEditBuffer((prev) => {
@@ -168,13 +174,13 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
         [field]: val
       };
 
-      // Debounced auto-save to backend
+      // Debounced auto-save to backend (350ms)
       if (autoSaveTimersRef.current[bId]) {
         clearTimeout(autoSaveTimersRef.current[bId]);
       }
       autoSaveTimersRef.current[bId] = setTimeout(() => {
         handleSaveBenchmark(bId, updated);
-      }, 500);
+      }, 350);
 
       return {
         ...prev,
@@ -501,55 +507,56 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
             const isSaved = savedSuccessId === b.id;
             const isExpanded = expandedMetricsId === b.id;
 
+            const isSsd = CORE_SSD_BENCHMARKS.has(b.id);
+
             return (
               <div
                 key={b.id}
-                className={`bg-brand-card rounded-2xl border transition-all ${
-                  isCore
-                    ? "border-brand-border shadow-lg"
-                    : "border-brand-border/60 hover:border-slate-600"
-                }`}
+                className="bg-brand-card rounded-2xl border border-brand-border p-4 shadow-md space-y-3 transition hover:border-slate-600"
               >
-                {/* Benchmark Top Header */}
-                <div className="p-5 border-b border-brand-border/60 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                  <div className="flex items-center space-x-3">
-                    <span
-                      className={`p-2.5 rounded-xl border ${
-                        isCore
-                          ? "bg-amber-500/10 border-amber-500/30 text-amber-400"
-                          : "bg-brand-surface border-brand-border text-slate-300"
-                      }`}
-                    >
-                      {isCore ? <Laptop className="w-5 h-5" /> : <Cpu className="w-5 h-5" />}
-                    </span>
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <h2 className="text-base font-bold text-white tracking-wide">
-                          {b.name}
-                        </h2>
+                {/* Compact Header */}
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-brand-border/60 pb-3">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <div className="p-1.5 rounded-lg bg-brand-surface border border-brand-border text-brand-red shrink-0">
+                      {isCore ? (
+                        <Laptop className="w-4 h-4 text-brand-red" />
+                      ) : isSsd ? (
+                        <HardDrive className="w-4 h-4 text-blue-400" />
+                      ) : (
+                        <Cpu className="w-4 h-4 text-emerald-400" />
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center space-x-2 flex-wrap">
+                        <span className="font-bold text-xs text-white truncate">{b.name}</span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-brand-surface text-slate-400 border border-brand-border font-mono">
+                          {b.id}
+                        </span>
                         {isCore && (
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/30 tracking-wider uppercase">
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-300 font-semibold border border-amber-500/30">
                             Laptop Core
                           </span>
                         )}
+                        {isSsd && (
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 font-semibold border border-blue-500/30">
+                            SSD Core
+                          </span>
+                        )}
                         {b.category && (
-                          <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-slate-800 text-slate-400 border border-slate-700">
                             {b.category}
                           </span>
                         )}
                       </div>
-                      <span className="text-[11px] font-mono text-slate-500">
-                        ID: {b.id}
-                      </span>
                     </div>
                   </div>
 
-                  {/* Actions & Status */}
-                  <div className="flex items-center space-x-2.5">
+                  {/* Compact Header Actions */}
+                  <div className="flex items-center space-x-2 shrink-0">
                     {isSaved && (
-                      <span className="flex items-center space-x-1 text-xs font-bold text-emerald-400 animate-fadeIn">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <span>Saved to Charts</span>
+                      <span className="flex items-center space-x-1 text-[11px] font-semibold text-emerald-400">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        <span>Saved</span>
                       </span>
                     )}
 
@@ -557,11 +564,11 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
                       <button
                         type="button"
                         onClick={() => onNavigateToChart(b.id)}
-                        className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-brand-surface border border-brand-border text-slate-300 hover:text-white text-xs font-semibold transition"
+                        className="flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-brand-surface border border-brand-border text-slate-300 hover:text-white text-[11px] font-medium transition"
                         title="View this benchmark in Comparison Charts"
                       >
-                        <Eye className="w-3.5 h-3.5" />
-                        <span>View Chart</span>
+                        <Eye className="w-3 h-3" />
+                        <span>Chart</span>
                       </button>
                     )}
 
@@ -578,10 +585,10 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
                             }
                           }
                         }}
-                        className="px-2.5 py-1.5 rounded-xl bg-brand-surface border border-brand-border text-slate-400 hover:text-rose-400 hover:border-rose-500/40 text-xs font-medium transition"
+                        className="px-2 py-1 rounded-lg bg-brand-surface border border-brand-border text-slate-400 hover:text-rose-400 hover:border-rose-500/40 text-[11px] font-medium transition"
                         title="Delete custom benchmark"
                       >
-                        <Trash2 className="w-3.5 h-3.5 inline mr-1" />
+                        <Trash2 className="w-3 h-3 inline mr-1" />
                         <span>Delete</span>
                       </button>
                     )}
@@ -590,7 +597,7 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
                       type="button"
                       onClick={() => handleResetBenchmark(b.id)}
                       disabled={isSaving}
-                      className="px-2.5 py-1.5 rounded-xl bg-brand-surface border border-brand-border text-slate-400 hover:text-rose-400 text-xs font-medium transition"
+                      className="px-2 py-1 rounded-lg bg-brand-surface border border-brand-border text-slate-400 hover:text-white text-[11px] font-medium transition"
                       title="Reset benchmark profile to default definition"
                     >
                       Reset
@@ -598,190 +605,113 @@ export const BenchmarkProfilesPage: React.FC<BenchmarkProfilesPageProps> = ({
 
                     <button
                       type="button"
-                      onClick={() => handleSaveBenchmark(b.id)}
-                      disabled={isSaving}
-                      className="flex items-center space-x-1.5 px-4 py-1.5 rounded-xl bg-brand-red hover:bg-rose-600 text-white text-xs font-bold shadow-md shadow-brand-red/30 active:scale-95 transition"
+                      onClick={() => setExpandedMetricsId(isExpanded ? null : b.id)}
+                      className="px-2 py-1 rounded-lg bg-brand-surface border border-brand-border text-slate-400 hover:text-white text-[11px] font-medium transition flex items-center space-x-1"
                     >
-                      {isSaving ? (
-                        <span className="inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                      ) : (
-                        <Save className="w-3.5 h-3.5" />
-                      )}
-                      <span>Save Profile</span>
+                      <span>Metrics ({buf.metrics.length})</span>
+                      {isExpanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                     </button>
                   </div>
                 </div>
 
-                {/* Configuration Controls Body */}
-                <div className="p-5 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {/* Field 1: Chart Title / Benchmark Name */}
-                    <div className="space-y-1.5 md:col-span-2">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-                          <Tag className="w-3.5 h-3.5 text-brand-red" />
-                          <span>Chart Display Title</span>
-                        </label>
-                        <span className="text-[10px] text-slate-500 font-mono">
-                          Reflects on Main Chart & Exports
+                {/* Compact Inputs: Chart Display Title & Version */}
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 pt-1">
+                  <div className="sm:col-span-8 space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-400 flex items-center justify-between">
+                      <span>Chart Display Title</span>
+                      {isSaving && <span className="text-[10px] text-amber-400 animate-pulse font-mono">Saving...</span>}
+                    </label>
+                    <input
+                      type="text"
+                      value={buf.name}
+                      onChange={(e) => handleFieldChange(b.id, "name", e.target.value)}
+                      onBlur={() => {
+                        if (autoSaveTimersRef.current[b.id]) clearTimeout(autoSaveTimersRef.current[b.id]);
+                        handleSaveBenchmark(b.id, buf);
+                      }}
+                      placeholder="e.g. Geekbench 6.7"
+                      className="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-brand-red transition"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-4 space-y-1">
+                    <label className="text-[11px] font-semibold text-slate-400 block">Version</label>
+                    <input
+                      type="text"
+                      value={buf.version || ""}
+                      onChange={(e) => handleFieldChange(b.id, "version", e.target.value)}
+                      onBlur={() => {
+                        if (autoSaveTimersRef.current[b.id]) clearTimeout(autoSaveTimersRef.current[b.id]);
+                        handleSaveBenchmark(b.id, buf);
+                      }}
+                      placeholder="e.g. 6.7"
+                      className="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-1.5 text-xs font-bold text-white focus:outline-none focus:border-brand-red transition"
+                    />
+                  </div>
+                </div>
+
+                {/* Expandable Metrics Subsection */}
+                {isExpanded && (
+                  <div className="mt-2 p-3 bg-brand-surface/30 rounded-xl border border-brand-border/40 space-y-2">
+                    <div className="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">
+                      <span className="col-span-3">Metric ID</span>
+                      <span className="col-span-4">Chart Display Name</span>
+                      <span className="col-span-2">Unit</span>
+                      <span className="col-span-3">Direction</span>
+                    </div>
+
+                    {buf.metrics.map((m) => (
+                      <div
+                        key={m.id}
+                        className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg bg-brand-surface border border-brand-border/60"
+                      >
+                        <span className="col-span-3 font-mono text-xs text-slate-300 truncate">
+                          {m.id}
                         </span>
-                      </div>
-                      <input
-                        type="text"
-                        value={buf.name}
-                        onChange={(e) => handleFieldChange(b.id, "name", e.target.value)}
-                        placeholder="e.g. Geekbench 6.7 or OCCT 13.1.2"
-                        className="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-brand-red"
-                      />
-
-                      {/* Formatting Helper Presets */}
-                      <div className="flex items-center space-x-2 pt-1">
-                        <span className="text-[10px] text-slate-500 font-medium">Auto Format:</span>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPreset(b.id, "name_version")}
-                          className="px-2 py-0.5 rounded-lg bg-brand-surface border border-brand-border hover:border-slate-500 text-[10px] font-semibold text-slate-300 hover:text-white transition"
-                        >
-                          Name + Version
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPreset(b.id, "name_paren_version")}
-                          className="px-2 py-0.5 rounded-lg bg-brand-surface border border-brand-border hover:border-slate-500 text-[10px] font-semibold text-slate-300 hover:text-white transition"
-                        >
-                          Name (vVersion)
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleApplyPreset(b.id, "name_only")}
-                          className="px-2 py-0.5 rounded-lg bg-brand-surface border border-brand-border hover:border-slate-500 text-[10px] font-semibold text-slate-300 hover:text-white transition"
-                        >
-                          Name Only
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Field 2: Version Note */}
-                    <div className="space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <label className="text-xs font-bold text-slate-300 flex items-center space-x-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-brand-red" />
-                          <span>Version Note</span>
-                        </label>
-                        <span className="text-[10px] text-slate-500">e.g. 6.7, 13.1.2</span>
-                      </div>
-                      <input
-                        type="text"
-                        value={buf.version || ""}
-                        onChange={(e) => handleFieldChange(b.id, "version", e.target.value)}
-                        placeholder="e.g. 6.7 or 13.1.2"
-                        className="w-full bg-brand-surface border border-brand-border rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-brand-red"
-                      />
-                      <p className="text-[10px] text-slate-500">
-                        Tracks the benchmark version used for test consistency.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Chart Title Live Preview Badge */}
-                  <div className="p-3 bg-brand-surface/60 rounded-xl border border-brand-border/60 flex items-center justify-between">
-                    <div className="flex items-center space-x-2.5">
-                      <span className="text-[11px] text-slate-400 font-semibold">
-                        Chart Title Live Preview:
-                      </span>
-                      <span className="px-2.5 py-1 rounded-lg bg-brand-card text-white font-mono font-bold text-xs border border-brand-border shadow-sm">
-                        {buf.name.toUpperCase()}
-                      </span>
-                    </div>
-
-                    <span className="text-[11px] text-slate-500 font-mono hidden sm:inline">
-                      Export: <span className="text-slate-300 font-semibold">[Product] - {buf.name}.webp</span>
-                    </span>
-                  </div>
-
-                  {/* Metrics Subsection (Collapsible) */}
-                  <div className="pt-1">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setExpandedMetricsId(isExpanded ? null : b.id)
-                      }
-                      className="flex items-center justify-between w-full p-2.5 rounded-xl bg-brand-surface/50 border border-brand-border/40 hover:border-slate-500 text-xs font-semibold text-slate-300 transition"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <Zap className="w-3.5 h-3.5 text-brand-red" />
-                        <span>Configured Metrics ({buf.metrics.length})</span>
-                      </div>
-                      <div className="flex items-center space-x-1 text-slate-500">
-                        <span>{isExpanded ? "Hide Metrics" : "Customize Labels & Units"}</span>
-                        {isExpanded ? (
-                          <ChevronUp className="w-3.5 h-3.5" />
-                        ) : (
-                          <ChevronDown className="w-3.5 h-3.5" />
-                        )}
-                      </div>
-                    </button>
-
-                    {isExpanded && (
-                      <div className="mt-3 p-3 bg-brand-surface/30 rounded-xl border border-brand-border/40 space-y-2.5">
-                        <div className="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2">
-                          <span className="col-span-3">Metric ID</span>
-                          <span className="col-span-4">Chart Display Name</span>
-                          <span className="col-span-2">Unit</span>
-                          <span className="col-span-3">Direction</span>
+                        <div className="col-span-4">
+                          <input
+                            type="text"
+                            value={m.display_name}
+                            onChange={(e) =>
+                              handleMetricChange(b.id, m.id, "display_name", e.target.value)
+                            }
+                            className="w-full bg-brand-bg border border-brand-border rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-brand-red font-medium"
+                          />
                         </div>
-
-                        {buf.metrics.map((m) => (
-                          <div
-                            key={m.id}
-                            className="grid grid-cols-12 gap-2 items-center p-2 rounded-lg bg-brand-surface border border-brand-border/60"
+                        <div className="col-span-2">
+                          <input
+                            type="text"
+                            value={m.unit}
+                            onChange={(e) =>
+                              handleMetricChange(b.id, m.id, "unit", e.target.value)
+                            }
+                            className="w-full bg-brand-bg border border-brand-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-red font-mono"
+                          />
+                        </div>
+                        <div className="col-span-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              handleMetricChange(
+                                b.id,
+                                m.id,
+                                "higher_is_better",
+                                !m.higher_is_better
+                              )
+                            }
+                            className={`w-full py-1 px-2 rounded-lg text-xs font-semibold border transition ${
+                              m.higher_is_better
+                                ? "bg-emerald-950/60 border-emerald-500/40 text-emerald-400 hover:bg-emerald-900/60"
+                                : "bg-amber-950/60 border-amber-500/40 text-amber-400 hover:bg-amber-900/60"
+                            }`}
                           >
-                            <span className="col-span-3 font-mono text-xs text-slate-300 truncate">
-                              {m.id}
-                            </span>
-                            <div className="col-span-4">
-                              <input
-                                type="text"
-                                value={m.display_name}
-                                onChange={(e) =>
-                                  handleMetricChange(b.id, m.id, "display_name", e.target.value)
-                                }
-                                className="w-full bg-brand-bg border border-brand-border rounded-lg px-2.5 py-1 text-xs text-white focus:outline-none focus:border-brand-red font-medium"
-                              />
-                            </div>
-                            <div className="col-span-2">
-                              <input
-                                type="text"
-                                value={m.unit}
-                                onChange={(e) =>
-                                  handleMetricChange(b.id, m.id, "unit", e.target.value)
-                                }
-                                className="w-full bg-brand-bg border border-brand-border rounded-lg px-2 py-1 text-xs text-white focus:outline-none focus:border-brand-red font-mono"
-                              />
-                            </div>
-                            <div className="col-span-3">
-                              <select
-                                value={m.higher_is_better ? "hib" : "lib"}
-                                onChange={(e) =>
-                                  handleMetricChange(
-                                    b.id,
-                                    m.id,
-                                    "higher_is_better",
-                                    e.target.value === "hib"
-                                  )
-                                }
-                                className="w-full bg-brand-bg border border-brand-border rounded-lg px-2 py-1 text-xs font-semibold text-white focus:outline-none focus:border-brand-red cursor-pointer"
-                              >
-                                <option value="hib">Higher is Better</option>
-                                <option value="lib">Lower is Better</option>
-                              </select>
-                            </div>
-                          </div>
-                        ))}
+                            {m.higher_is_better ? "Higher Better" : "Lower Better"}
+                          </button>
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
-                </div>
+                )}
               </div>
             );
           })}

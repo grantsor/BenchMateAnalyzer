@@ -122,13 +122,15 @@ class DataService:
                     if run_data:
                         parsed_runs.append(run_data)
 
-        # Detect mode if not explicitly forced
-        target_mode = mode
-        if not target_mode:
-            laptop_count = sum(1 for r in parsed_runs if r.get("is_laptop") or r.get("is_power_profile_mode"))
-            target_mode = "laptop" if (laptop_count > len(parsed_runs) / 2) else "pc"
+        laptop_count = sum(1 for r in parsed_runs if r.get("is_laptop") or r.get("is_power_profile_mode"))
+        is_laptop_dataset = (laptop_count > len(parsed_runs) / 2)
+        if is_laptop_dataset:
+            clean_mode = "laptop"
+        elif mode:
+            clean_mode = "laptop" if "laptop" in mode.lower() else "pc"
+        else:
+            clean_mode = "pc"
 
-        clean_mode = "laptop" if "laptop" in target_mode.lower() else "pc"
         active_sess = self.sessions[clean_mode]
         active_sess.data_dir = target_dir
         active_sess.runs = parsed_runs
@@ -145,12 +147,15 @@ class DataService:
         mode: Optional[str] = None,
         append: bool = False
     ) -> int:
-        target_mode = mode
-        if not target_mode:
-            laptop_count = sum(1 for r in new_runs if r.get("is_laptop") or r.get("is_power_profile_mode"))
-            target_mode = "laptop" if (laptop_count > len(new_runs) / 2) else "pc"
+        laptop_count = sum(1 for r in new_runs if r.get("is_laptop") or r.get("is_power_profile_mode"))
+        is_laptop_dataset = (laptop_count > len(new_runs) / 2)
+        if is_laptop_dataset:
+            clean_mode = "laptop"
+        elif mode:
+            clean_mode = "laptop" if "laptop" in mode.lower() else "pc"
+        else:
+            clean_mode = "pc"
 
-        clean_mode = "laptop" if "laptop" in target_mode.lower() else "pc"
         active_sess = self.sessions[clean_mode]
         active_sess.data_dir = folder_name
         if append:

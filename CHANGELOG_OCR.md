@@ -4,6 +4,27 @@ All notable changes, milestones, and architectural improvements to the **Benchma
 
 This application is also bundled as the primary vision engine within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [2.17.8] - 2026-10-26
+### Smooth Review Progression, 1-Click Ignore, Drag-and-Drop Pill Ordering & Compact Profiles Auto-Save
+
+- **OCR Review Smooth Progression & Scroll Stabilization**:
+  - Eliminated full-page reload and scroll resets to the top item upon clicking "Accept Result" or "Apply & Reparse".
+  - Items update silently and automatically advance focus to the next pending item, allowing continuous reviewing without losing place.
+- **One-Click Ignore & Restoration**:
+  - Added a dedicated "🚫 Ignore Result" button in OCR Review, enabling reviewers to quickly exclude faulty or unwanted benchmarks from charts.
+  - Added restore capability for ignored items with clear status badges.
+- **Drag-and-Drop Configuration Ordering**:
+  - Added interactive drag-and-drop handles (`GripVertical`) to "INCLUDED CONFIGURATIONS" pills in Comparison Chart Builder.
+  - Drag order sets chart sorting to "Custom (Drag Order)" and directly arranges benchmark bars accordingly.
+- **Compact Benchmark Profiles with Live Auto-Save**:
+  - Cut card vertical footprint by over 60%, stripping out redundant flavor text and auto-format preset buttons.
+  - Added instant debounced auto-save on typing and on blur for chart display titles, with immediate real-time event sync to active charts.
+- **Batch Export Checklist Accuracy & Physical JSON Storage**:
+  - Fixed counter discrepancies in Batch Export Checklist by filtering against active dataset keys.
+  - Export presets are physically saved to `backend/data/export_presets.json` with direct "Explorer" button to reveal the folder.
+
+---
+
 ## [2.17.7] - 2026-10-17
 ### 16:9 Single-Row Title Enforcement, 9:16 Adaptive Collision Wrapping & Canvas Scaling Stabilization
 

@@ -20,7 +20,8 @@ import {
   BarChart3,
   ArrowRight,
   FolderSync,
-  FolderTree
+  FolderTree,
+  RotateCcw
 } from "lucide-react";
 import { NewBenchmarkModal } from "../components/benchmarks/NewBenchmarkModal";
 
@@ -63,9 +64,9 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
     }
   }, [actionNotice]);
 
-  const loadReviewItems = async () => {
+  const loadReviewItems = async (silent: boolean = false) => {
     if (!currentProject) return;
-    setIsLoading(true);
+    if (!silent) setIsLoading(true);
     try {
       const list = await api.getOCRReview(currentProject.id);
       setItems(list);
@@ -79,8 +80,17 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
     } catch (err) {
       console.error(err);
     } finally {
-      setIsLoading(false);
+      if (!silent) setIsLoading(false);
     }
+  };
+
+  const getNextItemAfterRemoval = (resultId: string): OCRReviewItem | null => {
+    const curIndex = filteredItems.findIndex((i) => i.result_id === resultId);
+    if (curIndex === -1) return null;
+    const remaining = filteredItems.filter((i) => i.result_id !== resultId);
+    if (remaining.length === 0) return null;
+    const nextIdx = Math.min(curIndex, remaining.length - 1);
+    return remaining[nextIdx];
   };
 
   useEffect(() => {
@@ -88,30 +98,42 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
   }, [currentProject?.id]);
 
   const handleAccept = async (resultId: string) => {
+    const nextItem = (statusFilter !== "all" && statusFilter !== "verified")
+      ? getNextItemAfterRemoval(resultId)
+      : null;
     try {
       await api.updateResultStatus(resultId, "verified");
       setActionNotice({ text: "✓ Result accepted and verified with 100% confidence!", type: "success" });
-      await loadReviewItems();
+      if (nextItem) setSelectedItem(nextItem);
+      await loadReviewItems(true);
     } catch (err: any) {
       alert("Error: " + err.message);
     }
   };
 
   const handleRevert = async (resultId: string) => {
+    const nextItem = (statusFilter === "verified" || statusFilter === "ignored")
+      ? getNextItemAfterRemoval(resultId)
+      : null;
     try {
       await api.updateResultStatus(resultId, "needs_review");
       setActionNotice({ text: "Result status reverted back to Needs Review.", type: "info" });
-      await loadReviewItems();
+      if (nextItem) setSelectedItem(nextItem);
+      await loadReviewItems(true);
     } catch (err: any) {
       alert("Error: " + err.message);
     }
   };
 
   const handleIgnore = async (resultId: string) => {
+    const nextItem = (statusFilter !== "all" && statusFilter !== "ignored")
+      ? getNextItemAfterRemoval(resultId)
+      : null;
     try {
       await api.updateResultStatus(resultId, "ignored");
       setActionNotice({ text: "Result marked as ignored.", type: "info" });
-      await loadReviewItems();
+      if (nextItem) setSelectedItem(nextItem);
+      await loadReviewItems(true);
     } catch (err: any) {
       alert("Error: " + err.message);
     }
@@ -121,7 +143,7 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
     try {
       await api.reprocessResult(resultId);
       setActionNotice({ text: "OCR reprocessed successfully.", type: "info" });
-      await loadReviewItems();
+      await loadReviewItems(true);
     } catch (err: any) {
       alert("Error: " + err.message);
     }
@@ -130,25 +152,29 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
   const handleReassignBenchmark = async (resultId: string, benchmarkId: string) => {
     if (!benchmarkId) return;
     setIsReassigning(true);
+    const nextItem = (statusFilter === "unknown")
+      ? getNextItemAfterRemoval(resultId)
+      : null;
     try {
       const resp = await api.reassignResultBenchmark(resultId, benchmarkId, true);
       const chosen = benchmarks.find((b) => b.id === benchmarkId);
 
-      // If the backend returned the freshly updated item, immediately update local state
       if (resp && resp.item) {
         setItems((prev) =>
           prev.map((i) => (i.result_id === resultId ? resp.item : i))
         );
-        if (selectedItem?.result_id === resultId) {
-          setSelectedItem(resp.item);
-        }
+      }
+      if (nextItem) {
+        setSelectedItem(nextItem);
+      } else if (resp && resp.item && selectedItem?.result_id === resultId) {
+        setSelectedItem(resp.item);
       }
 
       setActionNotice({
         text: `✓ Screenshot assigned to ${chosen ? chosen.name : benchmarkId} and reparsed!`,
         type: "success"
       });
-      await loadReviewItems();
+      await loadReviewItems(true);
     } catch (err: any) {
       alert("Failed to reassign benchmark: " + err.message);
     } finally {
@@ -167,11 +193,13 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
       await api.overrideMetric(metricId, num, overrideReason);
       setEditingMetricId(null);
       setActionNotice({ text: "Metric correction saved and marked as manual override.", type: "success" });
-      await loadReviewItems();
+      await loadReviewItems(true);
     } catch (err: any) {
-      alert("Failed to save correction: " + err.message);
+      alert("Error: " + err.message);
     }
   };
+
+
 
   // Sync reassign dropdown with current selection
   useEffect(() => {
@@ -512,7 +540,7 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
                       <span>Create Benchmark Profile</span>
                     </button>
 
-                    {selectedItem.status === "verified" ? (
+                    {selectedItem.status === "verified" || selectedItem.status === "manual_override" ? (
                       <div className="flex items-center space-x-2">
                         <div className="px-3.5 py-1.5 rounded-xl bg-emerald-950/90 border border-emerald-500/80 text-emerald-300 font-bold text-xs flex items-center space-x-1.5 shadow-sm">
                           <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
@@ -526,14 +554,39 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
                           Revert
                         </button>
                       </div>
+                    ) : selectedItem.status === "ignored" ? (
+                      <div className="flex items-center space-x-2">
+                        <div className="px-3.5 py-1.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-400 font-bold text-xs flex items-center space-x-1.5 shadow-sm">
+                          <Slash className="w-3.5 h-3.5 text-slate-400" />
+                          <span>Result Ignored</span>
+                        </div>
+                        <button
+                          onClick={() => handleRevert(selectedItem.result_id)}
+                          className="px-3 py-1.5 rounded-xl bg-brand-surface hover:bg-brand-border text-slate-300 hover:text-white font-medium text-xs transition border border-brand-border flex items-center space-x-1"
+                          title="Restore back to Needs Review"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          <span>Restore</span>
+                        </button>
+                      </div>
                     ) : (
-                      <button
-                        onClick={() => handleAccept(selectedItem.result_id)}
-                        className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition shadow-md flex items-center space-x-1.5"
-                      >
-                        <CheckCircle className="w-3.5 h-3.5" />
-                        <span>✓ Accept Result</span>
-                      </button>
+                      <div className="flex items-center space-x-2">
+                        <button
+                          onClick={() => handleAccept(selectedItem.result_id)}
+                          className="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition shadow-md flex items-center space-x-1.5 cursor-pointer active:scale-95"
+                        >
+                          <CheckCircle className="w-3.5 h-3.5" />
+                          <span>✓ Accept Result</span>
+                        </button>
+                        <button
+                          onClick={() => handleIgnore(selectedItem.result_id)}
+                          className="px-3.5 py-1.5 rounded-xl bg-rose-950/60 hover:bg-rose-900 border border-rose-800/80 text-rose-300 hover:text-rose-200 font-semibold text-xs transition flex items-center space-x-1.5 cursor-pointer active:scale-95 shadow-sm"
+                          title="Ignore benchmark so the app will not count it in charts"
+                        >
+                          <Slash className="w-3.5 h-3.5 text-rose-400" />
+                          <span>Ignore Result</span>
+                        </button>
+                      </div>
                     )}
 
                     <button
@@ -542,13 +595,6 @@ export const OCRReviewPage: React.FC<OCRReviewProps> = ({ onNavigate }) => {
                       title="Reprocess OCR"
                     >
                       <RefreshCw className="w-4 h-4" />
-                    </button>
-                    <button
-                      onClick={() => handleIgnore(selectedItem.result_id)}
-                      className="p-2 hover:bg-rose-950/40 rounded-xl text-slate-400 hover:text-rose-400 transition"
-                      title="Ignore screenshot"
-                    >
-                      <Slash className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

@@ -800,6 +800,30 @@ export const api = {
     const res = await fetch(`${API_BASE}/ssd-database/metric-columns`);
     if (!res.ok) throw new Error("Failed to fetch metric columns");
     return res.json();
+  },
+
+  async getExportPresets(): Promise<{ presets: any[]; file_path: string; folder_path: string }> {
+    const res = await fetch(`${API_BASE}/export/presets`);
+    if (!res.ok) throw new Error("Failed to load export presets");
+    return res.json();
+  },
+
+  async saveExportPresets(presets: any[]): Promise<{ status: string; count: number; file_path: string; folder_path: string }> {
+    const res = await fetch(`${API_BASE}/export/presets`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ presets })
+    });
+    if (!res.ok) throw new Error("Failed to save export presets");
+    return res.json();
+  },
+
+  async openPresetsFolder(): Promise<{ status: string; folder_path: string }> {
+    const res = await fetch(`${API_BASE}/export/presets/open-folder`, {
+      method: "POST"
+    });
+    if (!res.ok) throw new Error("Failed to open presets folder");
+    return res.json();
   }
 
 };

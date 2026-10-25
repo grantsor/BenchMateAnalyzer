@@ -5,8 +5,32 @@ All notable changes and milestones in the **BenchMate Analyzer** suite are docum
 The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction) and the **CapFrameX Analyzer** (telemetry ingestion & frametime analysis) into a unified, high-performance, offline desktop application.
 
 ### Dedicated Application Changelogs
-- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.7 - v1.0.0)
-- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.8 - v1.0.0)
+- [Benchmark OCR Analyzer Dedicated Changelog](CHANGELOG_OCR.md) (v2.17.8 - v1.0.0)
+- [CapFrameX Analyzer Dedicated Changelog](CHANGELOG_CAPFRAMEX.md) (v1.1.9 - v1.0.0)
+
+---
+
+## [1.1.9] - 2026-10-26
+### Smooth OCR Verification, Drag-and-Drop Chart Ordering, Compact Profiles Auto-Save, Physical Preset Storage & CapFrameX Ingestion Stabilization
+
+- **OCR Review Smooth Flow & One-Click Ignore**:
+  - Eliminated full-page reloads and scroll jumps to top (index 0) upon clicking "Accept Result" or "Apply & Reparse". Review items now reload silently with stable DOM structure and advance smoothly to the next item in view.
+  - Added a prominent "🚫 Ignore Result" button in OCR Review to instantly exclude anomalous or unwanted benchmark screenshots from charts, with instant restore options for ignored runs.
+- **Interactive Drag-and-Drop Configuration Ordering in Chart Builder**:
+  - Added drag handles to "INCLUDED CONFIGURATIONS" pills. Reordering configuration pills directly sets the chart sort order to "Custom (Drag Order)", immediately reflecting the custom sequence across live previews and high-res exports.
+- **Compact Benchmark Profiles & Real-Time Title Sync**:
+  - Redesigned Benchmark Profiles cards to be ~60% more compact, eliminating bulky preset buttons and redundant flavor text.
+  - Added auto-save on typing (debounced) and on blur for "Chart Display Title".
+  - Dispatched instant `gp_benchmark_profile_updated` events so active Comparison Builder charts update display titles immediately in memory.
+- **Batch Export Checklist Accuracy & Physical JSON Preset Storage**:
+  - Fixed count mismatch in the Batch Export checklist dialog by calculating valid selected benchmarks against current dataset targets.
+  - Implemented physical persistence for chart export presets at `backend/data/export_presets.json` with new backend REST endpoints.
+  - Added an "Explorer" button beside the Preset selector to open the physical directory directly in Windows File Explorer.
+- **CapFrameX Capture Upload & Re-Scan Fix**:
+  - Fixed blank results screen (`Games (0)`) when uploading captures from folders (such as laptop captures). The ingestion pipeline now accurately classifies laptop vs. desktop telemetry sessions and populates game/hardware lists immediately upon upload.
+  - Preserved original filesystem paths across scans so clicking "Scan" re-scans the active folder reliably.
+- **CapFrameX Export File Naming Fix**:
+  - Resolved an argument mismatch in `buildChartFileName` where single and batch exports prepended format strings ("webp") into the filename instead of the user's custom review tag.
 
 ---
 
