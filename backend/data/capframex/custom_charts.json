@@ -844,9 +844,21 @@
     "columns": [],
     "rows": [
       {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
-        "value": 68.5,
+        "id": "row_profile_0_Unleashed",
+        "label": "Unleashed",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Unleashed_2",
+        "label": "Unleashed 2",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
+        "value": null,
         "value2": null
       },
       {
@@ -856,9 +868,9 @@
         "value2": null
       },
       {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
-        "value": null,
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
+        "value": 68.5,
         "value2": null
       },
       {
@@ -884,8 +896,20 @@
     "metric2_unit": "",
     "rows": [
       {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
+        "id": "row_profile_0_Unleashed",
+        "label": "Unleashed",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Unleashed_2",
+        "label": "Unleashed 2",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
         "value": null,
         "value2": null
       },
@@ -896,8 +920,8 @@
         "value2": null
       },
       {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
         "value": null,
         "value2": null
       },
@@ -924,8 +948,20 @@
     "metric2_unit": "",
     "rows": [
       {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
+        "id": "row_profile_0_Unleashed",
+        "label": "Unleashed",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_1_Unleashed_2",
+        "label": "Unleashed 2",
+        "value": null,
+        "value2": null
+      },
+      {
+        "id": "row_profile_2_Performance",
+        "label": "Performance",
         "value": null,
         "value2": null
       },
@@ -936,8 +972,8 @@
         "value2": null
       },
       {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
+        "id": "row_profile_0_Silent",
+        "label": "Silent",
         "value": null,
         "value2": null
       },
