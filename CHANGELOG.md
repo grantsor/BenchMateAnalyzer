@@ -27,6 +27,9 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
 - **Classical 'Browse For Folder' Dialog with Zero CMD Windows**:
   - Switched folder selection across all import and browse buttons to native `SHBrowseForFolderW` running 100% in-process.
   - Guarantees immediate single-click termination on Cancel or `[X]` with zero secondary dialogs and zero console/CMD windows.
+- **Elimination of "Native" in Chart File Names**:
+  - Filtered out internal fallback resolution tags (`Native`, `all`, `any`, `system`) and telemetry units (`°C`, `W`, etc.) from being appended to exported image file names.
+  - Ensured individual game saves and batch exports format cleanly as `<Product Name> <Tag> - <Game Name>.<format>` without extraneous suffixes (e.g. `MSI Cyborg A15 MAX REVIEW - Cyberpunk 2077: Phantom Liberty.png`).
 - **Zero Text Overlap & Calibrated Symmetrical Spacing**:
   - Allocated realistic font bounding box height (1.25x font size) for chart subtitles and applied symmetrical 7px vertical gaps between Heading -> Subheading and Subheading -> Legend.
   - Guaranteed zero text collision on single-metric and multi-metric charts (such as Octane 2.0 Benchmark and 3DMark Fire Strike) in both 16:9 and 9:16 aspect ratios across all resolutions.

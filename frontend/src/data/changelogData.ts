@@ -30,7 +30,8 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
       "Silent Downloads for Individual Charts: Single images and non-zipped batch exports save directly and silently into Windows Downloads with toast feedback, eliminating duplicate prompts and Explorer popups.",
       "Strict Hardware Profile Scoping on Custom Charts: GPU/CPU Temperatures and Battery Life charts in laptop mode strictly display only the power profiles belonging to the currently active laptop (e.g. Eco - Silent, Balanced, Extreme Performance), purging ghost rows from previous devices.",
       "Native 'Browse For Folder' Dialog Parity: Switched folder selection to in-process SHBrowseForFolderW across all buttons (navbar Import Folder and in-page Browse Folder), eliminating secondary popups and black command prompt windows on Cancel.",
-      "Zero Overlap Symmetrical Spacing: Calibrated subtitle line-height bounds and applied 7px symmetrical gaps matching Heading -> Subheading and Subheading -> Legend with guaranteed clearance on all charts."
+      "Zero Overlap Symmetrical Spacing: Calibrated subtitle line-height bounds and applied 7px symmetrical gaps matching Heading -> Subheading and Subheading -> Legend with guaranteed clearance on all charts.",
+      "Elimination of 'Native' in File Names: Suppressed internal fallback resolution keywords ('Native', 'all', 'system') and telemetry units from chart file names, ensuring individual images and batch exports format cleanly as <Product> <Tag> - <Game>.<ext> without unwanted suffixes."
     ]
   },
   {

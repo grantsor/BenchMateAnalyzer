@@ -1112,9 +1112,21 @@ export function buildChartFileName(
   let cleanGame = (gameOrTitle || "Benchmark").trim().replace(/[\\/:*?"<>|]/g, "-").replace(/\s+/g, " ");
   cleanGame = cleanGame.replace(/\s+4K$/i, " 4k");
 
+  // Strip accidental trailing "Native" or "- Native" or ": Native" from cleanGame if present
+  cleanGame = cleanGame.replace(/[\s\-_:]+native$/i, "").trim();
+
   let cleanRes = res.trim();
   if (cleanRes.toLowerCase() === "4k") {
     cleanRes = "4k";
+  }
+
+  // Never include internal keywords, fallback resolution names, or telemetry units in file names:
+  const suppressedRes = [
+    "native", "all", "any", "system", "chart", "custom", "metric",
+    "°c", "c", "w", "watts", "mins", "minutes", "pts", "fps", "score", "seconds", "hours", "default"
+  ];
+  if (suppressedRes.includes(cleanRes.toLowerCase()) || cleanRes.startsWith("°")) {
+    cleanRes = "";
   }
 
   // Avoid duplicating resolution if cleanGame already ends with it
@@ -1149,7 +1161,18 @@ export async function exportSingleChart(
 ): Promise<void> {
   const dataUrl = await renderChartToDataUrl(dataset, options, config);
   const title = gameName || options.title || dataset.benchmark_name;
-  const res = resolution || dataset.version || "";
+  let res = resolution || dataset.version || "";
+  if (
+    !res ||
+    res.toLowerCase() === "native" ||
+    res.toLowerCase() === "all" ||
+    res.toLowerCase() === "custom" ||
+    res.toLowerCase() === "metric" ||
+    res.toLowerCase() === "system" ||
+    res.toLowerCase() === "chart"
+  ) {
+    res = "";
+  }
   const name =
     customFileName ||
     buildChartFileName(productName, title, res, config.format, exportPhrase);

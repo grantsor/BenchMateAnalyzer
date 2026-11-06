@@ -11,6 +11,7 @@ This application is also bundled as a dedicated analysis app within the unified 
 - **Standardized ZIP File Naming**: Uniform `<laptop name> - CapframeX Analyzer - <aspect ratio> <resolution> <format>.zip` outer archive naming.
 - **Hardware Profile Scoping for Custom Telemetry**: GPU/CPU Temperatures and Battery Life charts strictly display only the profiles of the active laptop, eliminating ghost rows from previous laptops.
 - **In-Process Folder Picker**: Replaced folder browsing with `SHBrowseForFolderW` to eliminate black terminal windows.
+- **Elimination of 'Native' in File Names**: Stripped internal fallback resolution tags and units from image file names, guaranteeing clean game and custom chart titles.
 - **Symmetrical Chart Spacing**: Matched Heading -> Subheading and Subheading -> Legend spacing with zero text overlap.
 
 ---

@@ -1170,7 +1170,7 @@ export const CapFrameXApp: React.FC = () => {
           undefined,
           exportPhrase,
           effectiveTitle || activeCustom?.name || "Custom Chart",
-          activeCustom?.unit || "Metric"
+          ""
         );
       } catch (e: any) {
         console.error("Export custom chart error:", e);
@@ -1373,7 +1373,7 @@ export const CapFrameXApp: React.FC = () => {
         const fileName = buildChartFileName(
           productName,
           chart.title || chart.name,
-          chart.unit || "Chart",
+          "",
           exportConfig.format,
           exportPhrase
         );

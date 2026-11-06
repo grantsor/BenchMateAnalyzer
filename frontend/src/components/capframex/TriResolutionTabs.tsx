@@ -107,8 +107,8 @@ export const TriResolutionTabs: React.FC<TriResolutionTabsProps> = ({
 
   const currentTitle = customTitle || (isCustomChart ? (customChart?.title || gameName) : gameName.toUpperCase());
   const liveRes = isCustomChart
-    ? (customChart?.unit || "System")
-    : (activeTab === "all" ? (resolutionKeys[0] || "1080p") : activeTab);
+    ? ""
+    : (activeTab === "all" || activeTab.toLowerCase() === "native" ? "" : activeTab);
   const liveFileName = buildChartFileName(
     productName,
     currentTitle || gameName,
