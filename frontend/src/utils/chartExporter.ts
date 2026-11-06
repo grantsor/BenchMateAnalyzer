@@ -129,7 +129,7 @@ export function formatChartTitle(
   // Ensure title maintains clear visual hierarchy in preview without being crushed to tiny text
   const minTitleFontSize = isVertical ? 15 : 18;
   const fontSize = Math.max(minTitleFontSize, Math.round(baseFontSize * scale));
-  const lineHeight = Math.round(fontSize * 1.2);
+  const lineHeight = Math.round(fontSize * 1.12);
 
   return {
     text: lines.join("\n"),
@@ -304,48 +304,43 @@ export function buildExportEchartsOption(
   const subtitle = options.subtitle || autoSub;
   const subColor = options.subtitleColor || (subtitle.includes("LOWER") ? "#f59e0b" : "#e63946");
   const subtitleFontSize = Math.round((isVertical ? 17 : 20) * scale);
-  const subtitleLineHeight = Math.round(subtitleFontSize * 1.22);
+  const subtitleLineHeight = Math.round(subtitleFontSize * 1.12);
   const subtitleLineCount = subtitle ? (subtitle.includes("\n") ? subtitle.split("\n").length : 1) : 0;
   const subtitleBlockHeight = subtitle ? subtitleLineCount * subtitleLineHeight : 0;
 
   const legendFontSize = Math.round((isVertical ? 17 : 19) * scale);
-  const legendBlockHeight = Math.max(Math.round((isVertical ? 12 : 14) * scale), Math.round(legendFontSize * 1.2));
+  const legendBlockHeight = Math.max(Math.round((isVertical ? 12 : 14) * scale), Math.round(legendFontSize * 1.15));
 
   // Dynamic vertical offsets
   const titleTop = Math.round(
     (isVertical
-      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 18 : 24)
-      : (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 18 : 22)
+      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 18 : 22)
+      : (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 16 : 20)
     ) * scale
   );
 
-  // Compact, symmetrical spacing between Title -> Sub-header and Sub-header -> Legend (8px at 1080p, 5px min in preview)
-  const titleItemGap = Math.max(5, Math.round((isVertical ? 7 : 8) * scale));
+  // Exact ECharts Title component geometry:
+  // Title text block height calculated by ECharts TitleView
+  const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
 
-  // Actual visual height of Title block (font glyph boundary without loose line-height padding)
-  const titleVisualHeight =
-    titleLayout.lineCount > 1
-      ? (titleLayout.lineCount - 1) * titleLayout.lineHeight + Math.round(titleLayout.fontSize * 0.88)
-      : Math.round(titleLayout.fontSize * 0.88);
-
-  // Actual visual height of Subtitle block
-  const subtitleVisualHeight = subtitle
-    ? subtitleLineCount > 1
-      ? (subtitleLineCount - 1) * subtitleLineHeight + Math.round(subtitleFontSize * 0.88)
-      : Math.round(subtitleFontSize * 0.88)
-    : 0;
+  // Gap between title and subtitle inside ECharts title component
+  // Clean, tight gap to prevent wide spacing between main heading and subheader
+  const titleItemGap = subtitleBlockHeight > 0 ? Math.max(3, Math.round((isVertical ? 4 : 5) * scale)) : 0;
 
   // Subtitle bottom coordinate in canvas
-  const subtitleBottomY =
-    titleTop + titleVisualHeight + (subtitleVisualHeight > 0 ? titleItemGap + subtitleVisualHeight : 0);
+  // When subtitle exists, ECharts places subTextEl at (titleTop + titleBlockHeight + titleItemGap) with height subtitleBlockHeight
+  const subtitleBottomY = subtitleBlockHeight > 0
+    ? titleTop + titleBlockHeight + titleItemGap + subtitleBlockHeight
+    : titleTop + titleBlockHeight;
 
-  // Balanced, tight spacing between Sub-header and Legend (perfect symmetrical vertical rhythm without wide gaps)
-  const subToLegendGap = subtitleVisualHeight > 0 ? titleItemGap : 0;
+  // Space between Sub-header (or Title) and Legend:
+  // Strictly positive clearance guaranteeing zero overlap across all aspect ratios and resolutions
+  const subToLegendGap = Math.max(6, Math.round((isVertical ? 8 : 10) * scale));
   const legendTop = Math.round(subtitleBottomY + subToLegendGap);
 
   // Spacing between Legend and Chart Grid (bars)
   const legendBottomY = legendTop + legendBlockHeight;
-  const legendToGridGap = Math.max(10, Math.round((isVertical ? 14 : 16) * scale));
+  const legendToGridGap = Math.max(10, Math.round((isVertical ? 12 : 15) * scale));
   const gridTop = Math.round(legendBottomY + legendToGridGap);
 
   // Grid margins
