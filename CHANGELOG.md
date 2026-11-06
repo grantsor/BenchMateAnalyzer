@@ -10,6 +10,29 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
 
 ---
 
+## [1.2.1] - 2026-11-06
+### Save Location Selection First for ZIP Exports, Standardized ZIP Naming, Scoped Laptop Custom Charts & Native Folder Dialog Parity
+
+- **Save Destination Selection First for ZIP Archives**:
+  - Implemented `deliverExportZip` with native File System Access API (`showSaveFilePicker`) and backend `POST /api/export/save-dialog` fallback.
+  - The user is prompted to choose where to save the ZIP archive *first*. The file is written directly to the chosen location with zero auto-downloads beforehand, no duplicate browser download prompts, and no Windows File Explorer windows opening.
+  - Individual image exports and non-zipped batch exports continue saving directly and silently to the Windows Downloads folder with instant toast notification.
+- **Standardized ZIP File Naming**:
+  - Outermost ZIP archive names now follow the uniform convention:
+    `<product name> - <Benchmark OCR | CapframeX Analyzer> - <aspect ratio> <resolution> <format>.zip`
+    *(Example: `MSI Cyborg A15 MAX Review - Benchmark OCR - 16x9 1080p png.zip`)*.
+- **Hardware Profile Scoping for Laptop Custom Charts**:
+  - In laptop mode, custom telemetry charts (GPU Temperatures, CPU Temperatures, Battery Life) now strictly scope their rows to the active laptop's power profiles (`availablePowerProfiles` e.g. `Eco - Silent`, `Balanced`, `Extreme Performance`).
+  - Purged leftover ghost profile rows from previously loaded laptops in `custom_charts.json`.
+- **Classical 'Browse For Folder' Dialog with Zero CMD Windows**:
+  - Switched folder selection across all import and browse buttons to native `SHBrowseForFolderW` running 100% in-process.
+  - Guarantees immediate single-click termination on Cancel or `[X]` with zero secondary dialogs and zero console/CMD windows.
+- **Zero Text Overlap & Calibrated Symmetrical Spacing**:
+  - Allocated realistic font bounding box height (1.25x font size) for chart subtitles and applied symmetrical 7px vertical gaps between Heading -> Subheading and Subheading -> Legend.
+  - Guaranteed zero text collision on single-metric and multi-metric charts (such as Octane 2.0 Benchmark and 3DMark Fire Strike) in both 16:9 and 9:16 aspect ratios across all resolutions.
+
+---
+
 ## [1.2.0] - 2026-11-06
 ### Symmetrical Subheader Spacing Parity, Direct Modern Folder Picker & Zero-Window Cancellation
 

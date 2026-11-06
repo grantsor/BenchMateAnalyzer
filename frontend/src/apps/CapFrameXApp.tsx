@@ -31,7 +31,7 @@ import {
 import { GRADIENT_PRESETS, samplePresetColors } from "../utils/capframex/colorPalettes";
 import { useThemeStore } from "../stores/themeStore";
 import { useBrandingDefaultsStore } from "../stores/brandingDefaultsStore";
-import { deliverExportFile } from "../utils/exportDownloadHelper";
+import { deliverExportFile, deliverExportZip, buildZipExportFileName } from "../utils/exportDownloadHelper";
 import { useExportToastStore } from "../stores/exportToastStore";
 import JSZip from "jszip";
 
@@ -836,26 +836,36 @@ export const CapFrameXApp: React.FC = () => {
     const hib = chart.higher_is_better ? "HIGHER IS BETTER" : "LOWER IS BETTER";
     setSubHeaderPreset(chart.sub_header || `${chart.metric_name.toUpperCase()} (${chart.unit}) | ${hib}`);
 
-    // If chart rows are empty, intelligently prefill from active hardware models or power profiles
+    // Strictly scope chart rows to active hardware models or power profiles (discarding stale profiles from prior laptops/devices)
     let effectiveChart = chart;
-    if (!chart.rows || chart.rows.length === 0) {
-      let prefilledRows: any[] = [];
-      if (benchmarkMode === "laptop" && availablePowerProfiles.length > 0) {
-        prefilledRows = availablePowerProfiles.map((p, idx) => ({
-          id: `row_profile_${idx}`,
+    if (benchmarkMode === "laptop" && availablePowerProfiles.length > 0) {
+      const profileRows = availablePowerProfiles.map((p, idx) => {
+        const existing = (chart.rows || []).find(
+          (r) => r.label.trim().toLowerCase() === p.trim().toLowerCase()
+        );
+        return {
+          id: existing?.id || `row_profile_${idx}`,
           label: p,
-          value: null
-        }));
-      } else if (benchmarkMode === "pc" && availableGpus.length > 0) {
-        prefilledRows = availableGpus.map((g, idx) => ({
-          id: `row_gpu_${idx}`,
-          label: g,
-          value: null
-        }));
+          value: existing?.value !== undefined ? existing.value : null
+        };
+      });
+      effectiveChart = { ...chart, rows: profileRows };
+    } else if (benchmarkMode === "pc" && availableGpus.length > 0) {
+      if (!chart.rows || chart.rows.length === 0 || chart.rows.every((r) => r.value === null || r.value === 0)) {
+        const gpuRows = availableGpus.map((g, idx) => {
+          const existing = (chart.rows || []).find(
+            (r) => r.label.trim().toLowerCase() === g.trim().toLowerCase()
+          );
+          return {
+            id: existing?.id || `row_gpu_${idx}`,
+            label: g,
+            value: existing?.value !== undefined ? existing.value : null
+          };
+        });
+        effectiveChart = { ...chart, rows: gpuRows };
       }
-      if (prefilledRows.length > 0) {
-        effectiveChart = { ...chart, rows: prefilledRows };
-      }
+    } else if (!chart.rows || chart.rows.length === 0) {
+      effectiveChart = { ...chart, rows: [] };
     }
 
     const ds = convertCustomChartToGroupedDataset(effectiveChart);
@@ -1266,11 +1276,8 @@ export const CapFrameXApp: React.FC = () => {
 
       setExportProgressText("Compressing into ZIP archive...");
       const blob = await zip.generateAsync({ type: "blob" });
-      const cleanProduct = (productName || "Product").trim().replace(/[\\/:*?"<>|]/g, "-");
-      const cleanGame = (effectiveTitle || selectedGame).trim().replace(/[\\/:*?"<>|]/g, "-");
-      const phrasePart = exportPhrase?.trim() ? ` ${exportPhrase.trim()}` : "";
-      const zipFileName = `${cleanProduct}${phrasePart} - ${cleanGame} (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
-      await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
+      const zipFileName = buildZipExportFileName("CapframeX Analyzer", productName || selectedGame, exportConfig, exportPhrase);
+      await deliverExportZip(zipFileName, blob, { notify: true });
     } catch (e: any) {
       console.error("Tri-res export error:", e);
       useExportToastStore.getState().showToast({
@@ -1375,10 +1382,8 @@ export const CapFrameXApp: React.FC = () => {
 
       setExportProgressText("Compressing all benchmark charts into ZIP...");
       const blob = await zip.generateAsync({ type: "blob" });
-      const cleanProduct = (productName || "Gaming").trim().replace(/[\\/:*?"<>|]/g, "-");
-      const phrasePart = exportPhrase?.trim() ? ` ${exportPhrase.trim()}` : "";
-      const zipFileName = `${cleanProduct}${phrasePart} - All Benchmark Charts (${exportConfig.aspectRatio.replace(":", "x")}_${exportConfig.resolution}).zip`;
-      await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
+      const zipFileName = buildZipExportFileName("CapframeX Analyzer", productName, exportConfig, exportPhrase);
+      await deliverExportZip(zipFileName, blob, { notify: true });
     } catch (e: any) {
       console.error("Batch all games export failed:", e);
       useExportToastStore.getState().showToast({

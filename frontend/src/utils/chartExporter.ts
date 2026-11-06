@@ -4,7 +4,7 @@ import { GroupedBenchmarkDataset } from "../api/client";
 import type { ChartDesignOptions } from "../components/charts/BenchmarkChart";
 import { GRADIENT_PRESETS, samplePresetColors } from "./colorPalettes";
 import { getSplitExportTargets, AvailableExportTarget } from "./benchmarkSubGroups";
-import { deliverExportFile } from "./exportDownloadHelper";
+import { deliverExportFile, deliverExportZip, buildZipExportFileName } from "./exportDownloadHelper";
 import { useExportToastStore } from "../stores/exportToastStore";
 
 export function formatTwoLineLabel(text: string, maxCharsPerLine: number = 28): string {
@@ -304,7 +304,7 @@ export function buildExportEchartsOption(
   const subtitle = options.subtitle || autoSub;
   const subColor = options.subtitleColor || (subtitle.includes("LOWER") ? "#f59e0b" : "#e63946");
   const subtitleFontSize = Math.round((isVertical ? 17 : 20) * scale);
-  const subtitleLineHeight = Math.round(subtitleFontSize * 1.12);
+  const subtitleLineHeight = Math.round(subtitleFontSize * 1.25);
   const subtitleLineCount = subtitle ? (subtitle.includes("\n") ? subtitle.split("\n").length : 1) : 0;
   const subtitleBlockHeight = subtitle ? subtitleLineCount * subtitleLineHeight : 0;
 
@@ -323,9 +323,8 @@ export function buildExportEchartsOption(
   // Title text block height calculated by ECharts TitleView
   const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
 
-  // Gap between title and subtitle inside ECharts title component
-  // Clean, tight gap to prevent wide spacing between main heading and subheader
-  const titleItemGap = subtitleBlockHeight > 0 ? Math.max(3, Math.round((isVertical ? 4 : 5) * scale)) : 0;
+  // Symmetrical spacing: Gap between title and subtitle inside ECharts title component
+  const titleItemGap = subtitleBlockHeight > 0 ? Math.max(5, Math.round((isVertical ? 6 : 7) * scale)) : 0;
 
   // Subtitle bottom coordinate in canvas
   // When subtitle exists, ECharts places subTextEl at (titleTop + titleBlockHeight + titleItemGap) with height subtitleBlockHeight
@@ -333,7 +332,7 @@ export function buildExportEchartsOption(
     ? titleTop + titleBlockHeight + titleItemGap + subtitleBlockHeight
     : titleTop + titleBlockHeight;
 
-  // Spacing between Sub-header and Legend (Sub-header 2) - exactly matches Title-to-Sub-header spacing
+  // Spacing between Sub-header and Legend (Sub-header 2) - exactly matches Title-to-Sub-header spacing with zero overlap
   const subToLegendGap = subtitleBlockHeight > 0 ? titleItemGap : 0;
   const legendTop = Math.round(subtitleBottomY + subToLegendGap);
 
@@ -1133,9 +1132,7 @@ export async function batchExportAllCharts(
   const cleanPhrase = exportPhrase
     ? exportPhrase.trim().replace(/[\\/:*?"<>|]/g, "-").replace(/\s+/g, " ").replace(/-+$/, "").trim()
     : "";
-  const fullProduct = cleanPhrase ? `${cleanProduct} ${cleanPhrase}` : cleanProduct;
-  const prefix = includeCategoryTag && componentCategory ? `[${componentCategory.toUpperCase()}] ` : "";
   const blob = await zip.generateAsync({ type: "blob" });
-  const zipFileName = `${prefix}${fullProduct} - All Benchmarks (${config.aspectRatio.replace(":", "x")}_${config.resolution}).zip`;
-  await deliverExportFile(zipFileName, blob, { openInExplorer: true, notify: true });
+  const zipFileName = buildZipExportFileName("Benchmark OCR", productName, config, exportPhrase);
+  await deliverExportZip(zipFileName, blob, { notify: true });
 }

@@ -18,9 +18,9 @@ def get_app_dir() -> Path:
 
 class Settings(BaseModel):
     PROJECT_NAME: str = "BenchMate Analyzer API"
-    VERSION: str = "1.2.0"
-    OCR_VERSION: str = "2.17.9"
-    CAPFRAMEX_VERSION: str = "1.2.0"
+    VERSION: str = "1.2.1"
+    OCR_VERSION: str = "2.17.10"
+    CAPFRAMEX_VERSION: str = "1.2.1"
     API_PREFIX: str = "/api"
     HOST: str = "127.0.0.1"
     PORT: int = 8742

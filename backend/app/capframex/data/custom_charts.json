@@ -5,22 +5,22 @@
     "mode": "pc",
     "category": "temperatures",
     "title": "GPU TEMPERATURES",
-    "sub_header": "PEAK LOAD & IDLE TEMPERATURES (°C) | LOWER IS BETTER",
-    "unit": "°C",
+    "sub_header": "PEAK LOAD & IDLE TEMPERATURES (\u00b0C) | LOWER IS BETTER",
+    "unit": "\u00b0C",
     "higher_is_better": false,
     "metric_name": "Peak Temp",
     "metric2_name": "Idle Temp",
-    "metric2_unit": "°C",
+    "metric2_unit": "\u00b0C",
     "columns": [
       {
         "id": "peak_temp",
         "name": "Peak Temp",
-        "unit": "°C"
+        "unit": "\u00b0C"
       },
       {
         "id": "idle_temp",
         "name": "Idle Temp",
-        "unit": "°C"
+        "unit": "\u00b0C"
       }
     ],
     "rows": [
@@ -859,38 +859,13 @@
     "mode": "laptop",
     "category": "temperatures",
     "title": "CPU TEMPERATURES",
-    "sub_header": "MAX CPU TEMPERATURES (°C) | LOWER IS BETTER",
-    "unit": "°C",
+    "sub_header": "MAX CPU TEMPERATURES (\u00b0C) | LOWER IS BETTER",
+    "unit": "\u00b0C",
     "higher_is_better": false,
     "metric_name": "CPU Temp",
     "metric2_name": "",
     "metric2_unit": "",
-    "rows": [
-      {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
-        "value": 68.5,
-        "value2": null
-      },
-      {
-        "id": "row_profile_1_Standard",
-        "label": "Standard",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_3_Turbo",
-        "label": "Turbo",
-        "value": null,
-        "value2": null
-      }
-    ],
+    "rows": [],
     "notes": ""
   },
   {
@@ -899,38 +874,13 @@
     "mode": "laptop",
     "category": "temperatures",
     "title": "GPU TEMPERATURES",
-    "sub_header": "MAX GPU TEMPERATURES (°C) | LOWER IS BETTER",
-    "unit": "°C",
+    "sub_header": "MAX GPU TEMPERATURES (\u00b0C) | LOWER IS BETTER",
+    "unit": "\u00b0C",
     "higher_is_better": false,
     "metric_name": "GPU Temp",
     "metric2_name": "",
     "metric2_unit": "",
-    "rows": [
-      {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_1_Standard",
-        "label": "Standard",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_3_Turbo",
-        "label": "Turbo",
-        "value": null,
-        "value2": null
-      }
-    ],
+    "rows": [],
     "notes": ""
   },
   {
@@ -945,32 +895,7 @@
     "metric_name": "Battery Runtime",
     "metric2_name": "",
     "metric2_unit": "",
-    "rows": [
-      {
-        "id": "row_profile_0_Silent",
-        "label": "Silent",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_1_Standard",
-        "label": "Standard",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_2_Performance",
-        "label": "Performance",
-        "value": null,
-        "value2": null
-      },
-      {
-        "id": "row_profile_3_Turbo",
-        "label": "Turbo",
-        "value": null,
-        "value2": null
-      }
-    ],
+    "rows": [],
     "notes": ""
   }
 ]

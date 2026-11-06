@@ -286,7 +286,27 @@ class CustomChartService:
 
             # Preserve any extra manually added rows that didn't match target_items
             for leftover in existing_map.values():
-                new_rows.append(leftover)
+                is_auto_row = (
+                    leftover.get("id", "").startswith("row_profile_") or
+                    leftover.get("id", "").startswith("row_gpu_") or
+                    leftover.get("id", "").startswith("row_cpu_") or
+                    leftover.get("id", "").startswith("row_laptop_")
+                )
+                has_user_data = (
+                    leftover.get("value") not in (None, 0, "", 0.0) or
+                    leftover.get("value2") not in (None, 0, "", 0.0) or
+                    any(
+                        isinstance(c, dict) and c.get("value") not in (None, 0, "", 0.0)
+                        for c in leftover.get("columns", [])
+                    )
+                )
+                # In laptop mode, do not carry over stale profiles from other devices
+                if chart_mode == "laptop":
+                    if not is_auto_row and has_user_data:
+                        new_rows.append(leftover)
+                else:
+                    if has_user_data or not is_auto_row:
+                        new_rows.append(leftover)
 
             if chart_changed or len(new_rows) != len(existing_rows):
                 chart["rows"] = new_rows

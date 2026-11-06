@@ -11,7 +11,7 @@ import {
 import { GRADIENT_PRESETS, samplePresetColors } from "./colorPalettes";
 import { findGpuTier, DEFAULT_GPU_HIERARCHY } from "./gpuHierarchy";
 import { formatChartTitle } from "../chartExporter";
-import { deliverExportFile } from "../exportDownloadHelper";
+import { deliverExportFile, deliverExportZip, buildZipExportFileName } from "../exportDownloadHelper";
 
 export function formatTwoLineLabel(text: string, maxCharsPerLine: number = 28): string {
   if (!text) return "";
@@ -258,7 +258,7 @@ export function buildExportEchartsOption(
   const subtitle = options.subtitle || "AVERAGE & 1% LOW FPS (HIGHER IS BETTER)";
   const subColor = options.subtitleColor || "#e63946";
   const subtitleFontSize = Math.round((isVertical ? 17 : 20) * scale);
-  const subtitleLineHeight = Math.round(subtitleFontSize * 1.12);
+  const subtitleLineHeight = Math.round(subtitleFontSize * 1.25);
   const subtitleLineCount = subtitle ? (subtitle.includes("\n") ? subtitle.split("\n").length : 1) : 0;
   const subtitleBlockHeight = subtitle ? subtitleLineCount * subtitleLineHeight : 0;
 
@@ -273,7 +273,7 @@ export function buildExportEchartsOption(
   );
 
   const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
-  const titleItemGap = subtitleBlockHeight > 0 ? Math.max(3, Math.round((isVertical ? 4 : 5) * scale)) : 0;
+  const titleItemGap = subtitleBlockHeight > 0 ? Math.max(5, Math.round((isVertical ? 6 : 7) * scale)) : 0;
 
   const subtitleBottomY = subtitleBlockHeight > 0
     ? titleTop + titleBlockHeight + titleItemGap + subtitleBlockHeight

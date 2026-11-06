@@ -156,6 +156,94 @@ async def save_export_file(req: SaveExportFileRequest):
         "size_bytes": len(file_bytes)
     }
 
+
+class SaveDialogRequest(BaseModel):
+    filename: str
+    data_url: Optional[str] = None
+    base64_data: Optional[str] = None
+    title: Optional[str] = "Save ZIP Archive"
+
+def pick_save_file_location(initial_filename: str, title: str = "Save ZIP Archive") -> str:
+    import sys
+    import subprocess
+    clean_name = sanitize_filename(initial_filename)
+    ps_script = f"""
+    Add-Type -AssemblyName System.Windows.Forms
+    $dialog = New-Object System.Windows.Forms.SaveFileDialog
+    $dialog.Title = '{title}'
+    $dialog.FileName = '{clean_name}'
+    $dialog.Filter = 'ZIP Archive (*.zip)|*.zip|All Files (*.*)|*.*'
+    $dialog.DefaultExt = 'zip'
+    $res = $dialog.ShowDialog()
+    if ($res -eq [System.Windows.Forms.DialogResult]::OK) {{
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        Write-Output $dialog.FileName
+    }}
+    """
+    startupinfo = None
+    creationflags = 0
+    if sys.platform == "win32":
+        startupinfo = subprocess.STARTUPINFO()
+        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        startupinfo.wShowWindow = 0
+        creationflags = subprocess.CREATE_NO_WINDOW
+
+    try:
+        proc = subprocess.run(
+            ["powershell", "-NoProfile", "-NonInteractive", "-Command", ps_script],
+            capture_output=True,
+            text=True,
+            startupinfo=startupinfo,
+            creationflags=creationflags
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            return proc.stdout.strip()
+    except Exception as e:
+        pass
+    return ""
+
+@router.post("/save-dialog")
+async def save_dialog_file(req: SaveDialogRequest):
+    """Opens a native Windows Save File Dialog letting user choose destination before saving a ZIP export."""
+    clean_name = sanitize_filename(req.filename)
+    raw_b64 = None
+    if req.data_url and "," in req.data_url:
+        raw_b64 = req.data_url.split(",", 1)[1]
+    elif req.base64_data:
+        raw_b64 = req.base64_data
+    elif req.data_url:
+        raw_b64 = req.data_url
+
+    if not raw_b64:
+        raise HTTPException(status_code=400, detail="No data provided for export file")
+
+    try:
+        file_bytes = base64.b64decode(raw_b64)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Failed to decode base64 file data: {e}")
+
+    chosen = pick_save_file_location(clean_name, title=req.title or "Save ZIP Archive")
+    if not chosen:
+        return {"success": False, "cancelled": True}
+
+    dest_path = Path(chosen)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+    dest_path.write_bytes(file_bytes)
+
+    try:
+        settings.EXPORTS_DIR.mkdir(parents=True, exist_ok=True)
+        (settings.EXPORTS_DIR / dest_path.name).write_bytes(file_bytes)
+    except Exception:
+        pass
+
+    return {
+        "success": True,
+        "filename": dest_path.name,
+        "file_path": str(dest_path),
+        "directory": str(dest_path.parent),
+        "size_bytes": len(file_bytes)
+    }
+
 @router.post("/save-batch")
 async def save_export_batch(req: BatchSaveExportRequest):
     """Save multiple exported chart files directly to Downloads in one request."""

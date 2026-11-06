@@ -10,10 +10,34 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.2.1",
+    date: "2026-11-06",
+    title: "Save Location Selection First for ZIP Exports, Standardized ZIP Naming, Scoped Laptop Custom Charts & Native Folder Dialog Parity",
+    isLatest: true,
+    category: "Feature",
+    tags: [
+      "Save Dialog First",
+      "Standardized ZIP Naming",
+      "Laptop Profile Scoping",
+      "Ghost Profiles Elimination",
+      "Browse For Folder Dialog",
+      "Zero CMD Windows",
+      "Zero Overlap Clearance"
+    ],
+    highlights: [
+      "Save Location Selection First for ZIP Archives: ZIP exports now prompt the user with a native Save As dialog before saving, writing directly to the chosen destination without auto-downloading to Downloads or popping open File Explorer.",
+      "Standardized ZIP File Naming: Outermost ZIP files are uniformly formatted as <Product Name> - <Benchmark OCR | CapframeX Analyzer> - <Aspect Ratio> <Resolution> <Format>.zip (e.g. MSI Cyborg A15 MAX Review - Benchmark OCR - 16x9 1080p png.zip).",
+      "Silent Downloads for Individual Charts: Single images and non-zipped batch exports save directly and silently into Windows Downloads with toast feedback, eliminating duplicate prompts and Explorer popups.",
+      "Strict Hardware Profile Scoping on Custom Charts: GPU/CPU Temperatures and Battery Life charts in laptop mode strictly display only the power profiles belonging to the currently active laptop (e.g. Eco - Silent, Balanced, Extreme Performance), purging ghost rows from previous devices.",
+      "Native 'Browse For Folder' Dialog Parity: Switched folder selection to in-process SHBrowseForFolderW across all buttons (navbar Import Folder and in-page Browse Folder), eliminating secondary popups and black command prompt windows on Cancel.",
+      "Zero Overlap Symmetrical Spacing: Calibrated subtitle line-height bounds and applied 7px symmetrical gaps matching Heading -> Subheading and Subheading -> Legend with guaranteed clearance on all charts."
+    ]
+  },
+  {
     version: "v1.2.0",
     date: "2026-11-06",
     title: "Symmetrical Subheader Spacing Parity, Direct Modern Folder Picker & Zero-Window Cancellation",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Symmetrical Subheader Spacing",

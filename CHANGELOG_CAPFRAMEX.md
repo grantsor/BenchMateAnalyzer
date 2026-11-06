@@ -4,6 +4,17 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.2.1] - 2026-11-06
+### Save Destination Picker First, Standardized ZIP Naming & Laptop Profile Scoping
+
+- **Save Destination Picker First for ZIP Archives**: Prompt user with native Save File Dialog before saving tri-resolution or all-games ZIP exports, with zero Explorer popups.
+- **Standardized ZIP File Naming**: Uniform `<laptop name> - CapframeX Analyzer - <aspect ratio> <resolution> <format>.zip` outer archive naming.
+- **Hardware Profile Scoping for Custom Telemetry**: GPU/CPU Temperatures and Battery Life charts strictly display only the profiles of the active laptop, eliminating ghost rows from previous laptops.
+- **In-Process Folder Picker**: Replaced folder browsing with `SHBrowseForFolderW` to eliminate black terminal windows.
+- **Symmetrical Chart Spacing**: Matched Heading -> Subheading and Subheading -> Legend spacing with zero text overlap.
+
+---
+
 ## [1.2.0] - 2026-11-06
 ### Symmetrical Header-Subheader Spacing & Native Folder Picker Integration
 
