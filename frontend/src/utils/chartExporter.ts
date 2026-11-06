@@ -333,9 +333,8 @@ export function buildExportEchartsOption(
     ? titleTop + titleBlockHeight + titleItemGap + subtitleBlockHeight
     : titleTop + titleBlockHeight;
 
-  // Space between Sub-header (or Title) and Legend:
-  // Strictly positive clearance guaranteeing zero overlap across all aspect ratios and resolutions
-  const subToLegendGap = Math.max(6, Math.round((isVertical ? 8 : 10) * scale));
+  // Spacing between Sub-header and Legend (Sub-header 2) - exactly matches Title-to-Sub-header spacing
+  const subToLegendGap = subtitleBlockHeight > 0 ? titleItemGap : 0;
   const legendTop = Math.round(subtitleBottomY + subToLegendGap);
 
   // Spacing between Legend and Chart Grid (bars)

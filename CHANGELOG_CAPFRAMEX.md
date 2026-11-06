@@ -4,6 +4,19 @@ All notable changes, milestones, and architectural improvements to the **CapFram
 
 This application is also bundled as a dedicated analysis app within the unified **BenchMate Analyzer** suite (see [CHANGELOG.md](CHANGELOG.md)).
 
+## [1.2.0] - 2026-11-06
+### Symmetrical Header-Subheader Spacing & Native Folder Picker Integration
+
+- **Symmetrical Header & Subheader Vertical Rhythm**:
+  - Aligned the vertical gap between subtitle and legend to match title-to-subtitle spacing across all game charts and custom telemetry charts.
+  - Tightened line heights to `1.12 * fontSize` to ensure crisp spacing without dead vertical padding.
+- **Navbar Import Folder Direct Native Browser**:
+  - Directly triggers capture directory browsing and scanning when clicking "Import Folder" while in the CapFrameX workspace.
+- **Clean Dialog Cancellation**:
+  - Canceled folder picker dialogs exit silently with zero secondary popups or console windows.
+
+---
+
 ## [1.1.9] - 2026-10-26
 ### Telemetry Upload Mode Auto-Detection, Folder Path Persistence & Export Naming Fix
 

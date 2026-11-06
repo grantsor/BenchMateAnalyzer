@@ -10,6 +10,21 @@ The suite integrates the **Benchmark OCR Analyzer** (vision-based AI extraction)
 
 ---
 
+## [1.2.0] - 2026-11-06
+### Symmetrical Subheader Spacing Parity, Direct Modern Folder Picker & Zero-Window Cancellation
+
+- **Symmetrical Heading and Subheading Spacing**:
+  - Matched the vertical spacing between the first subheader ("HIGHER IS BETTER") and the legend series names ("Fire Strike Score") to exactly equal the heading-to-subheading gap.
+  - Standardized font bounding boxes with snug `lineHeight: 1.12 * fontSize` across title and subtitle, completely eliminating wide empty gaps while preventing any text overlap across all aspect ratios (16:9 and 9:16) and resolutions (Preview, 720p, 1080p, 4K).
+- **Native Modern Folder Picker on Navbar Import Button**:
+  - Replaced the Windows Explorer directory reveal command on the top navbar "Import Folder" button with the native Windows Folder Picker dialog (`IFileOpenDialog`).
+  - Implemented automatic application routing: selecting a folder immediately switches to the Import & Scan tab for OCR or triggers directory scanning for CapFrameX.
+- **Elimination of Secondary Dialogs and Terminal/CMD Windows**:
+  - Fixed `0x800704C7` (`ERROR_CANCELLED`) handling in COM `IFileOpenDialog.Show` wrapper to prevent `ctypes` from raising an unhandled `OSError` on dialog close or cancel.
+  - Added a `dialog_shown` guard preventing legacy fallbacks from executing once the modern dialog is shown, and added `CREATE_NO_WINDOW` and hidden non-interactive flags to background processes.
+
+---
+
 ## [1.1.9] - 2026-10-26
 ### Smooth OCR Verification, Drag-and-Drop Chart Ordering, Compact Profiles Auto-Save, Physical Preset Storage & CapFrameX Ingestion Stabilization
 

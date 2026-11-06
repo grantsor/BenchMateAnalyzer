@@ -10,10 +10,32 @@ export interface ReleaseItem {
 
 export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.2.0",
+    date: "2026-11-06",
+    title: "Symmetrical Subheader Spacing Parity, Direct Modern Folder Picker & Zero-Window Cancellation",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Symmetrical Subheader Spacing",
+      "Heading-to-Subheading Parity",
+      "Zero Text Overlap",
+      "Modern Folder Picker",
+      "Navbar Import Folder Routing",
+      "Zero Terminal Popups"
+    ],
+    highlights: [
+      "Symmetrical Header and Subheader Spacing: Matched the vertical spacing between the first subheader and the legend series line to exactly equal the heading-to-subheading gap.",
+      "Snug Font Bounding Geometry: Tightened title and subtitle line heights to 1.12x font size, eliminating excessive dead space below headings across 16:9 and 9:16 aspect ratios.",
+      "Zero Overlap Guarantee: Applied strict positive clearance calculations between subtitle bottom and legend top across all resolutions (Preview, 720p, 1080p, 4K).",
+      "Modern Folder Picker on Navbar Import: Wired the top navigation bar's Import Folder button directly to the native Windows folder picker with automatic active-app routing.",
+      "Elimination of 2nd Popup & Black CMD Window: Fixed ERROR_CANCELLED handling in the COM IFileOpenDialog wrapper to cancel cleanly with zero secondary dialogs or terminal windows."
+    ]
+  },
+  {
     version: "v1.1.9",
     date: "2026-10-26",
     title: "Smooth OCR Verification, Drag-and-Drop Chart Ordering, Compact Profiles Auto-Save, Physical Preset Storage & CapFrameX Ingestion Stabilization",
-    isLatest: true,
+    isLatest: false,
     category: "Feature",
     tags: [
       "Smooth OCR Review",
@@ -324,10 +346,28 @@ export const BENCHMATE_CHANGELOG: ReleaseItem[] = [
 
 export const CAPFRAMEX_CHANGELOG: ReleaseItem[] = [
   {
+    version: "v1.2.0",
+    date: "2026-11-06",
+    title: "Symmetrical Header-Subheader Spacing & Native Folder Picker Integration",
+    isLatest: true,
+    category: "Enhancement",
+    tags: [
+      "Header Spacing Parity",
+      "Symmetrical Subheader Gap",
+      "Native Folder Picker",
+      "Direct Folder Import"
+    ],
+    highlights: [
+      "Symmetrical Header Rhythm: Aligned the vertical gap between subtitle and legend to match title-to-subtitle spacing across all game charts and custom telemetry charts.",
+      "Direct Folder Picker Routing: Clicking Import Folder in the navbar triggers instant folder browsing and scanning in CapFrameX.",
+      "Zero Console Windows: Native COM dialog cancellation exits cleanly without secondary popups."
+    ]
+  },
+  {
     version: "v1.1.9",
     date: "2026-10-26",
     title: "Telemetry Upload Mode Auto-Detection, Folder Path Persistence & Export Naming Fix",
-    isLatest: true,
+    isLatest: false,
     category: "Enhancement",
     tags: [
       "Upload Mode Auto-Detection",
