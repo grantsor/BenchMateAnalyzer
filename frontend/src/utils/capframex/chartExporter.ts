@@ -267,27 +267,38 @@ export function buildExportEchartsOption(
 
   const titleTop = Math.round(
     (isVertical
-      ? (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 22 : 30)
-      : (titleLayout.lineCount >= 3 ? 16 : titleLayout.lineCount === 2 ? 20 : 26)
+      ? (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 18 : 24)
+      : (titleLayout.lineCount >= 3 ? 14 : titleLayout.lineCount === 2 ? 18 : 22)
     ) * scale
   );
 
-  // Equal balanced spacing between Title and Sub-header (14px at 1080p, 8px min in preview)
-  const titleItemGap = Math.max(8, Math.round((isVertical ? 12 : 14) * scale));
+  // Compact, symmetrical spacing between Title -> Sub-header and Sub-header -> Legend (8px at 1080p, 5px min in preview)
+  const titleItemGap = Math.max(5, Math.round((isVertical ? 7 : 8) * scale));
 
-  // Rendered height of Title block
-  const titleBlockHeight = titleLayout.lineCount * titleLayout.lineHeight;
+  // Actual visual height of Title block (font glyph boundary without loose line-height padding)
+  const titleVisualHeight =
+    titleLayout.lineCount > 1
+      ? (titleLayout.lineCount - 1) * titleLayout.lineHeight + Math.round(titleLayout.fontSize * 0.88)
+      : Math.round(titleLayout.fontSize * 0.88);
 
-  // Subtitle bottom coordinate
-  const subtitleBottomY = titleTop + titleBlockHeight + (subtitleBlockHeight > 0 ? titleItemGap + subtitleBlockHeight : 0);
+  // Actual visual height of Subtitle block
+  const subtitleVisualHeight = subtitle
+    ? subtitleLineCount > 1
+      ? (subtitleLineCount - 1) * subtitleLineHeight + Math.round(subtitleFontSize * 0.88)
+      : Math.round(subtitleFontSize * 0.88)
+    : 0;
 
-  // Equal balanced spacing between Sub-header and Legend (matches titleItemGap for perfect vertical rhythm)
-  const subToLegendGap = titleItemGap;
+  // Subtitle bottom coordinate in canvas
+  const subtitleBottomY =
+    titleTop + titleVisualHeight + (subtitleVisualHeight > 0 ? titleItemGap + subtitleVisualHeight : 0);
+
+  // Balanced, tight spacing between Sub-header and Legend (perfect symmetrical vertical rhythm without wide gaps)
+  const subToLegendGap = subtitleVisualHeight > 0 ? titleItemGap : 0;
   const legendTop = Math.round(subtitleBottomY + subToLegendGap);
 
   // Spacing between Legend and Chart Grid (bars)
   const legendBottomY = legendTop + legendBlockHeight;
-  const legendToGridGap = Math.max(14, Math.round((isVertical ? 20 : 24) * scale));
+  const legendToGridGap = Math.max(10, Math.round((isVertical ? 14 : 16) * scale));
   const gridTop = Math.round(legendBottomY + legendToGridGap);
 
   const gridBottom = Math.round((isVertical ? 75 : 65) * scale);

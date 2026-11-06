@@ -749,12 +749,7 @@ export const CapFrameXApp: React.FC = () => {
   const handleBrowse = async (targetFolder?: string) => {
     setIsScanning(true);
     try {
-      const res = await Promise.race([
-        api.browseFolder(targetFolder || folder, benchmarkMode),
-        new Promise<any>((_, reject) =>
-          setTimeout(() => reject(new Error("Timeout waiting for folder selection")), 20000)
-        )
-      ]);
+      const res = await api.browseFolder(targetFolder || folder, benchmarkMode);
       if (res && res.status === "success") {
         setSelectedCustomChartId(null);
         setFilterGpu("");
@@ -801,6 +796,15 @@ export const CapFrameXApp: React.FC = () => {
       setIsScanning(false);
     }
   };
+
+  // Listen for folder selections triggered externally (e.g. from top Navbar Import Folder button)
+  useEffect(() => {
+    const handleTriggerBrowse = () => {
+      handleBrowse();
+    };
+    window.addEventListener("cx_trigger_browse_folder", handleTriggerBrowse);
+    return () => window.removeEventListener("cx_trigger_browse_folder", handleTriggerBrowse);
+  }, [folder, benchmarkMode]);
 
   const handleRunsUpdated = async () => {
     loadGameData();

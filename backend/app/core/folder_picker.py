@@ -55,13 +55,15 @@ def pick_folder_ifiledialog(title: str = "Select Benchmark Review Folder", initi
     vtable = ctypes.cast(p_dialog, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
     release_dialog = ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(vtable[2])
 
+    dialog_shown = False
     try:
-        get_options = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(wintypes.DWORD))(vtable[10])
-        set_options = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.DWORD)(vtable[9])
-        set_title = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.LPCWSTR)(vtable[17])
-        set_folder = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.c_void_p)(vtable[12])
-        show = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.HWND)(vtable[3])
-        get_result = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p))(vtable[20])
+        get_options = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.POINTER(wintypes.DWORD))(vtable[10])
+        set_options = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.DWORD)(vtable[9])
+        set_title = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.LPCWSTR)(vtable[17])
+        set_folder = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.c_void_p)(vtable[12])
+        # Use c_long so ctypes does not raise WindowsError when hr_show is negative (like ERROR_CANCELLED)
+        show = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.HWND)(vtable[3])
+        get_result = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p))(vtable[20])
 
         options = wintypes.DWORD(0)
         get_options(p_dialog, ctypes.byref(options))
@@ -84,14 +86,12 @@ def pick_folder_ifiledialog(title: str = "Select Benchmark Review Folder", initi
                 ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(item_vtable[2])(p_initial_item)
 
         hwnd_owner = user32.GetForegroundWindow() or 0
+        dialog_shown = True
         hr_show = show(p_dialog, hwnd_owner)
 
-        # User clicked Cancel or closed the dialog
-        if (hr_show & 0xFFFFFFFF) == ERROR_CANCELLED or hr_show == -2147023673:
+        # User clicked Cancel, closed with [X], or pressed Esc
+        if hr_show != 0 or (hr_show & 0xFFFFFFFF) == ERROR_CANCELLED or hr_show == -2147023673:
             return True, ""
-
-        if hr_show != 0:
-            return False, ""
 
         p_result_item = ctypes.c_void_p()
         hr_res = get_result(p_dialog, ctypes.byref(p_result_item))
@@ -99,7 +99,7 @@ def pick_folder_ifiledialog(title: str = "Select Benchmark Review Folder", initi
             return True, ""
 
         res_vtable = ctypes.cast(p_result_item, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
-        get_display_name = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(wintypes.LPWSTR))(res_vtable[5])
+        get_display_name = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(wintypes.LPWSTR))(res_vtable[5])
         release_item = ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(res_vtable[2])
 
         psz_path = wintypes.LPWSTR()
@@ -111,7 +111,17 @@ def pick_folder_ifiledialog(title: str = "Select Benchmark Review Folder", initi
 
         release_item(p_result_item)
         return True, folder_path
+    except (WindowsError, OSError) as e:
+        # If user cancelled / closed dialog, treat as cleanly handled
+        if getattr(e, 'winerror', None) == -2147023673 or (getattr(e, 'winerror', 0) & 0xFFFFFFFF) == ERROR_CANCELLED or "canceled by the user" in str(e).lower():
+            return True, ""
+        if dialog_shown:
+            return True, ""
+        logger.warning(f"IFileOpenDialog error: {e}")
+        return False, ""
     except Exception as e:
+        if dialog_shown:
+            return True, ""
         logger.warning(f"IFileOpenDialog error: {e}")
         return False, ""
     finally:
@@ -159,11 +169,21 @@ if ($res -eq [System.Windows.Forms.DialogResult]::OK -and $fbd.SelectedPath) {{
 """
     try:
         enc = base64.b64encode(ps_code.encode("utf-16le")).decode("ascii")
+        startupinfo = None
+        creationflags = 0
+        if sys.platform == "win32":
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = 0  # SW_HIDE
+            creationflags = subprocess.CREATE_NO_WINDOW
+
         p = subprocess.run(
-            ["powershell.exe", "-NoProfile", "-Sta", "-EncodedCommand", enc],
+            ["powershell.exe", "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Sta", "-EncodedCommand", enc],
             capture_output=True,
             text=True,
             timeout=180,
+            creationflags=creationflags,
+            startupinfo=startupinfo,
         )
         if p.returncode == 0 and p.stdout:
             for line in p.stdout.splitlines():

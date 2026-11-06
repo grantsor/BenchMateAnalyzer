@@ -131,6 +131,25 @@ export const ImportPage: React.FC<ImportPageProps> = ({ onNavigate }) => {
     }
   }, [activeProjectId, isImporting]);
 
+  // Listen for folder selections triggered externally (e.g. from top Navbar Import Folder button)
+  useEffect(() => {
+    const handleFolderSelected = async (e: Event) => {
+      const customEvent = e as CustomEvent<{ folder_path: string }>;
+      if (customEvent.detail?.folder_path) {
+        const pickedPath = customEvent.detail.folder_path;
+        setFolderPath(pickedPath);
+        const base = pickedPath.trim().replace(/[\\/]+$/, "").split(/[\\/]/).pop() || "";
+        if (base) {
+          setProductName(base);
+          setProductCategory(autoDetectCategory(base));
+        }
+        await processAndExtractFolder(pickedPath, autoExtract);
+      }
+    };
+    window.addEventListener("gp_import_folder_selected", handleFolderSelected);
+    return () => window.removeEventListener("gp_import_folder_selected", handleFolderSelected);
+  }, [autoExtract]);
+
   const executeExtraction = async (
     targetProjectId: string,
     targetFolder: string,

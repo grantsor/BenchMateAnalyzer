@@ -7,6 +7,7 @@ import { useShortcutStore, isShortcutMatch, formatCombo } from "./stores/shortcu
 import { useThemeStore, THEME_OPTIONS } from "./stores/themeStore";
 import { useImportStore } from "./stores/useImportStore";
 import { useProjectStore } from "./stores/projectStore";
+import { api } from "./api/client";
 import { SUITE_VERSION_LABEL } from "./constants/version";
 import { ExportToastContainer } from "./components/common/ExportToastContainer";
 
@@ -55,39 +56,35 @@ export function App() {
     }
   }, [activeApp]);
 
-  const handleOpenImportFolder = useCallback(async () => {
-    let targetPath = "";
+  const handleImportFolder = useCallback(async () => {
     if (activeApp === "ocr") {
-      targetPath =
-        useImportStore.getState().folderPath ||
-        useProjectStore.getState().currentProject?.root_folder_path ||
-        "";
-      if (!targetPath) {
-        try {
-          targetPath = localStorage.getItem("gp_import_folder_path") || "";
-        } catch (e) {}
+      try {
+        const currentFolder =
+          useImportStore.getState().folderPath ||
+          useProjectStore.getState().currentProject?.root_folder_path ||
+          undefined;
+        const res = await api.browseFolder(currentFolder);
+        if (!res.cancelled && res.folder_path) {
+          useImportStore.getState().setFolderPath(res.folder_path);
+          const base = res.folder_path.trim().replace(/[\\/]+$/, "").split(/[\\/]/).pop() || "";
+          if (base) {
+            useImportStore.getState().setProductName(base);
+          }
+          // Switch to import page in OCR App
+          window.dispatchEvent(new CustomEvent("gp_switch_nav_tab", { detail: { tab: "import" } }));
+          // Trigger preview scan & auto-extract in Import view
+          window.dispatchEvent(
+            new CustomEvent("gp_import_folder_selected", {
+              detail: { folder_path: res.folder_path }
+            })
+          );
+        }
+      } catch (e) {
+        console.error("Failed to browse OCR folder:", e);
       }
     } else {
-      try {
-        targetPath = localStorage.getItem("cx_import_folder_path") || "";
-        if (!targetPath) {
-          const raw = localStorage.getItem("cx_benchmark_chart_preferences_v2");
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            targetPath = parsed.folder || "";
-          }
-        }
-      } catch (e) {}
-    }
-
-    try {
-      await fetch("/api/system/open-import-folder", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ path: targetPath, app_type: activeApp })
-      });
-    } catch (e) {
-      console.error("Could not open import folder:", e);
+      // In CapFrameX, trigger folder browse event
+      window.dispatchEvent(new CustomEvent("cx_trigger_browse_folder"));
     }
   }, [activeApp]);
 
@@ -120,13 +117,13 @@ export function App() {
         fetch("/api/system/open-data-folder", { method: "POST" }).catch(() => {});
       } else if (shortcuts.open_import_folder && isShortcutMatch(shortcuts.open_import_folder.combo, e)) {
         e.preventDefault();
-        handleOpenImportFolder();
+        handleImportFolder();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [shortcuts, cycleTheme, handleOpenImportFolder]);
+  }, [shortcuts, cycleTheme, handleImportFolder]);
 
   const handlePopOut = () => {
     const url = `${window.location.origin}${window.location.pathname}?app=${activeApp}&standalone=1`;
@@ -183,11 +180,11 @@ export function App() {
 
           {/* Right Action Tools: Import Folder + Global Theme + Settings + Pop Out */}
           <div className="flex items-center gap-1.5">
-            {/* Open Active Import Folder Button */}
+            {/* Import Folder Button (Launches Native Browse Folder Popup Dialog) */}
             <button
               type="button"
-              onClick={handleOpenImportFolder}
-              title={`Open ${activeApp === "ocr" ? "OCR Screenshots" : "CapFrameX Captures"} Import Folder in Windows Explorer (${formatCombo(shortcuts.open_import_folder?.combo || { key: "i", ctrl: true })})`}
+              onClick={handleImportFolder}
+              title={`Browse and import ${activeApp === "ocr" ? "OCR Screenshots" : "CapFrameX Captures"} folder (${formatCombo(shortcuts.open_import_folder?.combo || { key: "i", ctrl: true })})`}
               className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] hover:bg-white/[0.07] text-slate-300 hover:text-white border border-brand-border text-xs font-medium transition active:scale-95 cursor-pointer"
             >
               <FolderSearch className="w-3.5 h-3.5 text-sky-400" />

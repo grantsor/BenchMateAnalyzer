@@ -58,6 +58,18 @@ export function OcrApp() {
     fetchProjects();
   }, []);
 
+  // Listen for external tab switch events (e.g. from top Navbar Import Folder action)
+  useEffect(() => {
+    const handleSwitchTab = (e: Event) => {
+      const customEvent = e as CustomEvent<{ tab: NavTab }>;
+      if (customEvent.detail?.tab && VALID_TABS.includes(customEvent.detail.tab)) {
+        setActiveTab(customEvent.detail.tab);
+      }
+    };
+    window.addEventListener("gp_switch_nav_tab", handleSwitchTab);
+    return () => window.removeEventListener("gp_switch_nav_tab", handleSwitchTab);
+  }, []);
+
   // Persist active navigation tab
   useEffect(() => {
     try {

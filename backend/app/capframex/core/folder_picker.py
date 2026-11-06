@@ -6,7 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-def pick_folder_ifiledialog(title: str = "Select CapFrameX Capture Folder", initial: str = "") -> tuple[bool, str]:
+def pick_folder_ifiledialog(title: str = "Select Benchmark Review Folder", initial: str = "") -> tuple[bool, str]:
     """Uses native Windows modern IFileOpenDialog (Windows Vista+ / 10 / 11).
     This opens the standard, modern Windows File Explorer Folder Picker dialog with
     Quick Access, drive letters, address bar, and search.
@@ -55,13 +55,15 @@ def pick_folder_ifiledialog(title: str = "Select CapFrameX Capture Folder", init
     vtable = ctypes.cast(p_dialog, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
     release_dialog = ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(vtable[2])
 
+    dialog_shown = False
     try:
-        get_options = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(wintypes.DWORD))(vtable[10])
-        set_options = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.DWORD)(vtable[9])
-        set_title = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.LPCWSTR)(vtable[17])
-        set_folder = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.c_void_p)(vtable[12])
-        show = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.HWND)(vtable[3])
-        get_result = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p))(vtable[20])
+        get_options = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.POINTER(wintypes.DWORD))(vtable[10])
+        set_options = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.DWORD)(vtable[9])
+        set_title = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.LPCWSTR)(vtable[17])
+        set_folder = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.c_void_p)(vtable[12])
+        # Use c_long so ctypes does not raise WindowsError when hr_show is negative (like ERROR_CANCELLED)
+        show = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.HWND)(vtable[3])
+        get_result = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, ctypes.POINTER(ctypes.c_void_p))(vtable[20])
 
         options = wintypes.DWORD(0)
         get_options(p_dialog, ctypes.byref(options))
@@ -84,14 +86,12 @@ def pick_folder_ifiledialog(title: str = "Select CapFrameX Capture Folder", init
                 ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(item_vtable[2])(p_initial_item)
 
         hwnd_owner = user32.GetForegroundWindow() or 0
+        dialog_shown = True
         hr_show = show(p_dialog, hwnd_owner)
 
-        # User clicked Cancel or closed dialog
-        if (hr_show & 0xFFFFFFFF) == ERROR_CANCELLED or hr_show == -2147023673:
+        # User clicked Cancel, closed with [X], or pressed Esc
+        if hr_show != 0 or (hr_show & 0xFFFFFFFF) == ERROR_CANCELLED or hr_show == -2147023673:
             return True, ""
-
-        if hr_show != 0:
-            return False, ""
 
         p_result_item = ctypes.c_void_p()
         hr_res = get_result(p_dialog, ctypes.byref(p_result_item))
@@ -99,7 +99,7 @@ def pick_folder_ifiledialog(title: str = "Select CapFrameX Capture Folder", init
             return True, ""
 
         res_vtable = ctypes.cast(p_result_item, ctypes.POINTER(ctypes.POINTER(ctypes.c_void_p))).contents
-        get_display_name = ctypes.WINFUNCTYPE(ctypes.HRESULT, ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(wintypes.LPWSTR))(res_vtable[5])
+        get_display_name = ctypes.WINFUNCTYPE(ctypes.c_long, ctypes.c_void_p, wintypes.DWORD, ctypes.POINTER(wintypes.LPWSTR))(res_vtable[5])
         release_item = ctypes.WINFUNCTYPE(wintypes.ULONG, ctypes.c_void_p)(res_vtable[2])
 
         psz_path = wintypes.LPWSTR()
@@ -111,16 +111,25 @@ def pick_folder_ifiledialog(title: str = "Select CapFrameX Capture Folder", init
 
         release_item(p_result_item)
         return True, folder_path
+    except (WindowsError, OSError) as e:
+        # If user cancelled / closed dialog, treat as cleanly handled
+        if getattr(e, 'winerror', None) == -2147023673 or (getattr(e, 'winerror', 0) & 0xFFFFFFFF) == ERROR_CANCELLED or "canceled by the user" in str(e).lower():
+            return True, ""
+        if dialog_shown:
+            return True, ""
+        logger.warning(f"IFileOpenDialog error: {e}")
+        return False, ""
     except Exception as e:
+        if dialog_shown:
+            return True, ""
         logger.warning(f"IFileOpenDialog error: {e}")
         return False, ""
     finally:
         release_dialog(p_dialog)
 
 
-def pick_folder_powershell(title: str = "Select CapFrameX Capture Folder", initial: str = "") -> tuple[bool, str]:
-    """Uses Windows PowerShell with Windows Forms FolderBrowserDialog and a TopMost owner form.
-    Guarantees the dialog pops up in front of all open windows (including web browsers).
+def pick_folder_powershell(title: str = "Select Benchmark Review Folder", initial: str = "") -> tuple[bool, str]:
+    """Fallback using Windows PowerShell with Windows Forms FolderBrowserDialog.
     Returns (handled, path_or_empty).
     """
     clean_initial = initial.replace("'", "''").replace("\\", "\\\\") if initial else ""
@@ -160,11 +169,21 @@ if ($res -eq [System.Windows.Forms.DialogResult]::OK -and $fbd.SelectedPath) {{
 """
     try:
         enc = base64.b64encode(ps_code.encode("utf-16le")).decode("ascii")
+        startupinfo = None
+        creationflags = 0
+        if sys.platform == "win32":
+            startupinfo = subprocess.STARTUPINFO()
+            startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            startupinfo.wShowWindow = 0  # SW_HIDE
+            creationflags = subprocess.CREATE_NO_WINDOW
+
         p = subprocess.run(
-            ["powershell.exe", "-NoProfile", "-Sta", "-EncodedCommand", enc],
+            ["powershell.exe", "-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-Sta", "-EncodedCommand", enc],
             capture_output=True,
             text=True,
             timeout=180,
+            creationflags=creationflags,
+            startupinfo=startupinfo,
         )
         if p.returncode == 0 and p.stdout:
             for line in p.stdout.splitlines():
@@ -181,8 +200,8 @@ if ($res -eq [System.Windows.Forms.DialogResult]::OK -and $fbd.SelectedPath) {{
     return False, ""
 
 
-def pick_folder_tkinter(title: str = "Select CapFrameX Capture Folder", initial: str = "") -> tuple[bool, str]:
-    """Fallback using Tkinter with proper topmost parent and window message pump.
+def pick_folder_tkinter(title: str = "Select Benchmark Review Folder", initial: str = "") -> tuple[bool, str]:
+    """Fallback using standard Tkinter filedialog if available.
     Returns (handled, path_or_empty).
     """
     try:
@@ -210,11 +229,11 @@ def pick_folder_tkinter(title: str = "Select CapFrameX Capture Folder", initial:
         return False, ""
 
 
-def pick_folder(title: str = "Select CapFrameX Capture Folder", initial_dir: str = "") -> str:
+def pick_folder(title: str = "Select Benchmark Review Folder", initial_dir: str = "") -> str:
     """Multi-tiered native folder picker for Windows.
     1. Native Windows modern IFileOpenDialog (the modern Windows Explorer folder picker).
-    2. PowerShell Windows Forms with TopMost owner form.
-    3. Tkinter askdirectory with topmost root.
+    2. PowerShell Windows Forms fallback.
+    3. Tkinter askdirectory fallback.
     Guarantees immediate single-click termination when cancelled by user.
     """
     if sys.platform == "win32":
@@ -234,7 +253,7 @@ def pick_folder(title: str = "Select CapFrameX Capture Folder", initial_dir: str
         except Exception as e:
             logger.warning(f"PowerShell folder picker error: {e}")
 
-    # 3. Tkinter fallback
+    # 3. Tkinter (cross-platform fallback)
     try:
         handled, path = pick_folder_tkinter(title, initial_dir)
         if handled:
@@ -243,3 +262,15 @@ def pick_folder(title: str = "Select CapFrameX Capture Folder", initial_dir: str
         logger.warning(f"Tkinter folder picker error: {e}")
 
     return ""
+
+
+def main():
+    initial = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] else ""
+    folder = pick_folder("Select Benchmark Review Folder", initial)
+    if folder:
+        sys.stdout.write(folder)
+        sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()
